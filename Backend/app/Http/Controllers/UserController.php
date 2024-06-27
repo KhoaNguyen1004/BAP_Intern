@@ -23,8 +23,15 @@ class UserController extends Controller
             'password' => 'required',
         ]);
 
+        $user1 = User::where('username', '1')->first();
+        if (!$user1) {
+            $user = new User();
+            $user->username = '1';
+            $user->password = bcrypt('123456');
+            $user->save();
+        }
+        
         $user = User::where('username', 'test01')->first();
-
         if (!$user) {
 
             if (!Template::first()) {
