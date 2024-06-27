@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { Layout, Space, Avatar, Dropdown, Button } from 'antd';
+import React, { useState } from 'react';
+import { Layout, Space, Avatar, Button } from 'antd';
 import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import AuthService from '../../services/auth.service';
 import Popup from '../../components/Popup/popup';
-const { Header, Content, Footer } = Layout;
+const { Header, Content } = Layout;
 
-const Template = () => {
-  return (
-    <div>
-      <p>Template</p>
-    </div>
-  );
-};
+// const Template = () => {
+//   return (
+//     <div>
+//       <p>Template</p>
+//     </div>
+//   );
+// };
 function Dashboard() {
   const [open, setOpen] = useState(false);
 
