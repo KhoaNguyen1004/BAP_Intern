@@ -4,6 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
+Route::get('/not-authorized', function () {
+    return response()->json(['error' => 'Unauthorized. Please login.'], 401);
+})->name('login');
 Route::post('/LoginProcessing', [UserController::class, 'LoginProcessing']);
 
 
