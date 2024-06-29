@@ -20,7 +20,7 @@ export function Login() {
       .unwrap()
       .then(() => {
         setLoading(true);
-        navigate('/dashboard');
+        navigate('/admin/dashboard');
         localStorage.setItem('username', username);
         window.location.reload();
       })

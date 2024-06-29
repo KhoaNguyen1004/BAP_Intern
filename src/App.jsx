@@ -8,7 +8,7 @@ function App() {
     <div className="app">
       <Routes>
         <Route
-          path="/"
+          path="/admin"
           element={
             <PrivateRoute>
               <div>Content Private</div>
@@ -26,13 +26,14 @@ function App() {
           }
         />
         <Route
-          path="/dashboard"
+          path="/admin/dashboard"
           element={
             <PrivateRoute>
               <Dashboard />
             </PrivateRoute>
           }
         />
+        <Route path="/" element={<div>Guest UI</div>}></Route>
       </Routes>
     </div>
   );
