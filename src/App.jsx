@@ -3,6 +3,8 @@ import { PrivateRoute } from './components/privateRoute';
 import { Login } from './features/auth/login';
 import { Link, Route, Routes } from 'react-router-dom';
 import Dashboard from './features/dashboard/dashboard';
+import AddConfig from './features/dashboard/addConfig';
+
 function App() {
   return (
     <div className="app">
@@ -20,8 +22,7 @@ function App() {
           path="*"
           element={
             <div>
-              Not Found
-              <Link to="/login">Login</Link>
+              Not Found<Link to="/login">Login</Link>
             </div>
           }
         />
@@ -33,7 +34,18 @@ function App() {
             </PrivateRoute>
           }
         />
-        <Route path="/" element={<div>Guest UI</div>}></Route>
+        <Route
+          path="/admin/addconfig"
+          element={
+            <PrivateRoute>
+              <AddConfig />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/"
+          element={<div>Guest UI</div>}
+        />
       </Routes>
     </div>
   );

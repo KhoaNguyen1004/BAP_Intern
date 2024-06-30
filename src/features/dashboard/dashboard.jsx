@@ -3,17 +3,12 @@ import { Layout, Space, Avatar, Button } from 'antd';
 import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import AuthService from '../../services/auth.service';
 import Popup from '../../components/Popup/popup';
+import { useNavigate } from 'react-router-dom'; 
 const { Header, Content } = Layout;
 
-// const Template = () => {
-//   return (
-//     <div>
-//       <p>Template</p>
-//     </div>
-//   );
-// };
 function Dashboard() {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate(); 
 
   const username = localStorage.getItem('username');
 
@@ -23,12 +18,15 @@ function Dashboard() {
 
   const handleCancel = () => {
     setOpen(false);
-    //call lại api list
   };
 
   const handleConfirmDelete = () => {
     console.log('confirm delete');
     setOpen(false);
+  };
+
+  const navigateToAddConfig = () => {
+    navigate('/admin/addconfig'); 
   };
 
   return (
@@ -76,17 +74,18 @@ function Dashboard() {
                   type="primary"
                   block
                   className="bg-primary-dominant hover:bg-primary-dominant-dark focus:bg-primary-dominant-dark"
+                  onClick={navigateToAddConfig}
                 >
-                  {' '}
                   Add Template
                 </Button>
 
-                <Button type="primary" block>
+                <Button type="primary" block onClick={showModal}>
                   Config Template
                 </Button>
                 <Button type="primary" block onClick={showModal}>
                   Delete Template
                 </Button>
+              
                 <Popup
                   title="Delete Template"
                   isOpen={open}
@@ -104,4 +103,5 @@ function Dashboard() {
     </div>
   );
 }
+
 export default Dashboard;
