@@ -3,6 +3,7 @@ import { PrivateRoute } from './components/privateRoute';
 import { Login } from './features/auth/login';
 import { Link, Route, Routes } from 'react-router-dom';
 import Dashboard from './features/dashboard/dashboard';
+import ConfigPage from './features/ConfigPage/ConfigPage';
 function App() {
   return (
     <div className="app">
@@ -30,6 +31,14 @@ function App() {
           element={
             <PrivateRoute>
               <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/config-page/:id"
+          element={
+            <PrivateRoute>
+              <ConfigPage />
             </PrivateRoute>
           }
         />
