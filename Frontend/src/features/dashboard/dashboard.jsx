@@ -1,0 +1,214 @@
+import React, { useState } from 'react';
+import {
+  Layout,
+  Space,
+  Avatar,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Radio,
+  Checkbox
+} from 'antd';
+import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
+import AuthService from '../../services/auth.service';
+import Popup from '../../components/Popup';
+const { Header, Content } = Layout;
+
+function Dashboard() {
+  const [isAddTemplateModalOpen, setIsAddTemplateModalOpen] = useState(false);
+  const [isDeleteTemplateModalOpen, setIsDeleteTemplateModalOpen] =
+    useState(false);
+  const [cloneTemplate, setCloneTemplate] = useState(true);
+
+  const username = localStorage.getItem('username');
+
+  const showAddTemplateModal = () => {
+    setIsAddTemplateModalOpen(true);
+  };
+
+  const showDeleteTemplateModal = () => {
+    setIsDeleteTemplateModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setIsAddTemplateModalOpen(false);
+    setIsDeleteTemplateModalOpen(false);
+  };
+
+  const handleConfirmDelete = () => {
+    console.log('confirm delete');
+    setIsDeleteTemplateModalOpen(false);
+  };
+
+  const handleOk = () => {
+    setIsAddTemplateModalOpen(false);
+  };
+
+  const onFinish = values => {
+    console.log('Received values:', values);
+    setIsAddTemplateModalOpen(false);
+    const randomId = Math.floor(Math.random() * 1000);
+    window.open(
+      `${window.location.origin}/admin/config-page/${randomId}`,
+      '_blank'
+    );
+  };
+
+  const onFinishFailed = errorInfo => {
+    console.log('Failed:', errorInfo);
+  };
+
+  const handleRadioChange = e => {
+    setCloneTemplate(e.target.value === 'Clone Template');
+  };
+
+  return (
+    <div className="min-h-screen">
+      <Layout className="min-h-screen fixed w-full">
+        <Header className="bg-transparent z-40 mt-4 fixed w-full top-0 right-0 transition-all">
+          <div className="rounded-lg h-full shadow-md px-4 bg-white text-end">
+            <Space
+              size="middle"
+              align="center"
+              className="text-black hover:text-slate-500"
+            >
+              <div className="flex justify-start items-center">
+                <Avatar shape="square" size="large" icon={<UserOutlined />} />
+                <div className="ml-2">
+                  <p className="text-lg text-start m-0 mb-2 leading-none font-semibold">
+                    {username}
+                  </p>
+                  <p className="m-0 leading-none text-start">role</p>
+                </div>
+              </div>
+              <Button
+                type="text"
+                icon={<LogoutOutlined />}
+                onClick={() => {
+                  AuthService.logout();
+                  window.location.href = '/login';
+                }}
+                className="w-full border-none bg-transparent text-start p-0 m-0"
+              />
+            </Space>
+          </div>
+        </Header>
+
+        <Content className="bg-transparent rounded-lg mb-4 mx-10 mt-[92px] ">
+          <div className="flex justify-between items-center">
+            <div className="bg-white rounded-lg p-4 shadow-md flex-1"></div>
+            <div className="bg-white rounded-lg p-4 mx-8 shadow-md flex-1">
+              <p className="text-lg font-semibold items-start m-[4]">
+                Config Template
+              </p>
+
+              <div className="flex flex-col space-y-4 justify-between items-center w-2/4 mx-auto">
+                <Button
+                  type="primary"
+                  block
+                  className="bg-primary-dominant hover:bg-primary-dominant-dark focus:bg-primary-dominant-dark"
+                  onClick={showAddTemplateModal}
+                >
+                  Add Template
+                </Button>
+                <Modal
+                  title="Add Configuration"
+                  open={isAddTemplateModalOpen}
+                  onOk={handleOk}
+                  onCancel={handleCancel}
+                  footer={[
+                    <Button key="back" onClick={handleCancel}>
+                      Cancel
+                    </Button>,
+                    <Button
+                      form="addConfigForm"
+                      key="submit"
+                      type="primary"
+                      htmlType="submit"
+                    >
+                      Create
+                    </Button>
+                  ]}
+                >
+                  <Form
+                    id="addConfigForm"
+                    initialValues={{
+                      configValue: 'Clone Template',
+                      header: true,
+                      section: true,
+                      footer: true
+                    }}
+                    onFinish={onFinish}
+                    onFinishFailed={onFinishFailed}
+                    layout="vertical"
+                  >
+                    <Form.Item
+                      label="Template Name"
+                      name="configName"
+                      rules={[
+                        {
+                          required: true,
+                          message: 'Please enter template name!'
+                        }
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item
+                      label="Template Options"
+                      name="configValue"
+                      rules={[
+                        { required: true, message: 'Please choose an option!' }
+                      ]}
+                    >
+                      <Radio.Group onChange={handleRadioChange}>
+                        <Radio value="Clone Template">Clone Template</Radio>
+                        <Radio value="New Template">New Template</Radio>
+                      </Radio.Group>
+                    </Form.Item>
+                    {cloneTemplate && (
+                      <>
+                        <Form.Item name="header" valuePropName="checked">
+                          <Checkbox defaultChecked>Clone Header</Checkbox>
+                        </Form.Item>
+                        <Form.Item name="section" valuePropName="checked">
+                          <Checkbox defaultChecked>Clone Section</Checkbox>
+                        </Form.Item>
+                        <Form.Item name="footer" valuePropName="checked">
+                          <Checkbox defaultChecked>Clone Footer</Checkbox>
+                        </Form.Item>
+                      </>
+                    )}
+                  </Form>
+                </Modal>
+
+                <Button type="primary" block>
+                  Config Template
+                </Button>
+                <Button type="primary" block onClick={showDeleteTemplateModal}>
+                  Delete Template
+                </Button>
+                <Popup
+                  title="Delete Template"
+                  isOpen={isDeleteTemplateModalOpen}
+                  onConfirm={handleConfirmDelete}
+                  onCancel={handleCancel}
+                  text="Delete"
+                >
+                  List Template
+                </Popup>
+              </div>
+            </div>
+          </div>
+        </Content>
+
+        {/* <Footer className="bg-transparent text-center fixed">
+          <p className="text-sm text-gray-500 m-0">BAP Intern</p>
+        </Footer> */}
+      </Layout>
+    </div>
+  );
+}
+
+export default Dashboard;

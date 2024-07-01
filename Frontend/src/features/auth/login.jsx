@@ -1,30 +1,32 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loginAsync, selectAuth } from './authSlice';
+import { LoadingContext } from '../../contexts/LoadingContext';
 
 export function Login() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const { error } = useAppSelector(selectAuth);
-
+  const { setIsLoading } = useContext(LoadingContext);
   const handleSubmit = async event => {
     event.preventDefault();
     const username = event.currentTarget.username.value;
     const password = event.currentTarget.password.value;
 
     setLoading(true);
-
+    setIsLoading(true);
     dispatch(loginAsync({ username, password }))
       .unwrap()
       .then(() => {
-        setLoading(true);
-        navigate('/');
+        navigate('/admin/dashboard');
+        localStorage.setItem('username', username);
         window.location.reload();
       })
-      .catch(() => {
-        setLoading(false);
+      .catch(() => {})
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
