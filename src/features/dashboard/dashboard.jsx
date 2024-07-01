@@ -64,9 +64,9 @@ function Dashboard() {
   };
 
   return (
-    <div className="w-screen min-h-screen">
-      <Layout className="h-full w-full">
-        <Header className="bg-transparent z-40 mt-4 fixed w-full top-0 right-0 transition-all duration-200 before:content-[''] before:w-[99%] before:absolute before:-top-6 before:left-0 before:bottom-0 before:z-[-10] before:bg-[#f5f5f5]">
+    <div className="min-h-screen">
+      <Layout className="min-h-screen fixed w-full">
+        <Header className="bg-transparent z-40 mt-4 fixed w-full top-0 right-0 transition-all">
           <div className="rounded-lg h-full shadow-md px-4 bg-white text-end">
             <Space
               size="middle"
@@ -95,7 +95,7 @@ function Dashboard() {
           </div>
         </Header>
 
-        <Content className="bg-transparent rounded-lg z-40 mb-4 mx-8 mt-[92px] ">
+        <Content className="bg-transparent rounded-lg mb-4 mx-10 mt-[92px] ">
           <div className="flex justify-between items-center">
             <div className="bg-white rounded-lg p-4 shadow-md flex-1"></div>
             <div className="bg-white rounded-lg p-4 mx-8 shadow-md flex-1">
@@ -202,6 +202,10 @@ function Dashboard() {
             </div>
           </div>
         </Content>
+
+        {/* <Footer className="bg-transparent text-center fixed">
+          <p className="text-sm text-gray-500 m-0">BAP Intern</p>
+        </Footer> */}
       </Layout>
     </div>
   );
