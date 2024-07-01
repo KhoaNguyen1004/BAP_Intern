@@ -10,6 +10,8 @@ const ConfigPage = () => {
 
   const { id } = params;
 
+  // TODO: Call api fetch data by id
+
   return (
     <div>
       <h1>Config Page {id}</h1>

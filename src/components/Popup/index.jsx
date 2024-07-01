@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal } from 'antd';
-function Popup({ title, children, isOpen, onCancel, onConfirm, text }) {
+function Popup({ title, children, isOpen, onCancel, onConfirm, text, footer }) {
   return (
     <Modal
       title={title}
@@ -10,6 +10,7 @@ function Popup({ title, children, isOpen, onCancel, onConfirm, text }) {
       onCancel={onCancel}
       okText={text}
       cancelText="Cancel"
+      footer={footer}
     >
       {children}
     </Modal>
@@ -17,12 +18,17 @@ function Popup({ title, children, isOpen, onCancel, onConfirm, text }) {
 }
 
 Popup.propTypes = {
-  title: PropTypes.string.isRequired,
-  children: PropTypes.node.isRequired,
+  title: PropTypes.string,
+  children: PropTypes.node,
   isOpen: PropTypes.bool.isRequired,
   onCancel: PropTypes.func.isRequired,
   onConfirm: PropTypes.func,
-  text: PropTypes.string
+  text: PropTypes.string,
+  footer: PropTypes.func
+};
+
+Popup.defaultProps = {
+  title: 'Chưa nhập title'
 };
 
 export default Popup;
