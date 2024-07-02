@@ -12,6 +12,7 @@ module.exports = {
       grey: '#ABBBC2',
       transparent: 'transparent',
       current: 'currentColor',
+      buttonSolidCheckedBg: '#F5566C',
 
       'grey-darker': '#9B9D9E',
       'base-bg-light': '#FAFAFA',
@@ -52,6 +53,11 @@ module.exports = {
       '10xl': ['10rem', '1'],
       '11xl': ['12rem', '1']
     }
+  },
+  variants: {
+    extend: {
+      backgroundColor: ['hover', 'focus'],
+    },
   },
   plugins: [],
   corePlugins: {

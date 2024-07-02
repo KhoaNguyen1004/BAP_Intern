@@ -8,13 +8,16 @@ import { store } from './store/store';
 
 import './index.css';
 import { LoadingProvider } from './contexts/LoadingContext';
+import { PopupProvider } from './contexts/PopupContext';
 
 const root = createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store}>
     <BrowserRouter>
       <LoadingProvider>
-        <App />
+        <PopupProvider>
+          <App />
+        </PopupProvider>
       </LoadingProvider>
     </BrowserRouter>
   </Provider>

@@ -24,11 +24,12 @@ Popup.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onConfirm: PropTypes.func,
   text: PropTypes.string,
-  footer: PropTypes.func
+  footer: PropTypes.node
 };
 
 Popup.defaultProps = {
-  title: 'Chưa nhập title'
+  title: 'Chưa nhập title',
+  children: 'Chưa nhập children'
 };
 
 export default Popup;

@@ -1,23 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   Layout,
   Space,
   Avatar,
   Button,
-  Modal,
   Form,
   Input,
   Radio,
-  Checkbox
+  Checkbox,
+  Card,
+  List
 } from 'antd';
-import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
+import {
+  UserOutlined,
+  LogoutOutlined,
+  SettingOutlined
+} from '@ant-design/icons';
 import AuthService from '../../services/auth.service';
 import Popup from '../../components/Popup';
+import { LoadingContext } from '../../contexts/LoadingContext';
+import ConfigSection from './configSection';
 const { Header, Content } = Layout;
 
 function Dashboard() {
+  const { setIsLoading } = useContext(LoadingContext);
+  const templateList = [
+    { id: 1, name: 'Template 1', value: 'template1' },
+    { id: 2, name: 'Template 2', value: 'template2' },
+    { id: 3, name: 'Template 3', value: 'template3' },
+    { id: 4, name: 'Template 4', value: 'template4' },
+    { id: 5, name: 'Template 5', value: 'template5' },
+    { id: 6, name: 'Template 6', value: 'template6' }
+  ];
+  const [selectedTemplate, setSelectedTemplate] = useState(templateList[0].id);
+  const [selectedTemplatesToDelete, setSelectedTemplatesToDelete] = useState(
+    []
+  );
+
   const [isAddTemplateModalOpen, setIsAddTemplateModalOpen] = useState(false);
   const [isDeleteTemplateModalOpen, setIsDeleteTemplateModalOpen] =
+    useState(false);
+  const [isConfigTemplateModalOpen, setIsConfigTemplateModalOpen] =
     useState(false);
   const [cloneTemplate, setCloneTemplate] = useState(true);
 
@@ -30,19 +53,28 @@ function Dashboard() {
   const showDeleteTemplateModal = () => {
     setIsDeleteTemplateModalOpen(true);
   };
+  const showConfigTemplateModal = () => {
+    setIsConfigTemplateModalOpen(true);
+  };
 
   const handleCancel = () => {
     setIsAddTemplateModalOpen(false);
     setIsDeleteTemplateModalOpen(false);
+    setIsConfigTemplateModalOpen(false);
   };
 
   const handleConfirmDelete = () => {
-    console.log('confirm delete');
+    setIsLoading(true);
+
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
     setIsDeleteTemplateModalOpen(false);
   };
 
   const handleOk = () => {
     setIsAddTemplateModalOpen(false);
+    setIsConfigTemplateModalOpen(false);
   };
 
   const onFinish = values => {
@@ -62,10 +94,21 @@ function Dashboard() {
   const handleRadioChange = e => {
     setCloneTemplate(e.target.value === 'Clone Template');
   };
-
+  const handleSettingClick = templateValue => {
+    window.open(
+      `${window.location.origin}/admin/config?template=${templateValue}`,
+      '_blank'
+    );
+  };
+  const handleTemplateChange = e => {
+    setSelectedTemplate(e.target.value);
+  };
+  const handleTemplateDelete = checkedValues => {
+    setSelectedTemplatesToDelete(checkedValues);
+  };
   return (
     <div className="min-h-screen">
-      <Layout className="min-h-screen fixed w-full">
+      <Layout className="min-h-screen w-full">
         <Header className="bg-transparent z-40 mt-4 fixed w-full top-0 right-0 transition-all">
           <div className="rounded-lg h-full shadow-md px-4 bg-white text-end">
             <Space
@@ -73,7 +116,7 @@ function Dashboard() {
               align="center"
               className="text-black hover:text-slate-500"
             >
-              <div className="flex justify-start items-center">
+              <div className="flex">
                 <Avatar shape="square" size="large" icon={<UserOutlined />} />
                 <div className="ml-2">
                   <p className="text-lg text-start m-0 mb-2 leading-none font-semibold">
@@ -96,9 +139,39 @@ function Dashboard() {
         </Header>
 
         <Content className="bg-transparent rounded-lg mb-4 mx-10 mt-[92px] ">
-          <div className="flex justify-between items-center">
-            <div className="bg-white rounded-lg p-4 shadow-md flex-1"></div>
-            <div className="bg-white rounded-lg p-4 mx-8 shadow-md flex-1">
+          <div className="flex">
+            <div className="bg-white rounded-lg p-4 shadow-md flex-1">
+              <p className="text-lg font-semibold items-start m-[4]">
+                Template
+              </p>
+              <div className="flex flex-wrap">
+                {templateList.map(item => (
+                  <div className="w-1/2 p-2" key={item.id}>
+                    <Card className="shadow-sm rounded-md border border-gray-200 p-2">
+                      <Radio.Group
+                        value={selectedTemplate}
+                        onChange={handleTemplateChange}
+                        className="w-full flex items-center"
+                      >
+                        <Radio className="w-full" value={item.id}>
+                          {item.name}
+                        </Radio>
+                      </Radio.Group>
+                    </Card>
+                  </div>
+                ))}
+              </div>
+              <div className="w-full flex justify-end mt-4">
+                <Button
+                  className="!bg-primary-dominant hover:!bg-primary-dominant-dark focus:!bg-primary-dominant-light"
+                  type="primary"
+                >
+                  Save
+                </Button>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg p-4 ml-4 shadow-md flex-1 h-[280px]">
               <p className="text-lg font-semibold items-start m-[4]">
                 Config Template
               </p>
@@ -107,14 +180,14 @@ function Dashboard() {
                 <Button
                   type="primary"
                   block
-                  className="bg-primary-dominant hover:bg-primary-dominant-dark focus:bg-primary-dominant-dark"
+                  className="!bg-primary-dominant hover:!bg-primary-dominant-dark focus:!bg-primary-dominant-light"
                   onClick={showAddTemplateModal}
                 >
                   Add Template
                 </Button>
-                <Modal
+                <Popup
                   title="Add Configuration"
-                  open={isAddTemplateModalOpen}
+                  isOpen={isAddTemplateModalOpen}
                   onOk={handleOk}
                   onCancel={handleCancel}
                   footer={[
@@ -181,11 +254,39 @@ function Dashboard() {
                       </>
                     )}
                   </Form>
-                </Modal>
+                </Popup>
 
-                <Button type="primary" block>
+                <Button type="primary" block onClick={showConfigTemplateModal}>
                   Config Template
                 </Button>
+                <Popup
+                  title="Config Template"
+                  isOpen={isConfigTemplateModalOpen}
+                  onConfirm={handleOk}
+                  onCancel={handleCancel}
+                >
+                  <List
+                    itemLayout="horizontal"
+                    dataSource={templateList}
+                    renderItem={item => (
+                      <List.Item
+                        actions={[
+                          <Button
+                            key="setting"
+                            type="text"
+                            icon={<SettingOutlined />}
+                            onClick={() => handleSettingClick(item.value)}
+                          />
+                        ]}
+                      >
+                        <List.Item.Meta title={item.name} />
+                      </List.Item>
+                    )}
+                  />
+                  <Button key="back" onClick={handleCancel}>
+                    Cancel
+                  </Button>
+                </Popup>
                 <Button type="primary" block onClick={showDeleteTemplateModal}>
                   Delete Template
                 </Button>
@@ -195,17 +296,30 @@ function Dashboard() {
                   onConfirm={handleConfirmDelete}
                   onCancel={handleCancel}
                   text="Delete"
+                  className="w-500"
                 >
-                  List Template
+                  <div className="flex flex-wrap">
+                    {templateList.map(item => (
+                      <div className="w-1/2" key={item.id}>
+                        <Card className="shadow-sm rounded-md border border-gray-200 ">
+                          <Checkbox
+                            value={selectedTemplatesToDelete}
+                            onChange={handleTemplateDelete}
+                            disabled={item.id === selectedTemplate}
+                            defaultChecked={item.id === selectedTemplate}
+                          >
+                            {item.name}
+                          </Checkbox>
+                        </Card>
+                      </div>
+                    ))}
+                  </div>
                 </Popup>
+                <ConfigSection />
               </div>
             </div>
           </div>
         </Content>
-
-        {/* <Footer className="bg-transparent text-center fixed">
-          <p className="text-sm text-gray-500 m-0">BAP Intern</p>
-        </Footer> */}
       </Layout>
     </div>
   );

@@ -4,7 +4,8 @@ import authService from '../../services/auth.service';
 import tokenService from '../../services/token.service';
 
 const user = tokenService.getUser();
-const initialState = user.accessToken
+
+const initialState = user
   ? {
       isLoggedIn: true,
       user: user,
@@ -12,55 +13,21 @@ const initialState = user.accessToken
     }
   : {
       isLoggedIn: false,
-      user: { accessToken: '', refreshToken: '' },
+      user: null,
       error: ''
     };
 
-export const registerAsync = createAsyncThunk(
-  'auth/register',
-  async (userRegister, thunkApi) => {
-    if (userRegister.password !== userRegister.passwordConf) {
-      thunkApi.dispatch(setError(`Your password doesn't match`));
-      return thunkApi.rejectWithValue(`Your password doesn't match`);
-    }
-    try {
-      const response = await authService.register(
-        userRegister.username,
-        userRegister.email,
-        userRegister.password
-      );
-      console.log(response);
-      if (response.status === 200) {
-        return response;
-      }
-    } catch (_error) {
-      const error = _error;
-      console.log(error);
-      if (axios.isAxiosError(error)) {
-        thunkApi.dispatch(setError(error.response?.data.message));
-        return thunkApi.rejectWithValue(error.response?.data.message);
-      }
-      thunkApi.dispatch(setError(error.message));
-      return thunkApi.rejectWithValue(error.message);
-    }
-  }
-);
-
 export const loginAsync = createAsyncThunk(
-  'auth/login',
+  '/auth/login',
   async (userCredentials, thunkApi) => {
-    console.log(userCredentials);
     try {
       const response = await authService.login(
         userCredentials.username,
         userCredentials.password
       );
-      if (response.accessToken) {
-        return response;
-      }
+      return response;
     } catch (_error) {
       const error = _error;
-      console.log(error);
       if (axios.isAxiosError(error)) {
         thunkApi.dispatch(setError(error.response?.data.message));
         return thunkApi.rejectWithValue(error.response?.data.message);
@@ -71,8 +38,9 @@ export const loginAsync = createAsyncThunk(
   }
 );
 
-export const logoutAsync = createAsyncThunk('auth/logout', async () => {
+export const logoutAsync = createAsyncThunk('/logout', async () => {
   authService.logout();
+  tokenService.removeUser();
 });
 
 export const authSlice = createSlice({
@@ -90,19 +58,19 @@ export const authSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(loginAsync.fulfilled, (state, { payload }) => {
+        console.log('Redux state updated:', payload);
         state.isLoggedIn = true;
-        state.user = payload.user;
+        state.user = payload;
         state.error = '';
+        tokenService.setUser(payload);
       })
       .addCase(loginAsync.rejected, state => {
         state.isLoggedIn = false;
-      })
-      .addCase(registerAsync.fulfilled, state => {
-        state.error = '';
+        state.error = 'Login failed!';
       })
       .addCase(logoutAsync.fulfilled, state => {
         state.isLoggedIn = false;
-        state.user = { accessToken: '', refreshToken: '' };
+        state.user = null;
         state.error = '';
       });
   }
