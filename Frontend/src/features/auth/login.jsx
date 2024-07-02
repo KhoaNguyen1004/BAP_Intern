@@ -1,30 +1,42 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loginAsync, selectAuth } from './authSlice';
 import { LoadingContext } from '../../contexts/LoadingContext';
+import TokenService from '../../services/token.service';
 
 export function Login() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const { error } = useAppSelector(selectAuth);
+  const { error, isLoggedIn } = useAppSelector(selectAuth);
   const { setIsLoading } = useContext(LoadingContext);
+
+  useEffect(() => {
+    console.log('Is logged in first? ', isLoggedIn);
+    if (isLoggedIn) {
+      navigate('/admin/dashboard');
+      console.log('Navigating to admin/dashboard in useEffect');
+      console.log('Is logged in second? ', isLoggedIn);
+    }
+  }, [isLoggedIn, navigate]);
+
   const handleSubmit = async event => {
     event.preventDefault();
     const username = event.currentTarget.username.value;
     const password = event.currentTarget.password.value;
 
-    setLoading(true);
     setIsLoading(true);
+
     dispatch(loginAsync({ username, password }))
       .unwrap()
-      .then(() => {
+      .then(response => {
+        console.log('Login successful, response:', response);
+        TokenService.setUser(response);
         navigate('/admin/dashboard');
-        localStorage.setItem('username', username);
-        window.location.reload();
       })
-      .catch(() => {})
+      .catch(error => {
+        console.error('Login error:', error);
+      })
       .finally(() => {
         setIsLoading(false);
       });
@@ -32,7 +44,6 @@ export function Login() {
 
   return (
     <>
-      {loading && <div>Loading...</div>}
       <main>
         <div>
           <div>Login</div>
