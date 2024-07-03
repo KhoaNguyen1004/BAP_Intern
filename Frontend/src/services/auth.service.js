@@ -1,40 +1,32 @@
 import TokenService from './token.service';
 import { http } from './http';
-import {
-  mockLogin,
-  mockLogout,
-  mockRegister
-} from '../features/auth/login.mock';
 
 class AuthService {
   async login(username, password) {
     try {
-      const response = await mockLogin({ username, password });
+      const response = await http.post('/LoginProcessing', {
+        username,
+        password
+      });
       TokenService.setUser(response.data);
       return response.data;
     } catch (error) {
-      throw error.response.data.message || 'Failed to login';
+      console.log('Login error:', error);
+      throw error.response?.data?.message || 'Login failed!';
     }
   }
 
   logout() {
     TokenService.removeUser();
-    return mockLogout();
-  }
-
-  async register(username, email, password) {
-    try {
-      const response = await mockRegister({ username, email, password });
-      return response.data;
-    } catch (error) {
-      throw error.response.data.message || 'Failed to register';
-    }
+    return http.post('/logout');
   }
 
   async getProfile() {
-    return http.get('/profile').then(response => {
-      return response.data;
-    });
+    try {
+      return await http.get('/profile');
+    } catch (error) {
+      throw error.response?.data?.message || 'Failed to get profile';
+    }
   }
 }
 
