@@ -96,7 +96,7 @@ function Dashboard() {
   };
   const handleSettingClick = templateValue => {
     window.open(
-      `${window.location.origin}/admin/config?template=${templateValue}`,
+      `${window.location.origin}/admin/config-page/${templateValue}`,
       '_blank'
     );
   };

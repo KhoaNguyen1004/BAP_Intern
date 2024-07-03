@@ -6,6 +6,7 @@ import Dashboard from './features/dashboard/dashboard';
 import ConfigPage from './features/configPage/configPage';
 import { useAppDispatch } from './store/hooks';
 import TokenService from './services/token.service';
+
 function App() {
   const dispatch = useAppDispatch();
 
