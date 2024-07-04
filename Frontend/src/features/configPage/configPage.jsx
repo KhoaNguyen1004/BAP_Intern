@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 import Header from './header';
 import Footer from './footer';
 import Section from './section';
@@ -10,6 +10,8 @@ const ConfigPage = () => {
   const { id } = params;
 
   const [sections, setSections] = useState([{ id: 1, title: `Section 1` }]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [sectionToDelete, setSectionToDelete] = useState(null);
 
   const addSection = () => {
     const newSection = {
@@ -19,12 +21,24 @@ const ConfigPage = () => {
     setSections(prevSections => [...prevSections, newSection]);
   };
 
-  const deleteSection = sectionId => {
+  const confirmDeleteSection = sectionId => {
     if (sections.length > 1) {
-      setSections(prevSections =>
-        prevSections.filter(section => section.id !== sectionId)
-      );
+      setIsModalVisible(true);
+      setSectionToDelete(sectionId);
     }
+  };
+
+  const handleDelete = () => {
+    setSections(prevSections =>
+      prevSections.filter(section => section.id !== sectionToDelete)
+    );
+    setIsModalVisible(false);
+    setSectionToDelete(null);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    setSectionToDelete(null);
   };
 
   return (
@@ -35,7 +49,7 @@ const ConfigPage = () => {
           <Section
             key={section.id}
             title={section.title}
-            onDelete={() => deleteSection(section.id)}
+            onDelete={() => confirmDeleteSection(section.id)}
           >
             <div>
               <h1>Config Page {id}</h1>
@@ -49,6 +63,16 @@ const ConfigPage = () => {
         </div>
       </div>
       <Footer content={'Made with ❤️'} />
+      <Modal
+        title="Confirm Delete"
+        visible={isModalVisible}
+        onOk={handleDelete}
+        onCancel={handleCancel}
+        okText="Yes"
+        cancelText="No"
+      >
+        <p>Are you sure you want to delete this section?</p>
+      </Modal>
     </div>
   );
 };
