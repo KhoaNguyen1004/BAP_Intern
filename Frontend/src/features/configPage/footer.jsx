@@ -7,8 +7,27 @@ const { Footer: AntdFooter } = Layout;
 
 const Footer = ({ content }) => {
   return (
-    <AntdFooter className="bg-slate-500 text-center fixed bottom-0 right-0 left-0 items-center flex justify-center">
-      <h1 className="text-sm text-white m-0">{content}</h1>
+    <AntdFooter
+      className="bg-slate-500"
+      style={{
+        position: 'fixed',
+        bottom: 0,
+        right: 0,
+        zIndex: 10,
+        width: '100%',
+        display: 'flex'
+      }}
+    >
+      <h1
+        className="text-sm text-white m-0"
+        style={{
+          width: '100%',
+          textAlign: 'center',
+          alignItems: 'center'
+        }}
+      >
+        {content}
+      </h1>
       <Button
         type="text"
         icon={<SettingOutlined />}

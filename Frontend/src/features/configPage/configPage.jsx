@@ -9,25 +9,36 @@ const ConfigPage = () => {
   const params = useParams();
   const { id } = params;
 
-  const [sectionCount, setSectionCount] = useState(1);
+  const [sections, setSections] = useState([{ id: 1, title: `Section 1` }]);
 
   const addSection = () => {
-    setSectionCount(prevCount => prevCount + 1);
+    const newSection = {
+      id: sections.length + 1,
+      title: `Section ${sections.length + 1}`
+    };
+    setSections(prevSections => [...prevSections, newSection]);
+  };
+
+  const deleteSection = sectionId => {
+    setSections(prevSections =>
+      prevSections.filter(section => section.id !== sectionId)
+    );
   };
 
   // TODO: Call API to fetch data by id
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col">
       <Header logo={'Logo'} title={'Title'} />
-      <div className="flex-1">
-        {[...Array(sectionCount)].map((_, index) => (
-          <Section key={index} title={`Section ${index + 1}`}>
+      <div className="flex-1 mb-20">
+        {sections.map(section => (
+          <Section
+            key={section.id}
+            title={section.title}
+            onDelete={() => deleteSection(section.id)}
+          >
             <div>
               <h1>Config Page {id}</h1>
-              <a href="/admin/dashboard" className="text-blue-500 block mb-1">
-                Back to Dashboard
-              </a>
             </div>
           </Section>
         ))}

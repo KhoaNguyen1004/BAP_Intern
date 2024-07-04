@@ -6,28 +6,49 @@ const { Header: AntdHeader } = Layout;
 
 const Header = ({ logo, title }) => {
   return (
-    <AntdHeader className="bg-slate-500 text-center fixed top-0 right-0 left-0 items-center flex justify-center">
+    <AntdHeader
+      className="bg-slate-500"
+      style={{
+        position: 'fixed',
+        top: 0,
+        right: 0,
+        zIndex: 5,
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0px 20px',
+        gap: '20%'
+      }}
+    >
       <div
         style={{
           backgroundColor: 'white',
           borderRadius: '100%',
+          marginLeft: '50px',
           padding: '5px',
-          display: 'inline-block',
-          marginRight: '400px'
+          display: 'inline-block'
         }}
       >
         <p className="text-2xl text-black m-0">{logo}</p>
       </div>
-      <h1
-        className="text-2xl text-black m-0"
+      <div
         style={{
-          backgroundColor: '#fff',
-          padding: '5px 300px',
-          borderRadius: '5px'
+          width: '600px',
+          textAlign: 'center',
+          alignItems: 'center'
         }}
       >
-        {title}
-      </h1>
+        <h1
+          className="text-2xl text-black m-0"
+          style={{
+            backgroundColor: '#fff',
+            padding: '5px 200px',
+            borderRadius: '5px'
+          }}
+        >
+          {title}
+        </h1>
+      </div>
       <Button
         type="text"
         icon={<SettingOutlined />}

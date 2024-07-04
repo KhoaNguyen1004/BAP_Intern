@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { Button } from 'antd';
 import { SettingOutlined, DeleteOutlined } from '@ant-design/icons';
 
-const Section = ({ title, children }) => {
+const Section = ({ title, children, onDelete }) => {
   return (
-    <section className="bg-gray-100 p-4 mb-6 relative top-16">
+    <section className="bg-gray-100 p-4 mb-5 pb-4 relative top-16">
       <h2 className="text-xl font-semibold mb-4">{title}</h2>
       {children}
       <Button
@@ -20,9 +20,7 @@ const Section = ({ title, children }) => {
         type="text"
         icon={<DeleteOutlined />}
         className="text-gray-500 absolute top-4 right-16"
-        onClick={() => {
-          console.log('Delete clicked');
-        }}
+        onClick={onDelete}
       />
     </section>
   );
@@ -30,7 +28,8 @@ const Section = ({ title, children }) => {
 
 Section.propTypes = {
   title: PropTypes.string.isRequired,
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
+  onDelete: PropTypes.func.isRequired
 };
 
 export default Section;
