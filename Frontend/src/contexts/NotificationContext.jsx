@@ -1,8 +1,6 @@
-/* eslint-disable react/prop-types */
-
 import React, { useMemo } from 'react';
-import { notification } from 'antd';
 import PropTypes from 'prop-types';
+import { notification } from 'antd';
 
 const NotificationContext = React.createContext({
   openNotification: () => {}
@@ -11,11 +9,14 @@ const NotificationContext = React.createContext({
 const NotificationProvider = ({ children }) => {
   const [api, contextHolder] = notification.useNotification();
 
-  const openNotification = (placement, message, description) => {
-    api.info({
-      message,
-      description,
-      placement
+  const openNotification = ({ message, type, title }) => {
+    api[type || 'open']({
+      message: title,
+      description: message,
+      className: 'custom-class',
+      style: {
+        width: 600
+      }
     });
   };
 
@@ -29,8 +30,9 @@ const NotificationProvider = ({ children }) => {
   );
 };
 
+// Add PropTypes validation for `children`
 NotificationProvider.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node.isRequired
 };
 
 export { NotificationContext, NotificationProvider };

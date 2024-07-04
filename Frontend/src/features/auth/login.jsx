@@ -38,11 +38,11 @@ export function Login() {
       })
       .catch(error => {
         console.error('Login error:', error);
-        openNotification(
-          'topRight',
-          'Login Failed',
-          'Invalid username or password'
-        );
+        openNotification({
+          message: 'Login failed!',
+          type: 'error',
+          title: 'Login Failed'
+        });
       })
       .finally(() => {
         setIsLoading(false);
@@ -68,7 +68,7 @@ export function Login() {
               placeholder="Password"
               required
             />
-            <button>Log in</button>
+            <button type="submit">Log in</button>
             <div>
               Don’t have an account yet? <Link to="/register">Sign up</Link>
             </div>
