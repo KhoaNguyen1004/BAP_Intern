@@ -20,9 +20,11 @@ const ConfigPage = () => {
   };
 
   const deleteSection = sectionId => {
-    setSections(prevSections =>
-      prevSections.filter(section => section.id !== sectionId)
-    );
+    if (sections.length > 1) {
+      setSections(prevSections =>
+        prevSections.filter(section => section.id !== sectionId)
+      );
+    }
   };
 
   return (
