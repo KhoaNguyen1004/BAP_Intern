@@ -114,7 +114,7 @@ const ConfigPage = () => {
               : () => handleEditFooter(footerContent)
         }
         onCancel={handleCancel}
-        okText="Save"
+        okText="Delete"
         cancelText="Cancel"
       >
         {modalContent === 'deleteSection' ? (
