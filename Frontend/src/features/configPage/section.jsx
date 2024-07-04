@@ -81,8 +81,8 @@ const Section = ({ title, content1, content2, onDelete, onEdit }) => {
           value={showContentOption}
           style={{ marginBottom: '10px' }}
         >
-          <Radio value="hide">Section 1</Radio>
-          <Radio value="show">Section 2</Radio>
+          <Radio value="hide">Option 1</Radio>
+          <Radio value="show">Option 2</Radio>
         </Radio.Group>
       </Modal>
     </section>
