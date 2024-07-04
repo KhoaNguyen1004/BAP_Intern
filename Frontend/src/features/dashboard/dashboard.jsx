@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   Layout,
   Space,
@@ -16,23 +16,25 @@ import {
   LogoutOutlined,
   SettingOutlined
 } from '@ant-design/icons';
-import AuthService from '../../services/auth.service';
+// import AuthService from '../../services/auth.service';
 import Popup from '../../components/Popup';
 import { LoadingContext } from '../../contexts/LoadingContext';
 import ConfigSection from './configSection';
+import { logoutAsync, selectAuth } from '../auth/authSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { getAllTemplates, chooseTemplate } from './templatesSlide';
+
 const { Header, Content } = Layout;
 
 function Dashboard() {
   const { setIsLoading } = useContext(LoadingContext);
-  const templateList = [
-    { id: 1, name: 'Template 1', value: 'template1' },
-    { id: 2, name: 'Template 2', value: 'template2' },
-    { id: 3, name: 'Template 3', value: 'template3' },
-    { id: 4, name: 'Template 4', value: 'template4' },
-    { id: 5, name: 'Template 5', value: 'template5' },
-    { id: 6, name: 'Template 6', value: 'template6' }
-  ];
-  const [selectedTemplate, setSelectedTemplate] = useState(templateList[0].id);
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector(selectAuth);
+  const { templates, chosen, status, error } = useAppSelector(
+    state => state.templates
+  );
+
+  const [selectedTemplate, setSelectedTemplate] = useState(chosen);
   const [selectedTemplatesToDelete, setSelectedTemplatesToDelete] = useState(
     []
   );
@@ -43,8 +45,6 @@ function Dashboard() {
   const [isConfigTemplateModalOpen, setIsConfigTemplateModalOpen] =
     useState(false);
   const [, setCloneTemplate] = useState(true);
-
-  const username = localStorage.getItem('username');
 
   const showAddTemplateModal = () => {
     setIsAddTemplateModalOpen(true);
@@ -100,11 +100,48 @@ function Dashboard() {
       '_blank'
     );
   };
+
+  const handleTemplateDelete = checkedValues => {
+    setSelectedTemplatesToDelete(checkedValues);
+  };
+
+  const handleLogout = () => {
+    setIsLoading(true);
+    dispatch(logoutAsync())
+      .unwrap()
+      .then(() => {
+        setIsLoading(false);
+      });
+  };
+  useEffect(() => {
+    setIsLoading(true);
+    dispatch(getAllTemplates())
+      .unwrap()
+      .then(response => {
+        console.log('Fetched templates:', response);
+        setSelectedTemplate(response.chosen);
+      })
+      .catch(err => {
+        console.error('Error fetching templates:', err);
+      })
+      .finally(() => setIsLoading(false));
+  }, [dispatch, setIsLoading]);
+
   const handleTemplateChange = e => {
     setSelectedTemplate(e.target.value);
   };
-  const handleTemplateDelete = checkedValues => {
-    setSelectedTemplatesToDelete(checkedValues);
+
+  const handlChooseTemplate = () => {
+    setIsLoading(true);
+    dispatch(chooseTemplate(selectedTemplate))
+      .unwrap()
+      .then(response => {
+        console.log('Chosen template:', response);
+      })
+      .catch(err => {
+        console.error('Error choosing template:', err);
+      })
+      .finally(() => setIsLoading(false));
   };
   return (
     <div className="min-h-screen">
@@ -120,16 +157,16 @@ function Dashboard() {
                 <Avatar shape="square" size="large" icon={<UserOutlined />} />
                 <div className="ml-2">
                   <p className="text-lg text-start m-0 mb-2 leading-none font-semibold">
-                    {username}
+                    {user?.username}
                   </p>
-                  <p className="m-0 leading-none text-start">role</p>
+                  <p className="m-0 leading-none text-start">{user?.role}</p>
                 </div>
               </div>
               <Button
                 type="text"
                 icon={<LogoutOutlined />}
                 onClick={() => {
-                  AuthService.logout();
+                  handleLogout();
                   window.location.href = '/login';
                 }}
                 className="w-full border-none bg-transparent text-start p-0 m-0"
@@ -145,26 +182,30 @@ function Dashboard() {
                 Template
               </p>
               <div className="flex flex-wrap">
-                {templateList.map(item => (
-                  <div className="w-1/2 p-2" key={item.id}>
-                    <Card className="shadow-sm rounded-md border border-gray-200 p-2">
-                      <Radio.Group
-                        value={selectedTemplate}
-                        onChange={handleTemplateChange}
-                        className="w-full flex items-center"
-                      >
-                        <Radio className="w-full" value={item.id}>
-                          {item.name}
-                        </Radio>
-                      </Radio.Group>
-                    </Card>
-                  </div>
-                ))}
+                {status === 'loading' && setIsLoading(true)}
+                {status === 'failed' && <p>{error}</p>}
+                {status === 'succeeded' &&
+                  templates.map(item => (
+                    <div className="w-1/2 p-2" key={item.id}>
+                      <Card className="shadow-sm rounded-md border border-gray-200 p-2">
+                        <Radio.Group
+                          value={selectedTemplate}
+                          onChange={handleTemplateChange}
+                          className="w-full flex items-center"
+                        >
+                          <Radio className="w-full" value={item.id}>
+                            {item.name}
+                          </Radio>
+                        </Radio.Group>
+                      </Card>
+                    </div>
+                  ))}
               </div>
               <div className="w-full flex justify-end mt-4">
                 <Button
                   className="!bg-primary-dominant hover:!bg-primary-dominant-dark focus:!bg-primary-dominant-light"
                   type="primary"
+                  onClick={handlChooseTemplate}
                 >
                   Save
                 </Button>
@@ -254,7 +295,7 @@ function Dashboard() {
                 >
                   <List
                     itemLayout="horizontal"
-                    dataSource={templateList}
+                    dataSource={templates}
                     renderItem={item => (
                       <List.Item
                         actions={[
@@ -283,7 +324,7 @@ function Dashboard() {
                   className="w-500"
                 >
                   <div className="flex flex-wrap">
-                    {templateList.map(item => (
+                    {templates.map(item => (
                       <div className="w-1/2" key={item.id}>
                         <Card className="shadow-sm rounded-md border border-gray-200 ">
                           <Checkbox
@@ -299,8 +340,8 @@ function Dashboard() {
                     ))}
                   </div>
                 </Popup>
-                <ConfigSection />
               </div>
+              <ConfigSection />
             </div>
           </div>
         </Content>

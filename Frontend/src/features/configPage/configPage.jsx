@@ -25,8 +25,6 @@ const ConfigPage = () => {
     );
   };
 
-  // TODO: Call API to fetch data by id
-
   return (
     <div className="flex flex-col">
       <Header logo={'Logo'} title={'Title'} />

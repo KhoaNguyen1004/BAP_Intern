@@ -1,13 +1,14 @@
 class TokenService {
   getLocalRefreshToken() {
     const user = this.getUser();
+    console.log('Retrieved refresh token:', user?.refreshToken);
     return user?.refreshToken;
   }
 
   getLocalAccessToken() {
     const user = this.getUser();
-    console.log('Retrieved access token:', user?.accessToken);
-    return user?.accessToken;
+    console.log('Retrieved access token:', user?.access_token);
+    return user?.access_token;
   }
 
   updateLocalRefreshToken(token) {
@@ -18,7 +19,7 @@ class TokenService {
 
   updateLocalAccessToken(token) {
     let user = this.getUser();
-    user.accessToken = token;
+    user.access_token = token;
     localStorage.setItem('user', JSON.stringify(user));
   }
 
