@@ -39,7 +39,7 @@ export function Login() {
       .catch(error => {
         console.error('Login error:', error);
         openNotification({
-          message: 'Login failed!',
+          message: 'Invalid username or password!',
           type: 'error',
           title: 'Login Failed'
         });
