@@ -16,14 +16,26 @@ import {
   LogoutOutlined,
   SettingOutlined
 } from '@ant-design/icons';
-import AuthService from '../../services/auth.service';
+// import AuthService from '../../services/auth.service';
 import Popup from '../../components/Popup';
 import { LoadingContext } from '../../contexts/LoadingContext';
 import ConfigSection from './configSection';
+import { logoutAsync, selectAuth } from '../auth/authSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 const { Header, Content } = Layout;
 
 function Dashboard() {
   const { setIsLoading } = useContext(LoadingContext);
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector(selectAuth);
+  const handleLogout = () => {
+    setIsLoading(true);
+    dispatch(logoutAsync())
+      .unwrap()
+      .then(() => {
+        setIsLoading(false);
+      });
+  };
   const templateList = [
     { id: 1, name: 'Template 1', value: 'template1' },
     { id: 2, name: 'Template 2', value: 'template2' },
@@ -44,7 +56,7 @@ function Dashboard() {
     useState(false);
   const [cloneTemplate, setCloneTemplate] = useState(true);
 
-  const username = localStorage.getItem('username');
+  // const username = localStorage.getItem('username');
 
   const showAddTemplateModal = () => {
     setIsAddTemplateModalOpen(true);
@@ -120,16 +132,16 @@ function Dashboard() {
                 <Avatar shape="square" size="large" icon={<UserOutlined />} />
                 <div className="ml-2">
                   <p className="text-lg text-start m-0 mb-2 leading-none font-semibold">
-                    {username}
+                    {user?.username}
                   </p>
-                  <p className="m-0 leading-none text-start">role</p>
+                  <p className="m-0 leading-none text-start">Admin</p>
                 </div>
               </div>
               <Button
                 type="text"
                 icon={<LogoutOutlined />}
                 onClick={() => {
-                  AuthService.logout();
+                  handleLogout();
                   window.location.href = '/login';
                 }}
                 className="w-full border-none bg-transparent text-start p-0 m-0"
@@ -315,8 +327,8 @@ function Dashboard() {
                     ))}
                   </div>
                 </Popup>
-                <ConfigSection />
               </div>
+              <ConfigSection />
             </div>
           </div>
         </Content>

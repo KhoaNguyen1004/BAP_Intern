@@ -32,6 +32,7 @@ export function Login() {
       .then(response => {
         console.log('Login successful, response:', response);
         TokenService.setUser(response);
+        TokenService.getLocalRefreshToken(response.refreshToken);
         navigate('/admin/dashboard');
       })
       .catch(error => {
