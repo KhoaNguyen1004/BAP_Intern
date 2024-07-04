@@ -9,13 +9,12 @@ const initialState = {
   error: null
 };
 
-// Async thunk to fetch all templates
 export const getAllTemplates = createAsyncThunk(
   'templates/getAllTemplates',
   async (_, { rejectWithValue }) => {
     try {
       const response = await http.get('/GetAllTemplate');
-      return response.data;
+      return response.data.templates;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to get templates'
@@ -24,7 +23,6 @@ export const getAllTemplates = createAsyncThunk(
   }
 );
 
-// Async thunk to add a new template
 export const addTemplate = createAsyncThunk(
   'templates/addTemplate',
   async (template, { rejectWithValue }) => {
@@ -39,7 +37,6 @@ export const addTemplate = createAsyncThunk(
   }
 );
 
-// Async thunk to edit an existing template
 export const editTemplate = createAsyncThunk(
   'templates/editTemplate',
   async ({ id, template }, { rejectWithValue }) => {
@@ -54,7 +51,6 @@ export const editTemplate = createAsyncThunk(
   }
 );
 
-// Async thunk to delete a template
 export const deleteTemplate = createAsyncThunk(
   'templates/deleteTemplate',
   async (id, { rejectWithValue }) => {
@@ -69,7 +65,6 @@ export const deleteTemplate = createAsyncThunk(
   }
 );
 
-// Slice for managing templates state
 const templateSlice = createSlice({
   name: 'templates',
   initialState,
@@ -110,6 +105,5 @@ const templateSlice = createSlice({
   }
 });
 
-// Export actions and reducer
 export const { getUser } = templateSlice.actions;
 export default templateSlice.reducer;

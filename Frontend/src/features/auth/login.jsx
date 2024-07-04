@@ -34,13 +34,12 @@ export function Login() {
       .then(response => {
         console.log('Login successful, response:', response);
         TokenService.setUser(response);
-        TokenService.getLocalRefreshToken(response.refreshToken);
         navigate('/admin/dashboard');
       })
       .catch(error => {
         console.error('Login error:', error);
         openNotification({
-          message: 'Login failed!',
+          message: 'Invalid username or password!',
           type: 'error',
           title: 'Login Failed'
         });
