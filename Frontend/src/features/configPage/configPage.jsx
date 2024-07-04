@@ -42,9 +42,9 @@ const ConfigPage = () => {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col min-h-screen">
       <Header logo={'Logo'} title={'Title'} />
-      <div className="flex-1 mb-20">
+      <div className="flex-1 mb-20 px-4">
         {sections.map(section => (
           <Section
             key={section.id}
@@ -56,7 +56,7 @@ const ConfigPage = () => {
             </div>
           </Section>
         ))}
-        <div className="flex justify-end mt-6">
+        <div className="flex justify-end mt-20">
           <Button type="primary" onClick={addSection}>
             Add more Section
           </Button>
