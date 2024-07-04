@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Layout, Modal, Input, Button } from 'antd';
+import { Layout, Modal, Input, Button, Card } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 
 const { Footer: AntdFooter } = Layout;
@@ -69,6 +69,17 @@ const Footer = ({ content, onEdit }) => {
           value={newContent}
           onChange={e => setNewContent(e.target.value)}
         />
+
+        <Card
+          className="bg-slate-500"
+          style={{
+            marginTop: '20px',
+            textAlign: 'center',
+            padding: '15px'
+          }}
+        >
+          <h1 className="text-sm text-white m-0">{newContent}</h1>
+        </Card>
       </Modal>
     </AntdFooter>
   );

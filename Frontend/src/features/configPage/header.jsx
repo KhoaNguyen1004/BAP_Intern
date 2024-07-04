@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Layout, Button, Modal, Input } from 'antd';
+import { Layout, Button, Modal, Input, Card } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 
 const { Header: AntdHeader } = Layout;
@@ -10,7 +10,6 @@ const Header = ({ logo, title, onEdit }) => {
   const [newLogo, setNewLogo] = useState(logo);
   const [newTitle, setNewTitle] = useState(title);
 
-  // Update internal state if props change (e.g., editing logo/title from ConfigPage)
   useEffect(() => {
     setNewLogo(logo);
     setNewTitle(title);
@@ -55,7 +54,6 @@ const Header = ({ logo, title, onEdit }) => {
           }}
         >
           <p className="text-2xl text-black m-0">{newLogo}</p>{' '}
-          {/* Use newLogo state here */}
         </div>
         <div
           style={{
@@ -72,7 +70,7 @@ const Header = ({ logo, title, onEdit }) => {
               borderRadius: '5px'
             }}
           >
-            {newTitle} {/* Use newTitle state here */}
+            {newTitle}
           </h1>
         </div>
         <Button
@@ -96,11 +94,62 @@ const Header = ({ logo, title, onEdit }) => {
           onChange={e => setNewLogo(e.target.value)}
           style={{ marginBottom: '10px' }}
         />
+
         <Input
           placeholder="Title"
           value={newTitle}
           onChange={e => setNewTitle(e.target.value)}
+          style={{ marginBottom: '10px' }}
         />
+
+        <Card
+          className="bg-slate-500"
+          style={{
+            marginTop: '10px',
+            borderRadius: '5px',
+            padding: '5px'
+          }}
+        >
+          <div
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '20%'
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: 'white',
+                borderRadius: '100%',
+                marginLeft: '20px',
+                padding: '5px',
+                display: 'inline-block'
+              }}
+            >
+              <p className="text-2xl text-black m-0">{newLogo}</p>
+            </div>
+
+            <div
+              style={{
+                width: '200px',
+                textAlign: 'center',
+                alignItems: 'center'
+              }}
+            >
+              <h1
+                className="text-2xl text-black m-0"
+                style={{
+                  backgroundColor: '#fff',
+                  padding: '5px 20px',
+                  borderRadius: '5px'
+                }}
+              >
+                {newTitle}
+              </h1>
+            </div>
+          </div>
+        </Card>
       </Modal>
     </div>
   );
