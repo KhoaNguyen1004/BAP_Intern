@@ -138,6 +138,7 @@ class TemplateService implements TemplateServiceInterface
         });
 
         return response()->json([
+            'id' => $chosenTemplate->id,
             'logo' => $chosenTemplate->logo,
             'title' => $chosenTemplate->title,
             'footer' => $chosenTemplate->footer,
