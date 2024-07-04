@@ -42,7 +42,7 @@ function Dashboard() {
     useState(false);
   const [isConfigTemplateModalOpen, setIsConfigTemplateModalOpen] =
     useState(false);
-  const [cloneTemplate, setCloneTemplate] = useState(true);
+  const [, setCloneTemplate] = useState(true);
 
   const username = localStorage.getItem('username');
 
@@ -240,19 +240,6 @@ function Dashboard() {
                         <Radio value="New Template">New Template</Radio>
                       </Radio.Group>
                     </Form.Item>
-                    {cloneTemplate && (
-                      <>
-                        <Form.Item name="header" valuePropName="checked">
-                          <Checkbox defaultChecked>Clone Header</Checkbox>
-                        </Form.Item>
-                        <Form.Item name="section" valuePropName="checked">
-                          <Checkbox defaultChecked>Clone Section</Checkbox>
-                        </Form.Item>
-                        <Form.Item name="footer" valuePropName="checked">
-                          <Checkbox defaultChecked>Clone Footer</Checkbox>
-                        </Form.Item>
-                      </>
-                    )}
                   </Form>
                 </Popup>
 
@@ -283,9 +270,6 @@ function Dashboard() {
                       </List.Item>
                     )}
                   />
-                  <Button key="back" onClick={handleCancel}>
-                    Cancel
-                  </Button>
                 </Popup>
                 <Button type="primary" block onClick={showDeleteTemplateModal}>
                   Delete Template
