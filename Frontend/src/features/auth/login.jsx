@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loginAsync, selectAuth } from './authSlice';
 import { LoadingContext } from '../../contexts/LoadingContext';
+import { NotificationContext } from '../../contexts/NotificationContext';
 import TokenService from '../../services/token.service';
 
 export function Login() {
@@ -10,6 +11,7 @@ export function Login() {
   const navigate = useNavigate();
   const { error, isLoggedIn } = useAppSelector(selectAuth);
   const { setIsLoading } = useContext(LoadingContext);
+  const { openNotification } = useContext(NotificationContext);
 
   useEffect(() => {
     console.log('Is logged in first? ', isLoggedIn);
@@ -37,6 +39,11 @@ export function Login() {
       })
       .catch(error => {
         console.error('Login error:', error);
+        openNotification({
+          message: 'Login failed!',
+          type: 'error',
+          title: 'Login Failed'
+        });
       })
       .finally(() => {
         setIsLoading(false);
@@ -48,7 +55,7 @@ export function Login() {
       <main>
         <div>
           <div>Login</div>
-          <div>{error}</div>
+          {error && <div className="error">{error}</div>}
           <form onSubmit={handleSubmit}>
             <input
               type="text"
@@ -62,7 +69,7 @@ export function Login() {
               placeholder="Password"
               required
             />
-            <button>Log in</button>
+            <button type="submit">Log in</button>
             <div>
               Don’t have an account yet? <Link to="/register">Sign up</Link>
             </div>
