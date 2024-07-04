@@ -15,8 +15,6 @@ const ConfigPage = () => {
     setSectionCount(prevCount => prevCount + 1);
   };
 
-  // TODO: Call API to fetch data by id
-
   return (
     <div className="flex flex-col min-h-screen">
       <Header logo={'Logo'} title={'Title'} />

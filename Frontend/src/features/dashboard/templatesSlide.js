@@ -6,7 +6,8 @@ const initialState = {
   user: null,
   templates: [],
   status: 'idle',
-  error: null
+  error: null,
+  chosen: null
 };
 
 export const getAllTemplates = createAsyncThunk(
@@ -14,7 +15,7 @@ export const getAllTemplates = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await http.get('/GetAllTemplate');
-      return response.data.templates;
+      return response.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to get templates'
@@ -65,6 +66,20 @@ export const deleteTemplate = createAsyncThunk(
   }
 );
 
+export const chooseTemplate = createAsyncThunk(
+  'templates/chooseTemplate',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await http.put(`/ChooseTemplate/${id}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || 'Failed to choose template'
+      );
+    }
+  }
+);
+
 const templateSlice = createSlice({
   name: 'templates',
   initialState,
@@ -80,14 +95,16 @@ const templateSlice = createSlice({
       })
       .addCase(getAllTemplates.fulfilled, (state, { payload }) => {
         state.status = 'succeeded';
-        state.templates = payload;
+        state.templates = payload.templates;
+        state.chosen = payload.chosen;
       })
       .addCase(getAllTemplates.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload || 'Failed to get templates';
       })
       .addCase(addTemplate.fulfilled, (state, { payload }) => {
-        state.templates.push(payload);
+        state.templates = payload.templates;
+        state.chosen = payload.chosen;
       })
       .addCase(editTemplate.fulfilled, (state, { payload }) => {
         const index = state.templates.findIndex(
