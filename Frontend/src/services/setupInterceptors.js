@@ -44,6 +44,7 @@ const setup = store => {
 
             return http(originalConfig);
           } catch (_error) {
+            alert('error');
             return Promise.reject(_error);
           }
         }

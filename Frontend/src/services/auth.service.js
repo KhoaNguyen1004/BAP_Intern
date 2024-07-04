@@ -8,6 +8,9 @@ class AuthService {
         username,
         password
       });
+      if (response.data.error) {
+        throw new Error(response.data.error);
+      }
       TokenService.setUser(response.data);
       return response.data;
     } catch (error) {

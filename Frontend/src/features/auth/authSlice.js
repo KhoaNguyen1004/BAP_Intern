@@ -25,14 +25,17 @@ export const loginAsync = createAsyncThunk(
         userCredentials.username,
         userCredentials.password
       );
+      if (response.error) {
+        return thunkApi.rejectWithValue(response.error);
+      }
       return response;
     } catch (_error) {
       const error = _error;
       if (axios.isAxiosError(error)) {
-        thunkApi.dispatch(setError(error.response?.data.message));
+        // thunkApi.dispatch(setError(error.response?.data.message));
         return thunkApi.rejectWithValue(error.response?.data.message);
       }
-      thunkApi.dispatch(setError(error.message));
+      // thunkApi.dispatch(setError(error.message));
       return thunkApi.rejectWithValue(error.message);
     }
   }
@@ -64,9 +67,9 @@ export const authSlice = createSlice({
         state.error = '';
         tokenService.setUser(payload);
       })
-      .addCase(loginAsync.rejected, state => {
+      .addCase(loginAsync.rejected, (state, { payload }) => {
         state.isLoggedIn = false;
-        state.error = 'Login failed!';
+        state.error = payload || 'Login failed!';
       })
       .addCase(logoutAsync.fulfilled, state => {
         state.isLoggedIn = false;
