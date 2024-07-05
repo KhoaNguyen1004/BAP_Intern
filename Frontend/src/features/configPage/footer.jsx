@@ -5,7 +5,7 @@ import { SettingOutlined } from '@ant-design/icons';
 
 const { Footer: AntdFooter } = Layout;
 
-const Footer = ({ content, onEdit }) => {
+const Footer = ({ content, onEdit, isEditable }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newContent, setNewContent] = useState(content);
 
@@ -44,18 +44,20 @@ const Footer = ({ content, onEdit }) => {
       >
         {content}
       </h1>
-      <Button
-        type="text"
-        icon={<SettingOutlined />}
-        className="text-white"
-        style={{
-          position: 'absolute',
-          top: '50%',
-          right: '20px',
-          transform: 'translateY(-50%)'
-        }}
-        onClick={showModal}
-      />
+      {isEditable && (
+        <Button
+          type="text"
+          icon={<SettingOutlined />}
+          className="text-white"
+          style={{
+            position: 'absolute',
+            top: '50%',
+            right: '20px',
+            transform: 'translateY(-50%)'
+          }}
+          onClick={showModal}
+        />
+      )}
       <Modal
         title="Edit Footer"
         visible={isModalVisible}
@@ -87,7 +89,12 @@ const Footer = ({ content, onEdit }) => {
 
 Footer.propTypes = {
   content: PropTypes.string.isRequired,
-  onEdit: PropTypes.func.isRequired
+  onEdit: PropTypes.func.isRequired,
+  isEditable: PropTypes.bool
+};
+
+Footer.defaultProps = {
+  isEditable: true
 };
 
 export default Footer;

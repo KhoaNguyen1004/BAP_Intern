@@ -31,6 +31,7 @@ import {
   addTemplate
 } from './templatesSlice';
 import useTemplateModals from '../../store/useTemplateModals';
+
 const { Header, Content } = Layout;
 
 function Dashboard() {

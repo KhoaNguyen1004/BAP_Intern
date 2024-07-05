@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.header-wrapper {
+    width: 100%;
+  }
+  
+  .content-wrapper {
+    flex: 1;
+    padding: 16px; /* Add padding as needed */
+  }
+  
+  .footer-wrapper {
+    width: 100%;
+    background-color: #333; /* Example background color */
+    color: #fff; /* Example text color */
+  }

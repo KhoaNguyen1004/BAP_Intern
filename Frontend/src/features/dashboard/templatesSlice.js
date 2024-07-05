@@ -14,7 +14,7 @@ export const getAllTemplates = createAsyncThunk(
   'templates/getAllTemplates',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await http.get('/GetAllTemplate');
+      const response = await http.get('/AllTemplate');
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -28,7 +28,7 @@ export const addTemplate = createAsyncThunk(
   'templates/addTemplate',
   async (template, { rejectWithValue }) => {
     try {
-      const response = await http.post('/AddTemplate', template);
+      const response = await http.post('/Template', template);
       console.log('response.data:', response.data);
       console.log('response.data.template:', response.data.template);
       return {
@@ -47,7 +47,7 @@ export const editTemplate = createAsyncThunk(
   'templates/editTemplate',
   async ({ id, template }, { rejectWithValue }) => {
     try {
-      const response = await http.put(`/EditTemplate/${id}`, template);
+      const response = await http.put(`/Template/${id}`, template);
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -57,6 +57,7 @@ export const editTemplate = createAsyncThunk(
   }
 );
 
+// Un-fix backend URL
 export const deleteTemplate = createAsyncThunk(
   'templates/deleteTemplate',
   async (id, { rejectWithValue }) => {
@@ -77,7 +78,7 @@ export const chooseTemplate = createAsyncThunk(
   'templates/chooseTemplate',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await http.put(`/ChooseTemplate/${id}`);
+      const response = await http.put(`/Show/${id}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -91,7 +92,7 @@ export const getTemplate = createAsyncThunk(
   'templates/getTemplate',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await http.get(`/GetTemplate/${id}`);
+      const response = await http.get(`/Template/${id}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(
