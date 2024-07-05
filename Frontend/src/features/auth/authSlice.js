@@ -25,17 +25,21 @@ export const loginAsync = createAsyncThunk(
         userCredentials.username,
         userCredentials.password
       );
-      if (response.error) {
-        return thunkApi.rejectWithValue(response.error);
+      // if (response.error) {
+      //   return thunkApi.rejectWithValue(response.error);
+      // }
+      if (response.status === 'success') {
+        return response; // Successful login
+      } else {
+        return thunkApi.rejectWithValue(response.message || 'Login failed!');
       }
-      return response;
     } catch (_error) {
       const error = _error;
       if (axios.isAxiosError(error)) {
-        // thunkApi.dispatch(setError(error.response?.data.message));
+        thunkApi.dispatch(setError(error.response?.data.message));
         return thunkApi.rejectWithValue(error.response?.data.message);
       }
-      // thunkApi.dispatch(setError(error.message));
+      thunkApi.dispatch(setError(error.message));
       return thunkApi.rejectWithValue(error.message);
     }
   }

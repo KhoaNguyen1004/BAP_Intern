@@ -8,14 +8,15 @@ class AuthService {
         username,
         password
       });
-      if (response.data.error) {
-        throw new Error(response.data.error);
+      if (response.data.status === 'success') {
+        TokenService.setUser(response.data);
+        return response.data;
+      } else {
+        throw new Error(response.data.message);
       }
-      TokenService.setUser(response.data);
-      return response.data;
     } catch (error) {
       console.log('Login error:', error);
-      throw error.response?.data?.message || 'Login failed!';
+      throw new Error(error.response?.data?.message || 'Login failed!');
     }
   }
 
