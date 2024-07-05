@@ -5,7 +5,7 @@ import { SettingOutlined } from '@ant-design/icons';
 
 const { Header: AntdHeader } = Layout;
 
-const Header = ({ logo, title, onEdit }) => {
+const Header = ({ logo, title, onEdit, isEditable }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newLogo, setNewLogo] = useState(logo);
   const [newTitle, setNewTitle] = useState(title);
@@ -29,57 +29,63 @@ const Header = ({ logo, title, onEdit }) => {
   };
 
   return (
-    <div>
-      <AntdHeader
-        className="bg-slate-500"
+    <AntdHeader
+      className="bg-slate-500"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        zIndex: 5,
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0px 20px',
+        gap: '20%',
+        height: '64px' // Set this to the height of your header
+      }}
+    >
+      <div
         style={{
-          position: 'fixed',
-          top: 0,
-          right: 0,
-          zIndex: 5,
-          width: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          padding: '0px 20px',
-          gap: '20%'
+          backgroundColor: 'white',
+          borderRadius: '100%',
+          marginLeft: '50px',
+          padding: '5px',
+          display: 'inline-block'
         }}
       >
-        <div
+        <p className="text-2xl text-black m-0">{newLogo}</p>
+      </div>
+      <div
+        style={{
+          width: '600px',
+          textAlign: 'center',
+          alignItems: 'center'
+        }}
+      >
+        <h1
+          className="text-2xl text-black m-0"
           style={{
-            backgroundColor: 'white',
-            borderRadius: '100%',
-            marginLeft: '50px',
-            padding: '5px',
-            display: 'inline-block'
+            backgroundColor: '#fff',
+            padding: '5px 20px',
+            borderRadius: '5px'
           }}
         >
-          <p className="text-2xl text-black m-0">{newLogo}</p>{' '}
-        </div>
-        <div
-          style={{
-            width: '600px',
-            textAlign: 'center',
-            alignItems: 'center'
-          }}
-        >
-          <h1
-            className="text-2xl text-black m-0"
-            style={{
-              backgroundColor: '#fff',
-              padding: '5px 20px',
-              borderRadius: '5px'
-            }}
-          >
-            {newTitle}
-          </h1>
-        </div>
+          {newTitle}
+        </h1>
+      </div>
+      {isEditable && (
         <Button
           type="text"
           icon={<SettingOutlined />}
-          className="text-white absolute top-4 right-4"
+          className="text-white"
+          style={{
+            position: 'absolute',
+            top: '16px',
+            right: '16px'
+          }}
           onClick={showModal}
         />
-      </AntdHeader>
+      )}
       <Modal
         title="Edit Header"
         visible={isModalVisible}
@@ -94,14 +100,12 @@ const Header = ({ logo, title, onEdit }) => {
           onChange={e => setNewLogo(e.target.value)}
           style={{ marginBottom: '10px' }}
         />
-
         <Input
           placeholder="Title"
           value={newTitle}
           onChange={e => setNewTitle(e.target.value)}
           style={{ marginBottom: '10px' }}
         />
-
         <Card
           className="bg-slate-500"
           style={{
@@ -129,7 +133,6 @@ const Header = ({ logo, title, onEdit }) => {
             >
               <p className="text-2xl text-black m-0">{newLogo}</p>
             </div>
-
             <div
               style={{
                 width: '200px',
@@ -151,14 +154,19 @@ const Header = ({ logo, title, onEdit }) => {
           </div>
         </Card>
       </Modal>
-    </div>
+    </AntdHeader>
   );
 };
 
 Header.propTypes = {
   logo: PropTypes.string,
   title: PropTypes.string.isRequired,
-  onEdit: PropTypes.func.isRequired
+  onEdit: PropTypes.func.isRequired,
+  isEditable: PropTypes.bool
+};
+
+Header.defaultProps = {
+  isEditable: true
 };
 
 export default Header;

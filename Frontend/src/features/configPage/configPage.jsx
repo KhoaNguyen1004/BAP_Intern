@@ -1,55 +1,35 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState } from 'react';
 import { Button, Modal, Input, message } from 'antd';
 import Header from './header';
 import Footer from './footer';
 import Section from './section';
-import { getTemplate } from '../dashboard/templatesSlice';
-import { addSection } from './sectionSlice';
-import { useAppDispatch } from '../../store/hooks';
-import { LoadingContext } from '../../contexts/LoadingContext';
 
 const ConfigPage = () => {
-  const { id } = useParams();
-  const dispatch = useAppDispatch();
-  const [templateData, setTemplateData] = useState({});
-  const [sections, setSections] = useState([]);
-  const { setIsLoading } = useContext(LoadingContext);
+  const [sections, setSections] = useState([
+    {
+      id: 1,
+      type: 1,
+      title: 'Section 1',
+      content1: 'Content 1',
+      content2: 'Content 2'
+    }
+  ]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [sectionToDelete, setSectionToDelete] = useState(null);
-  const [headerTitle, setHeaderTitle] = useState('Title');
-  const [headerLogo, setHeaderLogo] = useState('Logo');
+  const [headerTitle, setHeaderTitle] = useState('default-title');
+  const [headerLogo, setHeaderLogo] = useState('lg');
   const [footerContent, setFooterContent] = useState('Made with ❤️');
 
-  useEffect(() => {
-    dispatch(getTemplate(id))
-      .unwrap()
-      .then(response => {
-        setTemplateData(response);
-        setSections(response.section || []);
-      })
-      .catch(error => {
-        console.error('Failed to fetch template:', error);
-      });
-  }, [id, dispatch]);
-
-  const handleAddSection = () => {
+  const addSection = () => {
     const newSection = {
-      template_id: id
+      id: sections.length + 1,
+      type: 1,
+      title: `Section ${sections.length + 1}`,
+      content1: 'Content 1',
+      content2: 'Content 2'
     };
-    setIsLoading(true);
-    dispatch(addSection(newSection))
-      .unwrap()
-      .then(response => {
-        setSections(prevSections => [...prevSections, response]);
-      })
-      .catch(error => {
-        console.error('Failed to add section:', error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    setSections(prevSections => [...prevSections, newSection]);
   };
 
   const confirmDeleteSection = sectionId => {
@@ -75,7 +55,13 @@ const ConfigPage = () => {
     setSectionToDelete(null);
   };
 
-  const handleEditSection = (id, newTitle, newContent1, newContent2) => {
+  const handleEditSection = (
+    id,
+    newTitle,
+    newContent1,
+    newContent2,
+    newType
+  ) => {
     setSections(prevSections =>
       prevSections.map(section =>
         section.id === id
@@ -83,7 +69,8 @@ const ConfigPage = () => {
               ...section,
               title: newTitle,
               content1: newContent1,
-              content2: newContent2
+              content2: newContent2,
+              type: newType
             }
           : section
       )
@@ -102,47 +89,50 @@ const ConfigPage = () => {
   };
 
   return (
-<div className="flex flex-col min-h-screen">
-      <Header
-        logo={templateData.logo || headerLogo}
-        title={templateData.title || headerTitle}
-        onEdit={handleEditHeader}
-      />
+    <div className="flex flex-col min-h-screen">
+      <Header logo={headerLogo} title={headerTitle} onEdit={handleEditHeader} />
       <div className="flex-1 mb-20 px-4">
         {sections.map(section => (
           <Section
             key={section.id}
+            type={section.type}
             title={section.title}
             content1={section.content1}
             content2={section.content2}
             onDelete={() => confirmDeleteSection(section.id)}
-            onEdit={(newTitle, newContent1, newContent2) =>
-              handleEditSection(section.id, newTitle, newContent1, newContent2)
+            onEdit={(newTitle, newContent1, newContent2, newType) =>
+              handleEditSection(
+                section.id,
+                newTitle,
+                newContent1,
+                newContent2,
+                newType
+              )
             }
           />
         ))}
         <div className="flex justify-end mt-20">
-          <Button type="primary" onClick={handleAddSection}>
+          <Button type="primary" onClick={addSection}>
             Add more Section
           </Button>
         </div>
       </div>
-<Footer content={templateData.footer || footerContent} onEdit={handleEditFooter} />
+      <Footer content={footerContent} onEdit={handleEditFooter} />
       <Modal
         title={
           modalContent === 'deleteSection'
             ? 'Confirm Delete'
             : modalContent === 'editHeader'
-            ? 'Edit Header'
-            : 'Edit Footer'
+              ? 'Edit Header'
+              : 'Edit Footer'
         }
         visible={isModalVisible}
         onOk={
           modalContent === 'deleteSection'
             ? handleDelete
             : modalContent === 'editHeader'
-            ? () => handleEditHeader(headerLogo, headerTitle)
-            : () => handleEditFooter(footerContent)
+              ? () => handleEditHeader(headerLogo, headerTitle)
+              : () => handleEditFooter(footerContent)
         }
         onCancel={handleCancel}
         okText="Delete"

@@ -6,6 +6,7 @@ import Dashboard from './features/dashboard/dashboard';
 import ConfigPage from './features/configPage/configPage';
 import { useAppDispatch } from './store/hooks';
 import TokenService from './services/token.service';
+import GuestUI from './features/templates/guestUI';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -54,7 +55,7 @@ function App() {
             </PrivateRoute>
           }
         />
-        <Route path="/" element={<div>Guest UI</div>}></Route>
+        <Route path="/" element={<GuestUI />}></Route>
       </Routes>
     </div>
   );

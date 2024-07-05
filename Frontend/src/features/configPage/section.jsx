@@ -1,30 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Modal, Input, Radio } from 'antd';
+import { Button, Modal, Input, Radio, message, Card } from 'antd';
 import { SettingOutlined, DeleteOutlined } from '@ant-design/icons';
 
-const Section = ({ title, content1, content2, onDelete, onEdit }) => {
+const Section = ({ type, title, content1, content2, onDelete, onEdit }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [showContentOption, setShowContentOption] = useState('hide');
+  const [showContentOption, setShowContentOption] = useState(
+    type === 2 ? 'show' : 'hide'
+  );
   const [newTitle, setNewTitle] = useState(title);
   const [newContent1, setNewContent1] = useState(content1);
   const [newContent2, setNewContent2] = useState(content2);
+  const [titleError, setTitleError] = useState('');
+  const [typeDraft, setTypeDraft] = useState(type);
+
+  useEffect(() => {
+    setTypeDraft(type);
+    setShowContentOption(type === 2 ? 'show' : 'hide');
+  }, [type]);
 
   const showModal = () => {
     setIsModalVisible(true);
+    setTypeDraft(type);
+    setShowContentOption(type === 2 ? 'show' : 'hide');
   };
 
   const handleOk = () => {
-    onEdit(newTitle, newContent1, newContent2);
-    setIsModalVisible(false);
+    if (newTitle.length > 20) {
+      setTitleError('Title cannot exceed 20 characters');
+    } else {
+      onEdit(newTitle, newContent1, newContent2, typeDraft);
+      setIsModalVisible(false);
+    }
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setNewTitle(title);
+    setNewContent1(content1);
+    setNewContent2(content2);
+    setTitleError('');
+    setShowContentOption(type === 2 ? 'show' : 'hide');
   };
 
   const handleOptionChange = e => {
-    setShowContentOption(e.target.value);
+    setTypeDraft(e.target.value);
+    setShowContentOption(e.target.value === 2 ? 'show' : 'hide');
+  };
+
+  const handleTitleChange = e => {
+    const { value } = e.target;
+    if (value.length <= 20) {
+      setNewTitle(value);
+      setTitleError('');
+    } else {
+      message.error('Title cannot exceed 20 characters');
+    }
   };
 
   return (
@@ -34,8 +65,28 @@ const Section = ({ title, content1, content2, onDelete, onEdit }) => {
           {title}
         </h2>
       </div>
-      <p>{content1}</p>
-      {showContentOption === 'show' && <p>{content2}</p>}{' '}
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Card
+          style={{
+            flex: 1,
+            marginRight: showContentOption === 'show' ? '10px' : '0px',
+            maxWidth: showContentOption === 'show' ? 'calc(50% - 10px)' : '100%'
+          }}
+        >
+          <p style={{ overflowWrap: 'break-word' }}>{content1}</p>
+        </Card>
+        {showContentOption === 'show' && (
+          <Card
+            style={{
+              flex: 1,
+              marginLeft: '10px',
+              maxWidth: 'calc(50% - 10px)'
+            }}
+          >
+            <p style={{ overflowWrap: 'break-word' }}>{content2}</p>
+          </Card>
+        )}
+      </div>
       <Button
         type="text"
         icon={<SettingOutlined />}
@@ -59,9 +110,10 @@ const Section = ({ title, content1, content2, onDelete, onEdit }) => {
         <Input
           placeholder="Title"
           value={newTitle}
-          onChange={e => setNewTitle(e.target.value)}
+          onChange={handleTitleChange}
           style={{ marginBottom: '10px' }}
         />
+        {titleError && <p style={{ color: 'red' }}>{titleError}</p>}
         <Input
           placeholder="Content 1"
           value={newContent1}
@@ -78,18 +130,51 @@ const Section = ({ title, content1, content2, onDelete, onEdit }) => {
         )}
         <Radio.Group
           onChange={handleOptionChange}
-          value={showContentOption}
+          value={typeDraft}
           style={{ marginBottom: '10px' }}
         >
-          <Radio value="hide">Option 1</Radio>
-          <Radio value="show">Option 2</Radio>
+          <Radio value={1} defaultChecked={typeDraft === 1}>
+            Type 1
+          </Radio>
+          <Radio value={2}>Type 2</Radio>
         </Radio.Group>
+        <Card style={{ marginTop: '20px' }} className="bg-gray-100 relative">
+          <div style={{ padding: '0px 30%', borderRadius: '10px' }}>
+            <h2 className="text-xl font-semibold mb-4 text-center bg-white">
+              {newTitle}
+            </h2>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Card
+              style={{
+                flex: 1,
+                marginRight: showContentOption === 'show' ? '10px' : '0px',
+                maxWidth:
+                  showContentOption === 'show' ? 'calc(50% - 10px)' : '100%'
+              }}
+            >
+              <p style={{ overflowWrap: 'break-word' }}>{newContent1}</p>
+            </Card>
+            {showContentOption === 'show' && (
+              <Card
+                style={{
+                  flex: 1,
+                  marginLeft: '10px',
+                  maxWidth: 'calc(50% - 10px)'
+                }}
+              >
+                <p style={{ overflowWrap: 'break-word' }}>{newContent2}</p>
+              </Card>
+            )}
+          </div>
+        </Card>
       </Modal>
     </section>
   );
 };
 
 Section.propTypes = {
+  type: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   content1: PropTypes.string,
   content2: PropTypes.string,
