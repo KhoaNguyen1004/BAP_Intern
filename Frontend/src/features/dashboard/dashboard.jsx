@@ -21,7 +21,6 @@ import {
 import Popup from '../../components/Popup';
 import { LoadingContext } from '../../contexts/LoadingContext';
 import { NotificationContext } from '../../contexts/NotificationContext';
-import ConfigSection from './configSection';
 import { logoutAsync, selectAuth } from '../auth/authSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
@@ -31,7 +30,6 @@ import {
   addTemplate
 } from './templatesSlice';
 import useTemplateModals from '../../store/useTemplateModals';
-
 const { Header, Content } = Layout;
 
 function Dashboard() {
@@ -64,7 +62,6 @@ function Dashboard() {
     isDeleteTemplateModalOpen,
     isConfigTemplateModalOpen,
     handleTemplateChange,
-    handleTemplateDelete,
     handleConfirmDelete,
     showAddTemplateModal,
     showDeleteTemplateModal,
@@ -75,20 +72,30 @@ function Dashboard() {
     setShowPopconfirm,
     setIsDeleteTemplateModalOpen,
     setIsAddTemplateModalOpen,
-    setSelectedTemplate
+    setSelectedTemplate,
+    setSelectedTemplatesToDelete
   } = useTemplateModals(fetchTemplates, chosen);
 
+  const handleTemplateDelete = e => {
+    const { value, checked } = e.target;
+    if (checked) {
+      setSelectedTemplatesToDelete(prev => [...prev, value]);
+    } else {
+      setSelectedTemplatesToDelete(prev => prev.filter(item => item !== value));
+    }
+  };
   const handlePopconfirmConfirm = () => {
     setIsLoading(true);
     dispatch(deleteTemplate(selectedTemplatesToDelete))
       .unwrap()
       .then(response => {
         openNotification({
-          message: 'Template deleted successfully!',
+          message: `Deleted ${response.deleted} templates!`,
           type: 'success',
           title: 'Success'
         });
         console.log('Template deleted:', response);
+        fetchTemplates();
       })
       .catch(err => {
         console.error('Error deleting template:', err);
@@ -97,6 +104,7 @@ function Dashboard() {
           type: 'error',
           title: 'Error'
         });
+        fetchTemplates();
       })
       .finally(() => {
         setIsLoading(false);
@@ -104,7 +112,6 @@ function Dashboard() {
         setIsDeleteTemplateModalOpen(false);
       });
   };
-
   const handleAddTemplate = templates => {
     setIsLoading(true);
     dispatch(addTemplate(templates))
@@ -181,6 +188,7 @@ function Dashboard() {
           title: 'Success'
         });
         console.log('Template chosen:', response);
+        fetchTemplates();
       })
       .catch(err => {
         console.error('Error choosing template:', err);
@@ -405,7 +413,6 @@ function Dashboard() {
                   ))}
                 </div>
               </Popup>
-              <ConfigSection />
             </div>
           </div>
         </Content>

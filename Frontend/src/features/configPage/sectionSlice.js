@@ -14,7 +14,7 @@ export const addSection = createAsyncThunk(
   'section/addSection',
   async (section, { rejectWithValue }) => {
     try {
-      const response = await http.post('/AddSection', section);
+      const response = await http.post('/Section', section);
       console.log('response.data:', response.data);
       return response.data;
     } catch (error) {
@@ -43,7 +43,7 @@ export const deleteSection = createAsyncThunk(
   'section/deleteSection',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await http.delete(`/DeleteSection/${id}`);
+      const response = await http.delete(`/DeleteSecion/${id}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(

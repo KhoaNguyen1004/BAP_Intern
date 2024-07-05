@@ -43,10 +43,6 @@ const useTemplateModals = (fetchTemplates, chosen) => {
     setShowPopconfirm(false);
   };
 
-  const handleTemplateDelete = checkedValues => {
-    setSelectedTemplatesToDelete(checkedValues);
-  };
-
   const handleTemplateChange = e => {
     setSelectedTemplate(e.target.value);
   };
@@ -58,7 +54,6 @@ const useTemplateModals = (fetchTemplates, chosen) => {
     isDeleteTemplateModalOpen,
     isConfigTemplateModalOpen,
     handleTemplateChange,
-    handleTemplateDelete,
     handleConfirmDelete,
     showAddTemplateModal,
     showDeleteTemplateModal,
@@ -69,7 +64,8 @@ const useTemplateModals = (fetchTemplates, chosen) => {
     setShowPopconfirm,
     setIsDeleteTemplateModalOpen,
     setIsAddTemplateModalOpen,
-    setSelectedTemplate
+    setSelectedTemplate,
+    setSelectedTemplatesToDelete
   };
 };
 
