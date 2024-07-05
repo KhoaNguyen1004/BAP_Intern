@@ -4,7 +4,7 @@ import TokenService from '../../services/token.service';
 
 const initialState = {
   user: null,
-  templates: [],
+  templates: [] || null,
   status: 'idle',
   error: null,
   chosen: null
@@ -29,7 +29,12 @@ export const addTemplate = createAsyncThunk(
   async (template, { rejectWithValue }) => {
     try {
       const response = await http.post('/AddTemplate', template);
-      return response.data;
+      console.log('response.data:', response.data);
+      console.log('response.data.template:', response.data.template);
+      return {
+        templates: response.data.templates,
+        id: response.data.template.id
+      };
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to add template'
@@ -57,7 +62,9 @@ export const deleteTemplate = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const response = await http.delete(`/DeleteTemplate/${id}`);
-      return response.data;
+      console.log('response.data:', response.data);
+      console.log('response.data.message:', response.data.message);
+      return response.data.message;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to delete template'
@@ -75,6 +82,20 @@ export const chooseTemplate = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to choose template'
+      );
+    }
+  }
+);
+
+export const getTemplate = createAsyncThunk(
+  'templates/getTemplate',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await http.get(`/GetTemplate/${id}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || 'Failed to get template'
       );
     }
   }
@@ -118,6 +139,14 @@ const templateSlice = createSlice({
         state.templates = state.templates.filter(
           template => template.id !== payload.id
         );
+      })
+      .addCase(chooseTemplate.fulfilled, (state, { payload }) => {
+        state.templates = payload.templates;
+        state.chosen = payload.chosen;
+      })
+      .addCase(getTemplate.fulfilled, (state, { payload }) => {
+        state.templates = payload.templates;
+        state.chosen = payload.chosen;
       });
   }
 });

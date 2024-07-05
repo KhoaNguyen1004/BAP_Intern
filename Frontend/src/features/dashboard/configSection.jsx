@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { getAllTemplates } from './templatesSlide';
+import { getAllTemplates } from './templatesSlice';
 import { LoadingContext } from '../../contexts/LoadingContext';
 
 function ConfigSection() {

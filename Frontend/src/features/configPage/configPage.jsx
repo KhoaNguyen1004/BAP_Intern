@@ -1,52 +1,79 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button } from 'antd';
 import Header from './header';
 import Footer from './footer';
 import Section from './section';
+import { getTemplate } from '../dashboard/templatesSlice';
+import { addSection } from './sectionSlice';
+import { useAppDispatch } from '../../store/hooks';
+import { LoadingContext } from '../../contexts/LoadingContext';
 
 const ConfigPage = () => {
-  const params = useParams();
-  const { id } = params;
+  const { id } = useParams();
+  const dispatch = useAppDispatch();
+  const [templateData, setTemplateData] = useState({});
+  const [sections, setSections] = useState([]);
+  const { setIsLoading } = useContext(LoadingContext);
 
-  const [sections, setSections] = useState([{ id: 1, title: `Section 1` }]);
+  useEffect(() => {
+    dispatch(getTemplate(id))
+      .unwrap()
+      .then(response => {
+        setTemplateData(response);
+        setSections(response.section || []);
+      })
+      .catch(error => {
+        console.error('Failed to fetch template:', error);
+      });
+  }, [id, dispatch]);
 
-  const addSection = () => {
+  const handleAddSection = () => {
     const newSection = {
-      id: sections.length + 1,
-      title: `Section ${sections.length + 1}`
+      template_id: id
     };
-    setSections(prevSections => [...prevSections, newSection]);
+    setIsLoading(true);
+    dispatch(addSection(newSection))
+      .unwrap()
+      .then(response => {
+        setSections(prevSections => [...prevSections, response]);
+      })
+      .catch(error => {
+        console.error('Failed to add section:', error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const deleteSection = sectionId => {
     setSections(prevSections =>
-      prevSections.filter(section => section.id !== sectionId)
+      prevSections.filter((_, index) => index !== sectionId)
     );
   };
 
   return (
     <div className="flex flex-col">
-      <Header logo={'Logo'} title={'Title'} />
+      <Header
+        logo={templateData.logo || 'Logo'}
+        title={templateData.title || 'Title'}
+      />
       <div className="flex-1 mb-20">
-        {sections.map(section => (
-          <Section
-            key={section.id}
-            title={section.title}
-            onDelete={() => deleteSection(section.id)}
-          >
-            <div>
-              <h1>Config Page {id}</h1>
-            </div>
+        {sections.map((item, index) => (
+          <Section key={index} onDelete={() => deleteSection(index)}>
+            <h2>Config Page {id}</h2>
+            <div>{item.title}</div>
+            <div>{item.content1}</div>
+            <div>{item.content2}</div>
           </Section>
         ))}
         <div className="flex justify-end mt-6">
-          <Button type="primary" onClick={addSection}>
+          <Button type="primary" onClick={handleAddSection}>
             Add more Section
           </Button>
         </div>
       </div>
-      <Footer content={'Made with ❤️'} />
+      <Footer content={templateData.footer || 'Made with ❤️'} />
     </div>
   );
 };
