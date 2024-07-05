@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
   Layout,
   Space,
@@ -9,7 +9,8 @@ import {
   Radio,
   Checkbox,
   Card,
-  List
+  List,
+  Popconfirm
 } from 'antd';
 import {
   UserOutlined,
@@ -19,72 +20,127 @@ import {
 // import AuthService from '../../services/auth.service';
 import Popup from '../../components/Popup';
 import { LoadingContext } from '../../contexts/LoadingContext';
+import { NotificationContext } from '../../contexts/NotificationContext';
 import ConfigSection from './configSection';
 import { logoutAsync, selectAuth } from '../auth/authSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { getAllTemplates, chooseTemplate } from './templatesSlide';
-
+import {
+  getAllTemplates,
+  chooseTemplate,
+  deleteTemplate,
+  addTemplate
+} from './templatesSlice';
+import useTemplateModals from '../../store/useTemplateModals';
 const { Header, Content } = Layout;
 
 function Dashboard() {
   const { setIsLoading } = useContext(LoadingContext);
+  const { openNotification } = useContext(NotificationContext);
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(selectAuth);
   const { templates, chosen, status, error } = useAppSelector(
     state => state.templates
   );
 
-  const [selectedTemplate, setSelectedTemplate] = useState(chosen);
-  const [selectedTemplatesToDelete, setSelectedTemplatesToDelete] = useState(
-    []
-  );
-
-  const [isAddTemplateModalOpen, setIsAddTemplateModalOpen] = useState(false);
-  const [isDeleteTemplateModalOpen, setIsDeleteTemplateModalOpen] =
-    useState(false);
-  const [isConfigTemplateModalOpen, setIsConfigTemplateModalOpen] =
-    useState(false);
-  const [, setCloneTemplate] = useState(true);
-
-  const showAddTemplateModal = () => {
-    setIsAddTemplateModalOpen(true);
-  };
-
-  const showDeleteTemplateModal = () => {
-    setIsDeleteTemplateModalOpen(true);
-  };
-  const showConfigTemplateModal = () => {
-    setIsConfigTemplateModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsAddTemplateModalOpen(false);
-    setIsDeleteTemplateModalOpen(false);
-    setIsConfigTemplateModalOpen(false);
-  };
-
-  const handleConfirmDelete = () => {
+  const fetchTemplates = () => {
     setIsLoading(true);
-
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    setIsDeleteTemplateModalOpen(false);
+    dispatch(getAllTemplates())
+      .unwrap()
+      .then(response => {
+        console.log('Fetched templates:', response);
+        setSelectedTemplate(response.chosen);
+      })
+      .catch(err => {
+        console.error('Error fetching templates:', err);
+      })
+      .finally(() => setIsLoading(false));
   };
 
-  const handleOk = () => {
-    setIsAddTemplateModalOpen(false);
-    setIsConfigTemplateModalOpen(false);
+  const {
+    selectedTemplate,
+    selectedTemplatesToDelete,
+    isAddTemplateModalOpen,
+    isDeleteTemplateModalOpen,
+    isConfigTemplateModalOpen,
+    handleTemplateChange,
+    handleTemplateDelete,
+    handleConfirmDelete,
+    showAddTemplateModal,
+    showDeleteTemplateModal,
+    showConfigTemplateModal,
+    handleCancel,
+    handleOk,
+    setCloneTemplate,
+    setShowPopconfirm,
+    setIsDeleteTemplateModalOpen,
+    setIsAddTemplateModalOpen,
+    setSelectedTemplate
+  } = useTemplateModals(fetchTemplates, chosen);
+
+  const handlePopconfirmConfirm = () => {
+    setIsLoading(true);
+    dispatch(deleteTemplate(selectedTemplatesToDelete))
+      .unwrap()
+      .then(response => {
+        openNotification({
+          message: 'Template deleted successfully!',
+          type: 'success',
+          title: 'Success'
+        });
+        console.log('Template deleted:', response);
+      })
+      .catch(err => {
+        console.error('Error deleting template:', err);
+        openNotification({
+          message: 'Failed to delete template!',
+          type: 'error',
+          title: 'Error'
+        });
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setShowPopconfirm(false);
+        setIsDeleteTemplateModalOpen(false);
+      });
+  };
+
+  const handleAddTemplate = templates => {
+    setIsLoading(true);
+    dispatch(addTemplate(templates))
+      .unwrap()
+      .then(response => {
+        openNotification({
+          message: 'Template added successfully!',
+          type: 'success',
+          title: 'Success'
+        });
+        console.log('Template added:', response);
+        console.log('response.template.id', response.id);
+        fetchTemplates();
+        onFinishComplete(response.id);
+      })
+      .catch(err => {
+        console.error('Error adding template:', err);
+        openNotification({
+          message: 'Failed to add template!',
+          type: 'error',
+          title: 'Error'
+        });
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setIsAddTemplateModalOpen(false);
+      });
+  };
+
+  const onFinishComplete = id => {
+    window.open(`${window.location.origin}/admin/config-page/${id}`, '_blank');
   };
 
   const onFinish = values => {
-    console.log('Received values:', values);
     setIsAddTemplateModalOpen(false);
-    const randomId = Math.floor(Math.random() * 1000);
-    window.open(
-      `${window.location.origin}/admin/config-page/${randomId}`,
-      '_blank'
-    );
+    handleAddTemplate(values);
+    console.log('Success:', values);
   };
 
   const onFinishFailed = errorInfo => {
@@ -101,10 +157,6 @@ function Dashboard() {
     );
   };
 
-  const handleTemplateDelete = checkedValues => {
-    setSelectedTemplatesToDelete(checkedValues);
-  };
-
   const handleLogout = () => {
     setIsLoading(true);
     dispatch(logoutAsync())
@@ -114,29 +166,20 @@ function Dashboard() {
       });
   };
   useEffect(() => {
-    setIsLoading(true);
-    dispatch(getAllTemplates())
-      .unwrap()
-      .then(response => {
-        console.log('Fetched templates:', response);
-        setSelectedTemplate(response.chosen);
-      })
-      .catch(err => {
-        console.error('Error fetching templates:', err);
-      })
-      .finally(() => setIsLoading(false));
-  }, [dispatch, setIsLoading]);
-
-  const handleTemplateChange = e => {
-    setSelectedTemplate(e.target.value);
-  };
+    fetchTemplates();
+  }, []);
 
   const handlChooseTemplate = () => {
     setIsLoading(true);
     dispatch(chooseTemplate(selectedTemplate))
       .unwrap()
       .then(response => {
-        console.log('Chosen template:', response);
+        openNotification({
+          message: 'Template chosen successfully!',
+          type: 'success',
+          title: 'Success'
+        });
+        console.log('Template chosen:', response);
       })
       .catch(err => {
         console.error('Error choosing template:', err);
@@ -185,8 +228,8 @@ function Dashboard() {
                 {status === 'loading' && setIsLoading(true)}
                 {status === 'failed' && <p>{error}</p>}
                 {status === 'succeeded' &&
-                  templates.map(item => (
-                    <div className="w-1/2 p-2" key={item.id}>
+                  templates?.map(item => (
+                    <div className="w-1/2 sm:w-1/2 p-2" key={item.id}>
                       <Card className="shadow-sm rounded-md border border-gray-200 p-2">
                         <Radio.Group
                           value={selectedTemplate}
@@ -213,9 +256,7 @@ function Dashboard() {
             </div>
 
             <div className="bg-white rounded-lg p-4 ml-4 shadow-md flex-1 h-[280px]">
-              <p className="text-lg font-semibold items-start m-[4]">
-                Config Template
-              </p>
+              <p className="text-lg font-semibold items-start m-[4]">Config</p>
 
               <div className="flex flex-col space-y-4 justify-between items-center w-2/4 mx-auto">
                 <Button
@@ -227,9 +268,9 @@ function Dashboard() {
                   Add Template
                 </Button>
                 <Popup
-                  title="Add Configuration"
+                  title="Add Template"
                   isOpen={isAddTemplateModalOpen}
-                  onOk={handleOk}
+                  onOk={handleAddTemplate}
                   onCancel={handleCancel}
                   footer={[
                     <Button key="back" onClick={handleCancel}>
@@ -259,7 +300,7 @@ function Dashboard() {
                   >
                     <Form.Item
                       label="Template Name"
-                      name="configName"
+                      name="name"
                       rules={[
                         {
                           required: true,
@@ -293,54 +334,76 @@ function Dashboard() {
                   onConfirm={handleOk}
                   onCancel={handleCancel}
                 >
-                  <List
-                    itemLayout="horizontal"
-                    dataSource={templates}
-                    renderItem={item => (
-                      <List.Item
-                        actions={[
-                          <Button
-                            key="setting"
-                            type="text"
-                            icon={<SettingOutlined />}
-                            onClick={() => handleSettingClick(item.value)}
-                          />
-                        ]}
-                      >
-                        <List.Item.Meta title={item.name} />
-                      </List.Item>
-                    )}
-                  />
-                </Popup>
-                <Button type="primary" block onClick={showDeleteTemplateModal}>
-                  Delete Template
-                </Button>
-                <Popup
-                  title="Delete Template"
-                  isOpen={isDeleteTemplateModalOpen}
-                  onConfirm={handleConfirmDelete}
-                  onCancel={handleCancel}
-                  text="Delete"
-                  className="w-500"
-                >
-                  <div className="flex flex-wrap">
-                    {templates.map(item => (
-                      <div className="w-1/2" key={item.id}>
-                        <Card className="shadow-sm rounded-md border border-gray-200 ">
-                          <Checkbox
-                            value={selectedTemplatesToDelete}
-                            onChange={handleTemplateDelete}
-                            disabled={item.id === selectedTemplate}
-                            defaultChecked={item.id === selectedTemplate}
-                          >
-                            {item.name}
-                          </Checkbox>
-                        </Card>
+                  <div className="flex flex-wrap -mx-2">
+                    {templates?.map(item => (
+                      <div className="w-full sm:w-1/2" key={item.id}>
+                        <List
+                          itemLayout="horizontal"
+                          dataSource={[item]}
+                          bordered
+                          renderItem={item => (
+                            <List.Item
+                              actions={[
+                                <Button
+                                  key="setting"
+                                  type="text"
+                                  icon={<SettingOutlined />}
+                                  onClick={() => handleSettingClick(item.id)}
+                                  className="text-primary-dominant"
+                                />
+                              ]}
+                            >
+                              <p>{item.name}</p>
+                            </List.Item>
+                          )}
+                        />
                       </div>
                     ))}
                   </div>
                 </Popup>
+
+                <Button type="primary" block onClick={showDeleteTemplateModal}>
+                  Delete Template
+                </Button>
               </div>
+              <Popup
+                title="Delete Template"
+                isOpen={isDeleteTemplateModalOpen}
+                onOk={handleConfirmDelete}
+                onCancel={handleCancel}
+                footer={[
+                  <Button key="back" onClick={handleCancel}>
+                    Cancel
+                  </Button>,
+                  <Popconfirm
+                    title="Delete this template?"
+                    onConfirm={handlePopconfirmConfirm}
+                    onCancel={() => setShowPopconfirm(false)}
+                    okText="Yes"
+                    cancelText="No"
+                    key="confirm"
+                  >
+                    <Button type="primary">Delete</Button>
+                  </Popconfirm>
+                ]}
+              >
+                <div className="flex flex-wrap space-y-2">
+                  {templates?.map(item => (
+                    <div className="w-full sm:w-1/2" key={item.id}>
+                      <Card className="shadow-sm rounded-md border border-gray-200">
+                        <Checkbox
+                          value={item.id}
+                          onChange={handleTemplateDelete}
+                          disabled={item.id === chosen}
+                          className="w-full flex items-center"
+                        >
+                          {item.name}
+                        </Checkbox>
+                      </Card>
+                    </div>
+                  ))}
+                </div>
+              </Popup>
               <ConfigSection />
             </div>
           </div>
