@@ -57,15 +57,16 @@ export const editTemplate = createAsyncThunk(
   }
 );
 
-// Un-fix backend URL
 export const deleteTemplate = createAsyncThunk(
   'templates/deleteTemplate',
-  async (id, { rejectWithValue }) => {
+  async (template_ids, { rejectWithValue }) => {
     try {
-      const response = await http.delete(`/DeleteTemplate/${id}`);
+      const response = await http.delete('Template', {
+        data: { template_ids }
+      });
       console.log('response.data:', response.data);
-      console.log('response.data.message:', response.data.message);
-      return response.data.message;
+      console.log('response.data.template_ids:', template_ids);
+      return { template_ids, ...response.data };
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to delete template'
@@ -136,11 +137,21 @@ const templateSlice = createSlice({
           state.templates[index] = payload;
         }
       })
-      .addCase(deleteTemplate.fulfilled, (state, { payload }) => {
+      .addCase(deleteTemplate.fulfilled, (state, action) => {
+        const { template_ids } = action.payload;
         state.templates = state.templates.filter(
-          template => template.id !== payload.id
+          template => !template_ids.includes(template.id)
         );
+        state.status = 'succeeded';
       })
+      .addCase(deleteTemplate.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      })
+      .addCase(deleteTemplate.pending, state => {
+        state.status = 'loading';
+      })
+
       .addCase(chooseTemplate.fulfilled, (state, { payload }) => {
         state.templates = payload.templates;
         state.chosen = payload.chosen;

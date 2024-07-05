@@ -42,7 +42,6 @@ const GuestUI = () => {
         {template.section.map((sec, index) => (
           <section key={index}>
             <h2>{sec.title}</h2>
-            <h2>Section contents</h2>
             <p>{sec.content}</p>
           </section>
         ))}
