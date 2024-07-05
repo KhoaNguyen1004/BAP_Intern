@@ -10,7 +10,7 @@ Route::get('/not-authorized', function () {
     ], 401);
 })->name('login');
 Route::post('/LoginProcessing', [UserController::class, 'LoginProcessing']);
-Route::get('/', [UserController::class, 'Show']);
+Route::get('/ClientView', [UserController::class, 'Show']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/GetAllTemplate', [UserController::class, 'GetAllTemplate']);
@@ -20,10 +20,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
         Route::post('/AddTemplate', [UserController::class, 'AddTemplate']);
         Route::post('/CloneTemplate/{template}', [UserController::class, 'CloneTemplate']);
-        Route::post('/AddSecion', [UserController::class, 'AddSecion']);
+        Route::post('/AddSection', [UserController::class, 'AddSection']);
         Route::put('/EditTemplate/{template}', [UserController::class, 'EditTemplate']);
-        Route::delete('/DeleteTemplate/{template}', [UserController::class, 'DeleteTemplate']);
-        Route::delete('/DeleteSecion/{section}', [UserController::class, 'DeleteSecion']);
+        Route::delete('/DeleteTemplate', [UserController::class, 'DeleteTemplate']);
+        Route::delete('/DeleteSection/{section}', [UserController::class, 'DeleteSection']);
         Route::put('/ChooseTemplate/{template}', [UserController::class, 'ChangeTemplate']);
         Route::put('/EditSection/{section}', [UserController::class, 'EditSection']);
     });
