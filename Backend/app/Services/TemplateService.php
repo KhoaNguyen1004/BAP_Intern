@@ -201,7 +201,7 @@ class TemplateService implements TemplateServiceInterface
     {
         $query = $this->sectionRepository->selectSectionBelongTo($template->id)->get()->map(function ($section) {
             return [
-                'section-id' => $section->id,
+                'section_id' => $section->id,
                 'type' => $section->type,
                 'title' => $section->title,
                 'content1' => $section->content1,

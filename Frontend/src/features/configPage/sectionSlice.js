@@ -4,8 +4,7 @@ import TokenService from '../../services/token.service';
 
 const initialState = {
   user: null,
-
-  section: [] || null,
+  section: [],
   status: 'idle',
   error: null
 };
@@ -29,7 +28,8 @@ export const editSection = createAsyncThunk(
   'section/editSection',
   async ({ id, section }, { rejectWithValue }) => {
     try {
-      const response = await http.put(`/EditSection/${id}`, section);
+      const response = await http.put(`/Section/${id}`, section);
+      console.log('response.data:', response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -43,8 +43,9 @@ export const deleteSection = createAsyncThunk(
   'section/deleteSection',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await http.delete(`/DeleteSecion/${id}`);
-      return response.data;
+      const response = await http.delete(`/Section/${id}`);
+      console.log('response.data:', response.data);
+      return { id };
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to delete section'
@@ -64,14 +65,13 @@ export const sectionSlice = createSlice({
       state.user = TokenService.getUser();
     }
   },
-
   extraReducers: builder => {
     builder
       .addCase(addSection.pending, state => {
         state.status = 'loading';
       })
       .addCase(addSection.fulfilled, (state, action) => {
-        state.section = action.payload;
+        state.section.push(action.payload); // Push the new section to the array
         state.status = 'succeeded';
       })
       .addCase(addSection.rejected, (state, action) => {
@@ -82,7 +82,12 @@ export const sectionSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(editSection.fulfilled, (state, action) => {
-        state.section = action.payload;
+        const index = state.section.findIndex(
+          section => section['section-id'] === action.payload['section-id']
+        );
+        if (index !== -1) {
+          state.section[index] = action.payload;
+        }
         state.status = 'succeeded';
       })
       .addCase(editSection.rejected, (state, action) => {
@@ -93,7 +98,9 @@ export const sectionSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(deleteSection.fulfilled, (state, action) => {
-        state.section = action.payload;
+        state.section = state.section.filter(
+          section => section['section-id'] !== action.payload.id
+        );
         state.status = 'succeeded';
       })
       .addCase(deleteSection.rejected, (state, action) => {
