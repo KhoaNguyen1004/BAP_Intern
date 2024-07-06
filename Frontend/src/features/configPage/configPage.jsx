@@ -5,10 +5,11 @@ import Header from './header';
 import Footer from './footer';
 import Section from './section';
 import { getTemplate } from '../dashboard/templatesSlice';
-import { addSection, deleteSection } from './sectionSlice';
+import { addSection, deleteSection, editSection } from './sectionSlice';
 import { useAppDispatch } from '../../store/hooks';
 import { LoadingContext } from '../../contexts/LoadingContext';
 import { NotificationContext } from '../../contexts/NotificationContext';
+// import Popup from '../../components/Popup';
 
 const ConfigPage = () => {
   const { id } = useParams();
@@ -34,9 +35,6 @@ const ConfigPage = () => {
       .then(response => {
         setTemplateData(response);
         setSections(response.section || []);
-        console.log('response:', response);
-        console.log('response.section:', response.section);
-        console.log('response.data.template:', response.section.section_id);
       })
       .catch(error => {
         console.error('Failed to fetch sections:', error);
@@ -45,7 +43,8 @@ const ConfigPage = () => {
 
   const handleAddSection = () => {
     const newSection = {
-      template_id: id
+      template_id: id,
+      type: 1
     };
     setIsLoading(true);
     dispatch(addSection(newSection))
@@ -85,11 +84,7 @@ const ConfigPage = () => {
       .unwrap()
       .then(() => {
         setSections(prevSections =>
-          prevSections.filter(
-            section =>
-              section.section_id !== sectionToDelete ||
-              section.id !== sectionToDelete
-          )
+          prevSections.filter(section => section.section_id !== sectionToDelete)
         );
         openNotification({
           message: 'Section deleted successfully',
@@ -118,19 +113,58 @@ const ConfigPage = () => {
     setSectionToDelete(null);
   };
 
-  const handleEditSection = (id, newTitle, newContent1, newContent2) => {
-    setSections(prevSections =>
-      prevSections.map(section =>
-        section.section_id === id
-          ? {
-              ...section,
-              title: newTitle,
-              content1: newContent1,
-              content2: newContent2
-            }
-          : section
-      )
-    );
+  const handleEditSection = (
+    id,
+    newTitle,
+    newContent1,
+    newContent2,
+    newType
+  ) => {
+    setIsLoading(true);
+    dispatch(
+      editSection({
+        id,
+        section: {
+          title: newTitle,
+          content1: newContent1,
+          content2: newContent2,
+          type: newType
+        }
+      })
+    )
+      .unwrap()
+      .then(() => {
+        setSections(prevSections =>
+          prevSections.map(section =>
+            section.section_id === id
+              ? {
+                  ...section,
+                  title: newTitle,
+                  content1: newContent1,
+                  content2: newContent2,
+                  type: newType
+                }
+              : section
+          )
+        );
+        openNotification({
+          message: 'Section edited successfully',
+          type: 'success',
+          title: 'Success'
+        });
+        fetchSections();
+      })
+      .catch(error => {
+        openNotification({
+          message: 'Failed to edit section',
+          type: 'error',
+          title: 'Error'
+        });
+        console.error('Failed to edit section:', error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const handleEditHeader = (newLogo, newTitle) => {
@@ -155,6 +189,7 @@ const ConfigPage = () => {
         {sections.map(section => (
           <Section
             key={section.section_id}
+            type={section.type}
             title={section.title}
             content1={section.content1}
             content2={section.content2}
@@ -166,12 +201,13 @@ const ConfigPage = () => {
               );
               confirmDeleteSection(section.section_id);
             }}
-            onEdit={(newTitle, newContent1, newContent2) =>
+            onEdit={(newTitle, newContent1, newContent2, newType) =>
               handleEditSection(
                 section.section_id,
                 newTitle,
                 newContent1,
-                newContent2
+                newContent2,
+                newType
               )
             }
           />

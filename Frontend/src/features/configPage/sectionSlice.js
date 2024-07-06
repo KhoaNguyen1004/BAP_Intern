@@ -29,6 +29,7 @@ export const editSection = createAsyncThunk(
   async ({ id, section }, { rejectWithValue }) => {
     try {
       const response = await http.put(`/Section/${id}`, section);
+      console.log('response.data:', response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Layout, Button, Modal, Input, Card } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
-
+import Popup from '../../components/Popup';
 const { Header: AntdHeader } = Layout;
 
 const Header = ({ logo, title, onEdit, isEditable }) => {
@@ -41,7 +41,7 @@ const Header = ({ logo, title, onEdit, isEditable }) => {
         alignItems: 'center',
         padding: '0px 20px',
         gap: '20%',
-        height: '64px' // Set this to the height of your header
+        height: '64px' 
       }}
     >
       <div
@@ -86,13 +86,12 @@ const Header = ({ logo, title, onEdit, isEditable }) => {
           onClick={showModal}
         />
       )}
-      <Modal
+      <Popup
         title="Edit Header"
-        visible={isModalVisible}
-        onOk={handleOk}
+        isOpen={isModalVisible}
+        onConfirm={handleOk}
         onCancel={handleCancel}
-        okText="Save"
-        cancelText="Cancel"
+        text="Save"
       >
         <Input
           placeholder="Logo"
@@ -153,7 +152,7 @@ const Header = ({ logo, title, onEdit, isEditable }) => {
             </div>
           </div>
         </Card>
-      </Modal>
+      </Popup>
     </AntdHeader>
   );
 };

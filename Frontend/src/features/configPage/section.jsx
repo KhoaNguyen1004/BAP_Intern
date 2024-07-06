@@ -66,25 +66,34 @@ const Section = ({ type, title, content1, content2, onDelete, onEdit }) => {
         </h2>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Card
-          style={{
-            flex: 1,
-            marginRight: showContentOption === 'show' ? '10px' : '0px',
-            maxWidth: showContentOption === 'show' ? 'calc(50% - 10px)' : '100%'
-          }}
-        >
-          <p style={{ overflowWrap: 'break-word' }}>{content1}</p>
-        </Card>
-        {showContentOption === 'show' && (
-          <Card
-            style={{
-              flex: 1,
-              marginLeft: '10px',
-              maxWidth: 'calc(50% - 10px)'
-            }}
-          >
-            <p style={{ overflowWrap: 'break-word' }}>{content2}</p>
+        {type === 1 ? (
+          <Card style={{ flex: 1 }}>
+            <p style={{ overflowWrap: 'break-word' }}>{content1}</p>
           </Card>
+        ) : (
+          <>
+            <Card
+              style={{
+                flex: 1,
+                marginRight: showContentOption === 'show' ? '10px' : '0px',
+                maxWidth:
+                  showContentOption === 'show' ? 'calc(50% - 10px)' : '100%'
+              }}
+            >
+              <p style={{ overflowWrap: 'break-word' }}>{content1}</p>
+            </Card>
+            {showContentOption === 'show' && (
+              <Card
+                style={{
+                  flex: 1,
+                  marginLeft: '10px',
+                  maxWidth: 'calc(50% - 10px)'
+                }}
+              >
+                <p style={{ overflowWrap: 'break-word' }}>{content2}</p>
+              </Card>
+            )}
+          </>
         )}
       </div>
       <Button
@@ -101,7 +110,7 @@ const Section = ({ type, title, content1, content2, onDelete, onEdit }) => {
       />
       <Modal
         title="Edit Section"
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
         okText="Save"
@@ -133,12 +142,10 @@ const Section = ({ type, title, content1, content2, onDelete, onEdit }) => {
           value={typeDraft}
           style={{ marginBottom: '10px' }}
         >
-          <Radio value={1} defaultChecked={typeDraft === 1}>
-            Type 1
-          </Radio>
+          <Radio value={1}>Type 1</Radio>
           <Radio value={2}>Type 2</Radio>
         </Radio.Group>
-        <Card style={{ marginTop: '20px' }} className="bg-gray-100 relative">
+        <Card className="mt-5 bg-gray-100 relative">
           <div style={{ padding: '0px 30%', borderRadius: '10px' }}>
             <h2 className="text-xl font-semibold mb-4 text-center bg-white">
               {newTitle}

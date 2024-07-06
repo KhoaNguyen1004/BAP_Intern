@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Layout, Modal, Input, Button, Card } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
+import Popup from '../../components/Popup';
 
 const { Footer: AntdFooter } = Layout;
 
@@ -58,13 +59,12 @@ const Footer = ({ content, onEdit, isEditable }) => {
           onClick={showModal}
         />
       )}
-      <Modal
+      <Popup
         title="Edit Footer"
-        visible={isModalVisible}
-        onOk={handleOk}
+        isOpen={isModalVisible}
+        onConfirm={handleOk}
         onCancel={handleCancel}
-        okText="Save"
-        cancelText="Cancel"
+        text="Save"
       >
         <Input
           placeholder="Footer Content"
@@ -82,7 +82,7 @@ const Footer = ({ content, onEdit, isEditable }) => {
         >
           <h1 className="text-sm text-white m-0">{newContent}</h1>
         </Card>
-      </Modal>
+      </Popup>
     </AntdFooter>
   );
 };
