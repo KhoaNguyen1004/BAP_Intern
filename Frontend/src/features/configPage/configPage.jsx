@@ -23,7 +23,12 @@ const ConfigPage = () => {
   const [headerLogo, setHeaderLogo] = useState('Logo');
   const [footerContent, setFooterContent] = useState('Made with ❤️');
   const { openNotification } = useContext(NotificationContext);
+
   useEffect(() => {
+    fetchSections();
+  }, [id]);
+
+  const fetchSections = () => {
     dispatch(getTemplate(id))
       .unwrap()
       .then(response => {
@@ -31,11 +36,12 @@ const ConfigPage = () => {
         setSections(response.section || []);
         console.log('response:', response);
         console.log('response.section:', response.section);
+        console.log('response.data.template:', response.section.section_id);
       })
       .catch(error => {
-        console.error('Failed to fetch template:', error);
+        console.error('Failed to fetch sections:', error);
       });
-  }, [id, dispatch]);
+  };
 
   const handleAddSection = () => {
     const newSection = {
@@ -46,6 +52,12 @@ const ConfigPage = () => {
       .unwrap()
       .then(response => {
         setSections(prevSections => [...prevSections, response.section]);
+        openNotification({
+          message: 'Section added successfully',
+          type: 'success',
+          title: 'Success'
+        });
+        fetchSections();
       })
       .catch(error => {
         console.error('Failed to add section:', error);
@@ -56,6 +68,7 @@ const ConfigPage = () => {
   };
 
   const confirmDeleteSection = sectionId => {
+    console.log('Confirming delete for section with id:', sectionId);
     if (sections.length > 1) {
       setIsModalVisible(true);
       setSectionToDelete(sectionId);
@@ -66,20 +79,32 @@ const ConfigPage = () => {
   };
 
   const handleDeleteSection = () => {
+    console.log('Deleting section with id:', sectionToDelete);
     setIsLoading(true);
     dispatch(deleteSection(sectionToDelete))
       .unwrap()
       .then(() => {
         setSections(prevSections =>
           prevSections.filter(
-            section => section.section - id !== sectionToDelete
+            section =>
+              section.section_id !== sectionToDelete ||
+              section.id !== sectionToDelete
           )
         );
-        openNotification('success', 'Section deleted successfully');
+        openNotification({
+          message: 'Section deleted successfully',
+          type: 'success',
+          title: 'Success'
+        });
+        fetchSections();
       })
       .catch(error => {
+        openNotification({
+          message: 'Failed to delete section',
+          type: 'error',
+          title: 'Error'
+        });
         console.error('Failed to delete section:', error);
-        openNotification('error', 'Failed to delete section');
       })
       .finally(() => {
         setIsLoading(false);
@@ -96,7 +121,7 @@ const ConfigPage = () => {
   const handleEditSection = (id, newTitle, newContent1, newContent2) => {
     setSections(prevSections =>
       prevSections.map(section =>
-        section.id === id
+        section.section_id === id
           ? {
               ...section,
               title: newTitle,
@@ -129,13 +154,25 @@ const ConfigPage = () => {
       <div className="flex-1 mb-20 px-4">
         {sections.map(section => (
           <Section
-            key={section.id}
+            key={section.section_id}
             title={section.title}
             content1={section.content1}
             content2={section.content2}
-            onDelete={() => confirmDeleteSection(section.id)}
+            onDelete={() => {
+              console.log('Deleting section with id:', section.id);
+              console.log(
+                'Deleting section with section.section_id:',
+                section.section_id
+              );
+              confirmDeleteSection(section.section_id);
+            }}
             onEdit={(newTitle, newContent1, newContent2) =>
-              handleEditSection(section.id, newTitle, newContent1, newContent2)
+              handleEditSection(
+                section.section_id,
+                newTitle,
+                newContent1,
+                newContent2
+              )
             }
           />
         ))}
@@ -166,7 +203,7 @@ const ConfigPage = () => {
               : () => handleEditFooter(footerContent)
         }
         onCancel={handleCancel}
-        okText="Delete"
+        okText={modalContent === 'deleteSection' ? 'Delete' : 'Save'}
         cancelText="Cancel"
       >
         {modalContent === 'deleteSection' ? (
