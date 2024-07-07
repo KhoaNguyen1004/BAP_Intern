@@ -89,7 +89,7 @@ const Footer = ({ content, onEdit, isEditable }) => {
 
 Footer.propTypes = {
   content: PropTypes.string.isRequired,
-  onEdit: PropTypes.func.isRequired,
+  onEdit: PropTypes.func,
   isEditable: PropTypes.bool
 };
 

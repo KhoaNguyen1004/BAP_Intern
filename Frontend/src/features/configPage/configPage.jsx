@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button, Modal, Input, message } from 'antd';
+import { Button, Modal, Input } from 'antd';
 import Header from './header';
 import Footer from './footer';
 import Section from './section';

@@ -160,7 +160,7 @@ const Header = ({ logo, title, onEdit, isEditable }) => {
 Header.propTypes = {
   logo: PropTypes.string,
   title: PropTypes.string.isRequired,
-  onEdit: PropTypes.func.isRequired,
+  onEdit: PropTypes.func,
   isEditable: PropTypes.bool
 };
 
