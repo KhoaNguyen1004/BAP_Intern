@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 const useTemplateModals = (fetchTemplates, chosen) => {
   const [selectedTemplate, setSelectedTemplate] = useState(chosen);
+  const [selectedTemplateId, setSelectedTemplateId] = useState('');
   const [selectedTemplatesToDelete, setSelectedTemplatesToDelete] = useState(
     []
   );
@@ -10,7 +11,7 @@ const useTemplateModals = (fetchTemplates, chosen) => {
     useState(false);
   const [isConfigTemplateModalOpen, setIsConfigTemplateModalOpen] =
     useState(false);
-  const [, setCloneTemplate] = useState(true);
+  const [isCloneTemplate, setIsCloneTemplate] = useState(true);
   const [, setShowPopconfirm] = useState(false);
 
   const handleConfirmDelete = () => {
@@ -46,6 +47,9 @@ const useTemplateModals = (fetchTemplates, chosen) => {
   const handleTemplateChange = e => {
     setSelectedTemplate(e.target.value);
   };
+  const handleTemplateIdChange = e => {
+    setSelectedTemplateId(e.target.value);
+  }
 
   return {
     selectedTemplate,
@@ -53,6 +57,8 @@ const useTemplateModals = (fetchTemplates, chosen) => {
     isAddTemplateModalOpen,
     isDeleteTemplateModalOpen,
     isConfigTemplateModalOpen,
+    isCloneTemplate,
+    selectedTemplateId,
     handleTemplateChange,
     handleConfirmDelete,
     showAddTemplateModal,
@@ -60,12 +66,14 @@ const useTemplateModals = (fetchTemplates, chosen) => {
     showConfigTemplateModal,
     handleCancel,
     handleOk,
-    setCloneTemplate,
+    setIsCloneTemplate,
     setShowPopconfirm,
     setIsDeleteTemplateModalOpen,
     setIsAddTemplateModalOpen,
     setSelectedTemplate,
-    setSelectedTemplatesToDelete
+    setSelectedTemplatesToDelete,
+    setSelectedTemplateId,
+    handleTemplateIdChange
   };
 };
 
