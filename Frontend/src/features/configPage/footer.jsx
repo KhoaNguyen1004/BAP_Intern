@@ -47,17 +47,11 @@ const Footer = ({ content, onEdit, isEditable }) => {
       </h1>
       {isEditable && (
         <Button
-          type="text"
-          icon={<SettingOutlined />}
-          className="text-white"
-          style={{
-            position: 'absolute',
-            top: '50%',
-            right: '20px',
-            transform: 'translateY(-50%)'
-          }}
-          onClick={showModal}
-        />
+        type="text"
+        icon={<SettingOutlined />}
+        className="text-white absolute top-4 right-4"
+        onClick={showModal}
+      />
       )}
       <Popup
         title="Edit Footer"

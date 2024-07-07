@@ -80,8 +80,9 @@ const Header = ({ logo, title, onEdit, isEditable }) => {
           className="text-white"
           style={{
             position: 'absolute',
-            top: '16px',
-            right: '16px'
+            top: '50%',
+            right: '50px',
+            transform: 'translateY(-50%)'
           }}
           onClick={showModal}
         />

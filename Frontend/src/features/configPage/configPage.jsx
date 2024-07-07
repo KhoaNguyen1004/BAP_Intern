@@ -9,7 +9,6 @@ import { addSection, deleteSection, editSection } from './sectionSlice';
 import { useAppDispatch } from '../../store/hooks';
 import { LoadingContext } from '../../contexts/LoadingContext';
 import { NotificationContext } from '../../contexts/NotificationContext';
-// import Popup from '../../components/Popup';
 
 const ConfigPage = () => {
   const { id } = useParams();
