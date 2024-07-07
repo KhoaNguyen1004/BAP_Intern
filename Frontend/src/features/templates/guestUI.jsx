@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import templateService from '../../services/template.service';
 import Header from '../configPage/header';
 import Footer from '../configPage/footer';
-import Section from '../configPage/section';
 
 const GuestUI = () => {
   const [template, setTemplate] = useState(null);
@@ -38,18 +37,40 @@ const GuestUI = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="header-wrapper">
-        <Header logo={template.logo} title={template.title} isEditable={false} />
+        <Header
+          logo={template.logo}
+          title={template.title}
+          isEditable={false}
+        />
       </div>
-      <div className="flex-1 mb-20 px-4">
+      <div
+        className="content-wrapper flex-1 px-4"
+        style={{ paddingTop: '64px' }}
+      >
         {template.section.map((sec, index) => (
-          <Section
-            key={index}
-            type={sec.type}
-            title={sec.title}
-            content1={sec.content1}
-            content2={sec.content2}
-            isEditable={false}
-          />
+          <section key={index} className="section-content">
+            <h2>{sec.title}</h2>
+            {sec.type === 1 ? (
+              <div className="content-single">
+                <p>{sec.content || 'No content available'}</p>
+              </div>
+            ) : (
+              <div className="content-double">
+                <div className="content-part">
+                  <p>{sec.content1 || 'No content available'}</p>
+                </div>
+                {sec.content2 ? (
+                  <div className="content-part">
+                    <p>{sec.content2 || 'No content available'}</p>
+                  </div>
+                ) : (
+                  <div className="content-part">
+                    <p>No second content available</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
         ))}
       </div>
       <div className="footer-wrapper">
