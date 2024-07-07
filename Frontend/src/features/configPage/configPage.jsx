@@ -234,7 +234,7 @@ const ConfigPage = () => {
               ? 'Edit Header'
               : 'Edit Footer'
         }
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={
           modalContent === 'deleteSection'
             ? handleDeleteSection

@@ -27,7 +27,8 @@ import {
   getAllTemplates,
   chooseTemplate,
   deleteTemplate,
-  addTemplate
+  addTemplate,
+  cloneTemplate
 } from './templatesSlice';
 import useTemplateModals from '../../store/useTemplateModals';
 const { Header, Content } = Layout;
@@ -40,6 +41,7 @@ function Dashboard() {
   const { templates, chosen, status, error } = useAppSelector(
     state => state.templates
   );
+  // const [cloneTemplate, setCloneTemplate] = useState(true); // Default to cloneTemplate
 
   const fetchTemplates = () => {
     setIsLoading(true);
@@ -57,10 +59,12 @@ function Dashboard() {
 
   const {
     selectedTemplate,
+    selectedTemplateId,
     selectedTemplatesToDelete,
     isAddTemplateModalOpen,
     isDeleteTemplateModalOpen,
     isConfigTemplateModalOpen,
+    isCloneTemplate,
     handleTemplateChange,
     handleConfirmDelete,
     showAddTemplateModal,
@@ -68,12 +72,14 @@ function Dashboard() {
     showConfigTemplateModal,
     handleCancel,
     handleOk,
-    setCloneTemplate,
+    setIsCloneTemplate,
     setShowPopconfirm,
     setIsDeleteTemplateModalOpen,
     setIsAddTemplateModalOpen,
     setSelectedTemplate,
-    setSelectedTemplatesToDelete
+    setSelectedTemplatesToDelete,
+    setSelectedTemplateId,
+    handleTemplateIdChange
   } = useTemplateModals(fetchTemplates, chosen);
 
   const handleTemplateDelete = e => {
@@ -125,6 +131,8 @@ function Dashboard() {
         console.log('Template added:', response);
         console.log('response.template.id', response.id);
         fetchTemplates();
+        setIsAddTemplateModalOpen(false);
+
         onFinishComplete(response.id);
       })
       .catch(err => {
@@ -141,14 +149,43 @@ function Dashboard() {
       });
   };
 
+  const handleCloneTemplate = id => {
+    setIsLoading(true);
+    dispatch(cloneTemplate(id))
+      .unwrap()
+      .then(response => {
+        openNotification({
+          message: 'Template cloned successfully!',
+          type: 'success',
+          title: 'Success'
+        });
+        fetchTemplates();
+        setIsAddTemplateModalOpen(false);
+        onFinishComplete(response.template.original.id);
+      })
+      .catch(err => {
+        console.error('Error cloning template:', err);
+        openNotification({
+          message: 'Failed to clone template!',
+          type: 'error',
+          title: 'Error'
+        });
+        setIsAddTemplateModalOpen(false);
+      })
+      .finally(() => setIsLoading(false));
+  };
+
   const onFinishComplete = id => {
     window.open(`${window.location.origin}/admin/config-page/${id}`, '_blank');
   };
 
   const onFinish = values => {
     setIsAddTemplateModalOpen(false);
-    handleAddTemplate(values);
-    console.log('Success:', values);
+    if (isCloneTemplate) {
+      handleCloneTemplate(selectedTemplateId);
+    } else {
+      handleAddTemplate(values);
+    }
   };
 
   const onFinishFailed = errorInfo => {
@@ -156,7 +193,10 @@ function Dashboard() {
   };
 
   const handleRadioChange = e => {
-    setCloneTemplate(e.target.value === 'Clone Template');
+    const { value } = e.target;
+
+    setIsCloneTemplate(value === 'Clone Template');
+    setSelectedTemplateId('');
   };
   const handleSettingClick = templateValue => {
     window.open(
@@ -279,7 +319,7 @@ function Dashboard() {
                 <Popup
                   title="Add Template"
                   isOpen={isAddTemplateModalOpen}
-                  onOk={handleAddTemplate}
+                  onOk={onFinish}
                   onCancel={handleCancel}
                   footer={[
                     <Button key="back" onClick={handleCancel}>
@@ -298,10 +338,10 @@ function Dashboard() {
                   <Form
                     id="addConfigForm"
                     initialValues={{
-                      configValue: 'Clone Template',
-                      header: true,
-                      section: true,
-                      footer: true
+                      configValue: 'Clone Template'
+                      // header: true,
+                      // section: true,
+                      // footer: true
                     }}
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
@@ -326,11 +366,37 @@ function Dashboard() {
                         { required: true, message: 'Please choose an option!' }
                       ]}
                     >
-                      <Radio.Group onChange={handleRadioChange}>
+                      <Radio.Group
+                        onChange={handleRadioChange}
+                        initialValues="Clone Template"
+                      >
                         <Radio value="Clone Template">Clone Template</Radio>
                         <Radio value="New Template">New Template</Radio>
                       </Radio.Group>
                     </Form.Item>
+
+                    {cloneTemplate && (
+                      <div className="flex flex-wrap">
+                        {status === 'loading' && setIsLoading(true)}
+                        {status === 'failed' && <p>{error}</p>}
+                        {status === 'succeeded' &&
+                          templates?.map(item => (
+                            <div className="w-1/2 sm:w-1/2" key={item.id}>
+                              <Card className="shadow-sm rounded-md border border-gray-200 p-2">
+                                <Radio.Group
+                                  value={selectedTemplateId}
+                                  onChange={handleTemplateIdChange}
+                                  className="w-full flex items-center"
+                                >
+                                  <Radio className="w-full" value={item.id}>
+                                    {item.name}
+                                  </Radio>
+                                </Radio.Group>
+                              </Card>
+                            </div>
+                          ))}
+                      </div>
+                    )}
                   </Form>
                 </Popup>
 

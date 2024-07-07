@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 
@@ -93,10 +94,10 @@ class TemplateService implements TemplateServiceInterface
     public function editTemplate($request, $template)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string',
-            'title' => 'required|string',
-            'footer' => 'required|string',
-            'logo' => 'required|max:3',
+            'name' => 'string',
+            'title' => 'string',
+            'footer' => 'string',
+            'logo' => 'max:3',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -325,5 +326,4 @@ class TemplateService implements TemplateServiceInterface
             'section' => $Section,
         ]);
     }
-
 }
