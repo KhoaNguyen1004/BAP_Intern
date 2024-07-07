@@ -73,7 +73,11 @@ const ConfigPage = () => {
       setSectionToDelete(sectionId);
       setModalContent('deleteSection');
     } else {
-      message.info('At least one section must be present.');
+      openNotification({
+        message: 'At least one section must be present!',
+        type: 'error',
+        title: 'Error'
+      });
     }
   };
 
@@ -189,7 +193,7 @@ const ConfigPage = () => {
         {sections.map(section => (
           <Section
             key={section.section_id}
-            type={section.type}
+            type={Number(section.type)}
             title={section.title}
             content1={section.content1}
             content2={section.content2}

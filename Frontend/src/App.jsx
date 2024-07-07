@@ -55,7 +55,7 @@ function App() {
             </PrivateRoute>
           }
         />
-        <Route path="/" element={<GuestUI />}></Route>
+        <Route path="/" element={<GuestUI />} />
       </Routes>
     </div>
   );
