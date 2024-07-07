@@ -2,8 +2,17 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal, Input, Radio, message, Card } from 'antd';
 import { SettingOutlined, DeleteOutlined } from '@ant-design/icons';
-
-const Section = ({ type, title, content1, content2, onDelete, onEdit }) => {
+import Popup from '../../components/Popup';
+import { isEditable } from '@testing-library/user-event/dist/utils';
+const Section = ({
+  type,
+  title,
+  content1,
+  content2,
+  onDelete,
+  onEdit,
+  isEditable
+}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [showContentOption, setShowContentOption] = useState(
     type === 2 ? 'show' : 'hide'
@@ -96,25 +105,40 @@ const Section = ({ type, title, content1, content2, onDelete, onEdit }) => {
           </>
         )}
       </div>
-      <Button
-        type="text"
-        icon={<SettingOutlined />}
-        className="text-gray-500 absolute top-4 right-4"
-        onClick={showModal}
-      />
-      <Button
-        type="text"
-        icon={<DeleteOutlined />}
-        className="text-gray-500 absolute top-4 right-16"
-        onClick={onDelete}
-      />
-      <Modal
+      {isEditable && (
+        // <Button
+        //   type="text"
+        //   icon={<SettingOutlined />}
+        //   className="text-gray-500 absolute top-4 right-4"
+        //   onClick={showModal}
+        // />
+        // <Button
+        //   type="text"
+        //   icon={<DeleteOutlined />}
+        //   className="text-gray-500 absolute top-4 right-16"
+        //   onClick={onDelete}
+        // />
+        <div className="flex justify-end">
+          <Button
+            type="text"
+            icon={<SettingOutlined />}
+            className="text-gray-500"
+            onClick={showModal}
+          />
+          <Button
+            type="text"
+            icon={<DeleteOutlined />}
+            className="text-gray-500"
+            onClick={onDelete}
+          />
+        </div>
+      )}
+      <Popup
         title="Edit Section"
-        open={isModalVisible}
-        onOk={handleOk}
+        isOpen={isModalVisible}
+        onConfirm={handleOk}
         onCancel={handleCancel}
-        okText="Save"
-        cancelText="Cancel"
+        text="Save"
       >
         <Input
           placeholder="Title"
@@ -175,7 +199,7 @@ const Section = ({ type, title, content1, content2, onDelete, onEdit }) => {
             )}
           </div>
         </Card>
-      </Modal>
+      </Popup>
     </section>
   );
 };
@@ -185,8 +209,12 @@ Section.propTypes = {
   title: PropTypes.string.isRequired,
   content1: PropTypes.string,
   content2: PropTypes.string,
-  onDelete: PropTypes.func.isRequired,
-  onEdit: PropTypes.func.isRequired
+  onDelete: PropTypes.func,
+  onEdit: PropTypes.func,
+  isEditable: PropTypes.bool
+};
+Section.defaultProps = {
+  isEditable: true
 };
 
 export default Section;
