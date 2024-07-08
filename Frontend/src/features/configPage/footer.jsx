@@ -6,9 +6,9 @@ import Popup from '../../components/Popup';
 
 const { Footer: AntdFooter } = Layout;
 
-const Footer = ({ content, onEdit, isEditable }) => {
+const Footer = ({ footer, onEdit, isEditable }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [newContent, setNewContent] = useState(content);
+  const [newContent, setNewContent] = useState(footer);
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -43,7 +43,7 @@ const Footer = ({ content, onEdit, isEditable }) => {
           textAlign: 'center'
         }}
       >
-        {content}
+        {footer}
       </h1>
       {isEditable && (
         <Button
@@ -82,7 +82,7 @@ const Footer = ({ content, onEdit, isEditable }) => {
 };
 
 Footer.propTypes = {
-  content: PropTypes.string.isRequired,
+  footer: PropTypes.string.isRequired,
   onEdit: PropTypes.func,
   isEditable: PropTypes.bool
 };

@@ -117,7 +117,35 @@ export const cloneTemplate = createAsyncThunk(
     }
   }
 );
+export const editHeader = createAsyncThunk(
+  'section/editHeader',
+  async ({ id, header }, { rejectWithValue }) => {
+    try {
+      const response = await http.put(`/Template/${id}/header`, header);
+      console.log('response.data:', response.data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || 'Failed to edit header'
+      );
+    }
+  }
+);
 
+export const editFooter = createAsyncThunk(
+  'section/editFooter',
+  async ({ id, footer }, { rejectWithValue }) => {
+    try {
+      const response = await http.put(`/Template/${id}/footer`, footer);
+      console.log('response.data:', response.data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || 'Failed to edit footer'
+      );
+    }
+  }
+);
 const templateSlice = createSlice({
   name: 'templates',
   initialState,

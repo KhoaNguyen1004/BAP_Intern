@@ -6,6 +6,7 @@ import Footer from './footer';
 import Section from './section';
 import { getTemplate } from '../dashboard/templatesSlice';
 import { addSection, deleteSection, editSection } from './sectionSlice';
+import { editHeader, editFooter } from '../dashboard/templatesSlice';
 import { useAppDispatch } from '../../store/hooks';
 import { LoadingContext } from '../../contexts/LoadingContext';
 import { NotificationContext } from '../../contexts/NotificationContext';
@@ -19,9 +20,9 @@ const ConfigPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [sectionToDelete, setSectionToDelete] = useState(null);
-  const [headerTitle, setHeaderTitle] = useState('Title');
-  const [headerLogo, setHeaderLogo] = useState('Logo');
-  const [footerContent, setFooterContent] = useState('Made with ❤️');
+  const [headerTitle, setHeaderTitle] = useState(templateData.title);
+  const [headerLogo, setHeaderLogo] = useState(templateData.logo);
+  const [footerContent, setFooterContent] = useState(templateData.footer);
   const { openNotification } = useContext(NotificationContext);
 
   useEffect(() => {
@@ -34,6 +35,8 @@ const ConfigPage = () => {
       .then(response => {
         setTemplateData(response);
         setSections(response.section || []);
+        console.log('response:', response);
+        console.log('response.footer:', response.footer);
       })
       .catch(error => {
         console.error('Failed to fetch sections:', error);
@@ -170,15 +173,85 @@ const ConfigPage = () => {
       });
   };
 
+  // const handleEditHeader = (newLogo, newTitle) => {
+  //   setHeaderTitle(newTitle);
+  //   setHeaderLogo(newLogo);
+  //   setIsModalVisible(false);
+  // };
+
+  // const handleEditFooter = newContent => {
+  //   setFooterContent(newContent);
+  //   setIsModalVisible(false);
+  // };
+
   const handleEditHeader = (newLogo, newTitle) => {
-    setHeaderTitle(newTitle);
-    setHeaderLogo(newLogo);
+    setIsLoading(true);
+    dispatch(
+      editHeader({
+        id,
+        header: {
+          logo: newLogo,
+          title: newTitle
+        }
+      })
+    )
+      .unwrap()
+      .then(() => {
+        openNotification({
+          message: 'Header edited successfully',
+          type: 'success',
+          title: 'Success'
+        });
+        setHeaderTitle(newTitle);
+        setHeaderLogo(newLogo);
+        fetchSections();
+      })
+      .catch(error => {
+        openNotification({
+          message: 'Failed to edit header',
+          type: 'error',
+          title: 'Error'
+        });
+        console.error('Failed to edit header:', error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
     setIsModalVisible(false);
   };
 
   const handleEditFooter = newContent => {
-    setFooterContent(newContent);
-    setIsModalVisible(false);
+    setIsLoading(true);
+    dispatch(
+      editFooter({
+        id,
+        footer: {
+          footer: newContent
+        }
+      })
+    )
+      .unwrap()
+      .then(() => {
+        openNotification({
+          message: 'Footer edited successfully',
+          type: 'success',
+          title: 'Success'
+        });
+        setFooterContent(newContent);
+        fetchSections();
+      })
+      .catch(error => {
+        openNotification({
+          message: 'Failed to edit footer',
+          type: 'error',
+          title: 'Error'
+        });
+        console.error('Failed to edit footer:', error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setIsModalVisible(false);
+      });
   };
 
   return (
@@ -222,7 +295,7 @@ const ConfigPage = () => {
         </div>
       </div>
       <Footer
-        content={templateData.footer || footerContent}
+        footer={templateData.footer || footerContent}
         onEdit={handleEditFooter}
       />
       <Modal
