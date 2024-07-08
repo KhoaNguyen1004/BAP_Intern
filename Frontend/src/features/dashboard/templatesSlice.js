@@ -105,9 +105,10 @@ export const getTemplate = createAsyncThunk(
 
 export const cloneTemplate = createAsyncThunk(
   'templates/cloneTemplate',
-  async (id, { rejectWithValue }) => {
+  async ({ id, name }, { rejectWithValue }) => {
     try {
-      const response = await http.post(`/Template/${id}`);
+      const response = await http.post(`/Template/${id}`, name);
+      console.log('response.data:', response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -174,7 +175,7 @@ const templateSlice = createSlice({
         state.templates = payload.templates;
         state.chosen = payload.chosen;
       })
-      .addCase(cloneTemplate.pending, (state) => {
+      .addCase(cloneTemplate.pending, state => {
         state.status = 'loading';
       })
       .addCase(cloneTemplate.fulfilled, (state, { payload }) => {
@@ -185,9 +186,7 @@ const templateSlice = createSlice({
       .addCase(cloneTemplate.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload || 'Failed to clone template';
-      })
-      
-
+      });
   }
 });
 

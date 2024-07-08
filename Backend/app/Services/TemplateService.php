@@ -332,6 +332,7 @@ class TemplateService implements TemplateServiceInterface
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required|string',
+            'logo' => 'required|string'
         ]);
 
         if ($validator->fails()) {
@@ -352,6 +353,7 @@ class TemplateService implements TemplateServiceInterface
 
         $template->update([
             'title' => $request->title,
+            'logo' => $request->logo,
         ]);
 
         return response()->json([
