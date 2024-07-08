@@ -149,9 +149,9 @@ function Dashboard() {
       });
   };
 
-  const handleCloneTemplate = id => {
+  const handleCloneTemplate = (id, name) => {
     setIsLoading(true);
-    dispatch(cloneTemplate(id))
+    dispatch(cloneTemplate({ id, name: { name } }))
       .unwrap()
       .then(response => {
         openNotification({
@@ -161,7 +161,9 @@ function Dashboard() {
         });
         fetchTemplates();
         setIsAddTemplateModalOpen(false);
-        onFinishComplete(response.template.original.id);
+        onFinishComplete(response.template.id);
+        console.log('Template cloned:', response);
+        console.log('response.template.original.id', response.template.id);
       })
       .catch(err => {
         console.error('Error cloning template:', err);
@@ -182,7 +184,9 @@ function Dashboard() {
   const onFinish = values => {
     setIsAddTemplateModalOpen(false);
     if (isCloneTemplate) {
-      handleCloneTemplate(selectedTemplateId);
+      handleCloneTemplate(selectedTemplateId, values.name);
+      console.log('Clone template:', selectedTemplateId);
+      console.log('Name:', values.name);
     } else {
       handleAddTemplate(values);
     }
@@ -375,7 +379,7 @@ function Dashboard() {
                       </Radio.Group>
                     </Form.Item>
 
-                    {cloneTemplate && (
+                    {isCloneTemplate && (
                       <div className="flex flex-wrap">
                         {status === 'loading' && setIsLoading(true)}
                         {status === 'failed' && <p>{error}</p>}
@@ -385,6 +389,7 @@ function Dashboard() {
                               <Card className="shadow-sm rounded-md border border-gray-200 p-2">
                                 <Radio.Group
                                   value={selectedTemplateId}
+                                  // name="templateId"
                                   onChange={handleTemplateIdChange}
                                   className="w-full flex items-center"
                                 >
