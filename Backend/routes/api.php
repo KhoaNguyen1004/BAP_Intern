@@ -16,7 +16,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/AllTemplate', [UserController::class, 'GetAllTemplate']);
     Route::get('/Template/{template}', [UserController::class, 'GetTemplate']);
     Route::post('/logout', [UserController::class, 'logout'])->name('logout');
-    
+
     Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
         Route::post('/Template', [UserController::class, 'AddTemplate']);
         Route::post('/Template/{template}', [UserController::class, 'CloneTemplate']);
@@ -26,5 +26,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/Section/{section}', [UserController::class, 'DeleteSection']);
         Route::put('/Show/{template}', [UserController::class, 'ChangeTemplate']);
         Route::put('/Section/{section}', [UserController::class, 'EditSection']);
+
+        Route::put('/Template/{templateId}/header', [UserController::class, 'EditHeader']);
+        Route::put('/Template/{templateId}/footer', [UserController::class, 'EditFooter']);
     });
 });

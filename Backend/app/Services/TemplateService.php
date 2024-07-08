@@ -328,4 +328,69 @@ class TemplateService implements TemplateServiceInterface
         ]);
     }
 
+    public function editHeader($request, $templateId)
+    {
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => $validator->errors()
+            ], 422);
+        }
+
+        $template = $this->templateRepository->getATemplate($templateId);
+
+        if (!$template) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'Template not found',
+            ], 404);
+        }
+
+        $template->update([
+            'title' => $request->title,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Header updated successfully',
+            'template' => $template,
+        ]);
+    }
+
+    public function editFooter($request, $templateId)
+    {
+        $validator = Validator::make($request->all(), [
+            'footer' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => $validator->errors()
+            ], 422);
+        }
+
+        $template = $this->templateRepository->getATemplate($templateId);
+
+        if (!$template) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'Template not found',
+            ], 404);
+        }
+
+        $template->update([
+            'footer' => $request->footer,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Footer updated successfully',
+            'template' => $template,
+        ]);
+    }
 }
