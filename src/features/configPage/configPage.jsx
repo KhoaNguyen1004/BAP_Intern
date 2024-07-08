@@ -173,17 +173,6 @@ const ConfigPage = () => {
       });
   };
 
-  // const handleEditHeader = (newLogo, newTitle) => {
-  //   setHeaderTitle(newTitle);
-  //   setHeaderLogo(newLogo);
-  //   setIsModalVisible(false);
-  // };
-
-  // const handleEditFooter = newContent => {
-  //   setFooterContent(newContent);
-  //   setIsModalVisible(false);
-  // };
-
   const handleEditHeader = (newLogo, newTitle) => {
     setIsLoading(true);
     dispatch(
