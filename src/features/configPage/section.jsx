@@ -67,7 +67,7 @@ const Section = ({
   };
 
   return (
-    <section className="bg-gray-100 p-2 mb-5 pb-4 relative top-16">
+    <section className="bg-gray-100 p- mb-5 pb-4 relative top-16">
       <div style={{ padding: '0px 30%', borderRadius: '10px' }}>
         <h2 className="text-xl font-semibold mb-4 text-center bg-white">
           {title}
