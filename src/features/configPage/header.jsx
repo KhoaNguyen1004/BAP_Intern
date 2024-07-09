@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Layout, Button, Modal, Input, Card } from 'antd';
+import { Layout, Button, Input, Card } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import Popup from '../../components/Popup';
 const { Header: AntdHeader } = Layout;

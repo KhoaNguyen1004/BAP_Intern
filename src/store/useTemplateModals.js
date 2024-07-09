@@ -49,7 +49,7 @@ const useTemplateModals = (fetchTemplates, chosen) => {
   };
   const handleTemplateIdChange = e => {
     setSelectedTemplateId(e.target.value);
-  }
+  };
 
   return {
     selectedTemplate,

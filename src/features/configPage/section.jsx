@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Modal, Input, Radio, message, Card } from 'antd';
+import { Button, Input, Radio, message, Card } from 'antd';
 import { SettingOutlined, DeleteOutlined } from '@ant-design/icons';
 import Popup from '../../components/Popup';
-import { isEditable } from '@testing-library/user-event/dist/utils';
 const Section = ({
   type,
   title,
