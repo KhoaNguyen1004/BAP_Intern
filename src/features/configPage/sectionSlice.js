@@ -11,9 +11,9 @@ const initialState = {
 
 export const addSection = createAsyncThunk(
   'section/addSection',
-  async (section, { rejectWithValue }) => {
+  async ({ template, section }, { rejectWithValue }) => {
     try {
-      const response = await http.post('/Section', section);
+      const response = await http.post(`/${template}/section`, section);
       console.log('response.data:', response.data);
       return response.data;
     } catch (error) {
@@ -26,9 +26,9 @@ export const addSection = createAsyncThunk(
 
 export const editSection = createAsyncThunk(
   'section/editSection',
-  async ({ id, section }, { rejectWithValue }) => {
+  async ({ templateId, id, section }, { rejectWithValue }) => {
     try {
-      const response = await http.put(`/Section/${id}`, section);
+      const response = await http.put(`/${templateId}/section/${id}`, section);
       console.log('response.data:', response.data);
       return response.data;
     } catch (error) {
@@ -43,7 +43,7 @@ export const deleteSection = createAsyncThunk(
   'section/deleteSection',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await http.delete(`/Section/${id}`);
+      const response = await http.delete(`/section/${id}`);
       console.log('response.data:', response.data);
       return { id };
     } catch (error) {
