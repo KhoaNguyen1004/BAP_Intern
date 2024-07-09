@@ -4,18 +4,25 @@ import { Button, Modal, Input } from 'antd';
 import Header from './header';
 import Footer from './footer';
 import Section from './section';
-import { getTemplate } from '../dashboard/templatesSlice';
-import { addSection, deleteSection, editSection } from './sectionSlice';
-import { editHeader, editFooter } from '../dashboard/templatesSlice';
-import { useAppDispatch } from '../../store/hooks';
+// import { getTemplate } from '../dashboard/templatesSlice';
+// import { addSection, deleteSection, editSection } from './sectionSlice';
+// import { editHeader, editFooter } from '../dashboard/templatesSlice';
+// import { useAppDispatch } from '../../store/hooks';
 import { LoadingContext } from '../../contexts/LoadingContext';
 import { NotificationContext } from '../../contexts/NotificationContext';
 
 const ConfigPage = () => {
   const { id } = useParams();
-  const dispatch = useAppDispatch();
-  const [templateData, setTemplateData] = useState({});
-  const [sections, setSections] = useState([]);
+  // const dispatch = useAppDispatch();
+  const [templateData, setTemplateData] = useState({
+    logo: "sample_logo.png",
+    title: "Sample Title",
+    footer: "Sample Footer",
+  });
+  const [sections, setSections] = useState([
+    { section_id: 1, type: 1, title: "Sample Section 1", content1: "Content 1", content2: "" },
+    { section_id: 2, type: 2, title: "Sample Section 2", content1: "Content 1", content2: "Content 2" }
+  ]);
   const { setIsLoading } = useContext(LoadingContext);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState(null);
@@ -25,47 +32,39 @@ const ConfigPage = () => {
   const [footerContent, setFooterContent] = useState(templateData.footer);
   const { openNotification } = useContext(NotificationContext);
 
-  useEffect(() => {
-    fetchSections();
-  }, [id]);
+  // useEffect(() => {
+  //   fetchSections();
+  // }, [id]);
 
-  const fetchSections = () => {
-    dispatch(getTemplate(id))
-      .unwrap()
-      .then(response => {
-        setTemplateData(response);
-        setSections(response.section || []);
-        console.log('response:', response);
-        console.log('response.footer:', response.footer);
-      })
-      .catch(error => {
-        console.error('Failed to fetch sections:', error);
-      });
-  };
+  // const fetchSections = () => {
+  //   dispatch(getTemplate(id))
+  //     .unwrap()
+  //     .then(response => {
+  //       setTemplateData(response);
+  //       setSections(response.section || []);
+  //       console.log('response:', response);
+  //       console.log('response.footer:', response.footer);
+  //     })
+  //     .catch(error => {
+  //       console.error('Failed to fetch sections:', error);
+  //     });
+  // };
 
   const handleAddSection = () => {
     const newSection = {
-      template_id: id,
-      type: 1
+      section_id: sections.length + 1,
+      type: 1,
+      title: `New Section ${sections.length + 1}`,
+      content1: "New Content 1",
+      content2: ""
     };
-    setIsLoading(true);
-    dispatch(addSection(newSection))
-      .unwrap()
-      .then(response => {
-        setSections(prevSections => [...prevSections, response.section]);
-        openNotification({
-          message: 'Section added successfully',
-          type: 'success',
-          title: 'Success'
-        });
-        fetchSections();
-      })
-      .catch(error => {
-        console.error('Failed to add section:', error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    setSections(prevSections => [...prevSections, newSection]);
+    openNotification({
+      message: 'Section added successfully',
+      type: 'success',
+      title: 'Success'
+    });
+    // fetchSections();
   };
 
   const confirmDeleteSection = sectionId => {
@@ -85,31 +84,15 @@ const ConfigPage = () => {
 
   const handleDeleteSection = () => {
     console.log('Deleting section with id:', sectionToDelete);
-    setIsLoading(true);
-    dispatch(deleteSection(sectionToDelete))
-      .unwrap()
-      .then(() => {
-        setSections(prevSections =>
-          prevSections.filter(section => section.section_id !== sectionToDelete)
-        );
-        openNotification({
-          message: 'Section deleted successfully',
-          type: 'success',
-          title: 'Success'
-        });
-        fetchSections();
-      })
-      .catch(error => {
-        openNotification({
-          message: 'Failed to delete section',
-          type: 'error',
-          title: 'Error'
-        });
-        console.error('Failed to delete section:', error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    setSections(prevSections =>
+      prevSections.filter(section => section.section_id !== sectionToDelete)
+    );
+    openNotification({
+      message: 'Section deleted successfully',
+      type: 'success',
+      title: 'Success'
+    });
+    // fetchSections();
     setIsModalVisible(false);
     setSectionToDelete(null);
   };
@@ -126,121 +109,48 @@ const ConfigPage = () => {
     newContent2,
     newType
   ) => {
-    setIsLoading(true);
-    dispatch(
-      editSection({
-        id,
-        section: {
-          title: newTitle,
-          content1: newContent1,
-          content2: newContent2,
-          type: newType
-        }
-      })
-    )
-      .unwrap()
-      .then(() => {
-        setSections(prevSections =>
-          prevSections.map(section =>
-            section.section_id === id
-              ? {
-                  ...section,
-                  title: newTitle,
-                  content1: newContent1,
-                  content2: newContent2,
-                  type: newType
-                }
-              : section
-          )
-        );
-        openNotification({
-          message: 'Section edited successfully',
-          type: 'success',
-          title: 'Success'
-        });
-        fetchSections();
-      })
-      .catch(error => {
-        openNotification({
-          message: 'Failed to edit section',
-          type: 'error',
-          title: 'Error'
-        });
-        console.error('Failed to edit section:', error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    setSections(prevSections =>
+      prevSections.map(section =>
+        section.section_id === id
+          ? {
+              ...section,
+              title: newTitle,
+              content1: newContent1,
+              content2: newContent2,
+              type: newType
+            }
+          : section
+      )
+    );
+    openNotification({
+      message: 'Section edited successfully',
+      type: 'success',
+      title: 'Success'
+    });
+    // fetchSections();
   };
 
   const handleEditHeader = (newLogo, newTitle) => {
-    setIsLoading(true);
-    dispatch(
-      editHeader({
-        id,
-        header: {
-          logo: newLogo,
-          title: newTitle
-        }
-      })
-    )
-      .unwrap()
-      .then(() => {
-        openNotification({
-          message: 'Header edited successfully',
-          type: 'success',
-          title: 'Success'
-        });
-        setHeaderTitle(newTitle);
-        setHeaderLogo(newLogo);
-        fetchSections();
-      })
-      .catch(error => {
-        openNotification({
-          message: 'Failed to edit header',
-          type: 'error',
-          title: 'Error'
-        });
-        console.error('Failed to edit header:', error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    setHeaderTitle(newTitle);
+    setHeaderLogo(newLogo);
+    openNotification({
+      message: 'Header edited successfully',
+      type: 'success',
+      title: 'Success'
+    });
+    // fetchSections();
     setIsModalVisible(false);
   };
 
   const handleEditFooter = newContent => {
-    setIsLoading(true);
-    dispatch(
-      editFooter({
-        id,
-        footer: {
-          footer: newContent
-        }
-      })
-    )
-      .unwrap()
-      .then(() => {
-        openNotification({
-          message: 'Footer edited successfully',
-          type: 'success',
-          title: 'Success'
-        });
-        setFooterContent(newContent);
-        fetchSections();
-      })
-      .catch(error => {
-        openNotification({
-          message: 'Failed to edit footer',
-          type: 'error',
-          title: 'Error'
-        });
-        console.error('Failed to edit footer:', error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-        setIsModalVisible(false);
-      });
+    setFooterContent(newContent);
+    openNotification({
+      message: 'Footer edited successfully',
+      type: 'success',
+      title: 'Success'
+    });
+    // fetchSections();
+    setIsModalVisible(false);
   };
 
   return (
