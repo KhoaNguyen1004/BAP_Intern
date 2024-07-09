@@ -1,0 +1,30 @@
+[
+  {
+    "name": "So sánh 23 và 28",
+    "type": "Test",
+    "output": "Number",
+    "colour": 100,
+    "message0": "%1 %2 %3",
+    "args0": [
+      {
+        "type": "field_label",
+        "name": "a",
+        "text": "23"
+      },
+      {
+        "type": "field_dropdown",
+        "name": "operator",
+        "options": [
+          ["<", "BIGGER"],
+          ["=", "EQUAL"],
+          [">", "SMALLER"]
+        ]
+      },
+      {
+        "type": "field_label",
+        "name": "b",
+        "text": "28"
+      }
+    ]
+  }
+]
