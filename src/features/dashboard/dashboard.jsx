@@ -254,13 +254,13 @@ function Dashboard() {
               align="center"
               className="text-black hover:text-slate-500"
             >
-              <div className="flex">
+              <div className="flex items-center">
                 <Avatar shape="square" size="large" icon={<UserOutlined />} />
                 <div className="ml-2">
-                  <p className="text-lg text-start m-0 mb-2 leading-none font-semibold">
+                  <p className="text-lg font-semibold leading-none">
                     {user?.username}
                   </p>
-                  <p className="m-0 leading-none text-start">{user?.role}</p>
+                  <p className="text-sm leading-none">{user?.role}</p>
                 </div>
               </div>
               <Button
@@ -270,231 +270,239 @@ function Dashboard() {
                   handleLogout();
                   window.location.href = '/login';
                 }}
-                className="w-full border-none bg-transparent text-start p-0 m-0"
+                className="border-none bg-transparent text-start p-0 m-0"
               />
             </Space>
           </div>
         </Header>
 
-        <Content className="bg-transparent rounded-lg mb-4 mx-10 mt-[92px] ">
-          <div className="flex">
-            <div className="bg-white rounded-lg p-4 shadow-md flex-1">
-              <p className="text-lg font-semibold items-start m-[4]">
-                Template
-              </p>
-              <div className="flex flex-wrap">
-                {status === 'loading' && setIsLoading(true)}
-                {status === 'failed' && <p>{error}</p>}
-                {status === 'succeeded' &&
-                  templates?.map(item => (
-                    <div className="w-1/2 sm:w-1/2 p-2" key={item.id}>
-                      <Card className="shadow-sm rounded-md border border-gray-200 p-2">
+        <Content className="bg-transparent rounded-lg mb-4 mx-4 md:mx-10 mt-[92px]">
+          <div className="flex flex-wrap">
+            <div className="w-full md:w-1/2 p-2">
+              <div className="bg-white rounded-lg p-4 shadow-md">
+                <p className="text-lg font-semibold mb-4">Template</p>
+                <div>
+                  {status === 'loading' && setIsLoading(true)}
+                  {status === 'failed' && <p>{error}</p>}
+                  {status === 'succeeded' &&
+                    templates?.map(item => (
+                      <Card
+                        key={item.id}
+                        className="shadow-sm rounded-md border border-gray-200 mb-2"
+                      >
                         <Radio.Group
                           value={selectedTemplate}
                           onChange={handleTemplateChange}
-                          className="w-full flex items-center"
+                          className="w-full"
                         >
                           <Radio className="w-full" value={item.id}>
                             {item.name}
                           </Radio>
                         </Radio.Group>
                       </Card>
-                    </div>
-                  ))}
-              </div>
-              <div className="w-full flex justify-end mt-4">
-                <Button
-                  className="!bg-primary-dominant hover:!bg-primary-dominant-dark focus:!bg-primary-dominant-light"
-                  type="primary"
-                  onClick={handlChooseTemplate}
-                >
-                  Save
-                </Button>
+                    ))}
+                </div>
+                <div className="mt-4">
+                  <Button
+                    className="!bg-primary-dominant hover:!bg-primary-dominant-dark focus:!bg-primary-dominant-light w-full"
+                    type="primary"
+                    onClick={handlChooseTemplate}
+                  >
+                    Save
+                  </Button>
+                </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-4 ml-4 shadow-md flex-1 h-[280px]">
-              <p className="text-lg font-semibold items-start m-[4]">Config</p>
+            <div className="w-full md:w-1/2 p-2">
+              <div className="bg-white rounded-lg p-4 shadow-md h-[280px]">
+                <p className="text-lg font-semibold mb-4">Config</p>
+                <div className="space-y-4">
+                  <Button
+                    type="primary"
+                    block
+                    className="!bg-primary-dominant hover:!bg-primary-dominant-dark focus:!bg-primary-dominant-light"
+                    onClick={showAddTemplateModal}
+                  >
+                    Add Template
+                  </Button>
+                  <Button
+                    type="primary"
+                    block
+                    className="!bg-primary-dominant hover:!bg-primary-dominant-dark focus:!bg-primary-dominant-light"
+                    onClick={showConfigTemplateModal}
+                  >
+                    Config Template
+                  </Button>
+                  <Button
+                    type="primary"
+                    block
+                    onClick={showDeleteTemplateModal}
+                  >
+                    Delete Template
+                  </Button>
+                </div>
+              </div>
+            </div>
 
-              <div className="flex flex-col space-y-4 justify-between items-center w-2/4 mx-auto">
+            <Popup
+              title="Add Template"
+              isOpen={isAddTemplateModalOpen}
+              onOk={onFinish}
+              onCancel={handleCancel}
+              footer={[
+                <Button key="back" onClick={handleCancel}>
+                  Cancel
+                </Button>,
                 <Button
+                  form="addConfigForm"
+                  key="submit"
                   type="primary"
-                  block
-                  className="!bg-primary-dominant hover:!bg-primary-dominant-dark focus:!bg-primary-dominant-light"
-                  onClick={showAddTemplateModal}
+                  htmlType="submit"
                 >
-                  Add Template
+                  Create
                 </Button>
-                <Popup
-                  title="Add Template"
-                  isOpen={isAddTemplateModalOpen}
-                  onOk={onFinish}
-                  onCancel={handleCancel}
-                  footer={[
-                    <Button key="back" onClick={handleCancel}>
-                      Cancel
-                    </Button>,
-                    <Button
-                      form="addConfigForm"
-                      key="submit"
-                      type="primary"
-                      htmlType="submit"
-                    >
-                      Create
-                    </Button>
+              ]}
+            >
+              <Form
+                id="addConfigForm"
+                initialValues={{
+                  configValue: 'Clone Template'
+                }}
+                onFinish={onFinish}
+                onFinishFailed={onFinishFailed}
+                layout="vertical"
+              >
+                <Form.Item
+                  label="Template Name"
+                  name="name"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please enter template name!'
+                    }
                   ]}
                 >
-                  <Form
-                    id="addConfigForm"
-                    initialValues={{
-                      configValue: 'Clone Template'
-                      // header: true,
-                      // section: true,
-                      // footer: true
-                    }}
-                    onFinish={onFinish}
-                    onFinishFailed={onFinishFailed}
-                    layout="vertical"
-                  >
-                    <Form.Item
-                      label="Template Name"
-                      name="name"
-                      rules={[
-                        {
-                          required: true,
-                          message: 'Please enter template name!'
-                        }
-                      ]}
-                    >
-                      <Input />
-                    </Form.Item>
-                    <Form.Item
-                      label="Template Options"
-                      name="configValue"
-                      rules={[
-                        { required: true, message: 'Please choose an option!' }
-                      ]}
-                    >
-                      <Radio.Group
-                        onChange={handleRadioChange}
-                        initialValues="Clone Template"
-                      >
-                        <Radio value="Clone Template">Clone Template</Radio>
-                        <Radio value="New Template">New Template</Radio>
-                      </Radio.Group>
-                    </Form.Item>
-
-                    {isCloneTemplate && (
-                      <div className="flex flex-wrap">
-                        {status === 'loading' && setIsLoading(true)}
-                        {status === 'failed' && <p>{error}</p>}
-                        {status === 'succeeded' &&
-                          templates?.map(item => (
-                            <div className="w-1/2 sm:w-1/2" key={item.id}>
-                              <Card className="shadow-sm rounded-md border border-gray-200 p-2">
-                                <Radio.Group
-                                  value={selectedTemplateId}
-                                  // name="templateId"
-                                  onChange={handleTemplateIdChange}
-                                  className="w-full flex items-center"
-                                >
-                                  <Radio className="w-full" value={item.id}>
-                                    {item.name}
-                                  </Radio>
-                                </Radio.Group>
-                              </Card>
-                            </div>
-                          ))}
-                      </div>
-                    )}
-                  </Form>
-                </Popup>
-
-                <Button type="primary" block onClick={showConfigTemplateModal}>
-                  Config Template
-                </Button>
-                <Popup
-                  title="Config Template"
-                  isOpen={isConfigTemplateModalOpen}
-                  onConfirm={handleOk}
-                  onCancel={handleCancel}
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  label="Template Options"
+                  name="configValue"
+                  rules={[
+                    { required: true, message: 'Please choose an option!' }
+                  ]}
                 >
-                  <div className="flex flex-wrap -mx-2">
-                    {templates?.map(item => (
-                      <div className="w-full sm:w-1/2" key={item.id}>
-                        <List
-                          itemLayout="horizontal"
-                          dataSource={[item]}
-                          bordered
-                          renderItem={item => (
-                            <List.Item
-                              actions={[
-                                <Button
-                                  key="setting"
-                                  type="text"
-                                  icon={<SettingOutlined />}
-                                  onClick={() => handleSettingClick(item.id)}
-                                  className="text-primary-dominant"
-                                />
-                              ]}
-                            >
-                              <p>{item.name}</p>
-                            </List.Item>
-                          )}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </Popup>
-
-                <Button type="primary" block onClick={showDeleteTemplateModal}>
-                  Delete Template
-                </Button>
-              </div>
-              <Popup
-                title="Delete Template"
-                isOpen={isDeleteTemplateModalOpen}
-                onOk={handleConfirmDelete}
-                onCancel={handleCancel}
-                footer={[
-                  <Button key="back" onClick={handleCancel}>
-                    Cancel
-                  </Button>,
-                  <Popconfirm
-                    title="Delete selected templates?"
-                    onConfirm={handlePopconfirmConfirm}
-                    onCancel={() => setShowPopconfirm(false)}
-                    okText="Yes"
-                    cancelText="No"
-                    key="confirm"
+                  <Radio.Group
+                    onChange={handleRadioChange}
+                    initialValues="Clone Template"
                   >
-                    <Button
-                      type="primary"
-                      disabled={selectedTemplatesToDelete.length === 0}
-                    >
-                      Delete
-                    </Button>
-                  </Popconfirm>
-                ]}
-              >
-                <div className="flex flex-wrap space-y-2">
-                  {templates?.map(item => (
-                    <div className="w-full sm:w-1/2" key={item.id}>
-                      <Card className="shadow-sm rounded-md border border-gray-200">
-                        <Checkbox
-                          value={item.id}
-                          onChange={handleTemplateDelete}
-                          disabled={item.id === chosen}
-                          className="w-full flex items-center"
+                    <Radio value="Clone Template">Clone Template</Radio>
+                    <Radio value="New Template">New Template</Radio>
+                  </Radio.Group>
+                </Form.Item>
+                {isCloneTemplate && (
+                  <div>
+                    {status === 'loading' && setIsLoading(true)}
+                    {status === 'failed' && <p>{error}</p>}
+                    {status === 'succeeded' &&
+                      templates?.map(item => (
+                        <Card
+                          key={item.id}
+                          className="shadow-sm rounded-md border border-gray-200 mb-2"
                         >
-                          {item.name}
-                        </Checkbox>
-                      </Card>
-                    </div>
-                  ))}
-                </div>
-              </Popup>
-            </div>
+                          <Radio.Group
+                            value={selectedTemplateId}
+                            onChange={handleTemplateIdChange}
+                            className="w-full"
+                          >
+                            <Radio className="w-full" value={item.id}>
+                              {item.name}
+                            </Radio>
+                          </Radio.Group>
+                        </Card>
+                      ))}
+                  </div>
+                )}
+              </Form>
+            </Popup>
+
+            <Popup
+              title="Config Template"
+              isOpen={isConfigTemplateModalOpen}
+              onConfirm={handleOk}
+              onCancel={handleCancel}
+            >
+              <div>
+                {templates?.map(item => (
+                  <List
+                    key={item.id}
+                    itemLayout="horizontal"
+                    dataSource={[item]}
+                    bordered
+                    renderItem={item => (
+                      <List.Item
+                        actions={[
+                          <Button
+                            key="setting"
+                            type="text"
+                            icon={<SettingOutlined />}
+                            onClick={() => handleSettingClick(item.id)}
+                            className="text-primary-dominant"
+                          />
+                        ]}
+                      >
+                        <p>{item.name}</p>
+                      </List.Item>
+                    )}
+                  />
+                ))}
+              </div>
+            </Popup>
+
+            <Popup
+              title="Delete Template"
+              isOpen={isDeleteTemplateModalOpen}
+              onOk={handleConfirmDelete}
+              onCancel={handleCancel}
+              className="ant-modal-body mt-0"
+              footer={[
+                <Button key="back" onClick={handleCancel}>
+                  Cancel
+                </Button>,
+                <Popconfirm
+                  title="Delete selected templates?"
+                  onConfirm={handlePopconfirmConfirm}
+                  onCancel={() => setShowPopconfirm(false)}
+                  okText="Yes"
+                  cancelText="No"
+                  key="confirm"
+                >
+                  <Button
+                    type="primary"
+                    disabled={selectedTemplatesToDelete.length === 0}
+                  >
+                    Delete
+                  </Button>
+                </Popconfirm>
+              ]}
+            >
+              <div className="flex flex-wrap -mx-2">
+                {templates?.map(item => (
+                  <div key={item.id} className="w-full sm:w-1/2 px-2 mb-2">
+                    <Card className="shadow-sm rounded-md border border-gray-200">
+                      <Checkbox
+                        value={item.id}
+                        onChange={handleTemplateDelete}
+                        disabled={item.id === chosen}
+                        className="w-full flex items-center"
+                      >
+                        {item.name}
+                      </Checkbox>
+                    </Card>
+                  </div>
+                ))}
+              </div>
+            </Popup>
           </div>
         </Content>
       </Layout>
