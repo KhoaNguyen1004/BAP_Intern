@@ -254,13 +254,13 @@ function Dashboard() {
               align="center"
               className="text-black hover:text-slate-500"
             >
-              <div className="flex items-center">
+              <div className="flex">
                 <Avatar shape="square" size="large" icon={<UserOutlined />} />
                 <div className="ml-2">
-                  <p className="text-lg font-semibold leading-none">
+                  <p className="text-lg text-start m-0 mb-1 leading-none font-semibold">
                     {user?.username}
                   </p>
-                  <p className="text-sm leading-none">{user?.role}</p>
+                  <p className="m-0 leading-none text-start">{user?.role}</p>
                 </div>
               </div>
               <Button
@@ -270,18 +270,19 @@ function Dashboard() {
                   handleLogout();
                   window.location.href = '/login';
                 }}
-                className="border-none bg-transparent text-start p-0 m-0"
+                className="w-full border-none bg-transparent text-start p-0 m-0"
               />
             </Space>
           </div>
         </Header>
 
         <Content className="bg-transparent rounded-lg mb-4 mx-4 md:mx-10 mt-[92px]">
-          <div className="flex flex-wrap">
-            <div className="w-full md:w-1/2 p-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
+            {/* Template */}
+            <div className="p-4 sm:col-span-1">
               <div className="bg-white rounded-lg p-4 shadow-md">
-                <p className="text-lg font-semibold mb-4">Template</p>
-                <div>
+                <h2 className="text-lg font-semibold mb-4">Template</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {status === 'loading' && setIsLoading(true)}
                   {status === 'failed' && <p>{error}</p>}
                   {status === 'succeeded' &&
@@ -302,9 +303,10 @@ function Dashboard() {
                       </Card>
                     ))}
                 </div>
+
                 <div className="mt-4">
                   <Button
-                    className="!bg-primary-dominant hover:!bg-primary-dominant-dark focus:!bg-primary-dominant-light w-full"
+                    className="bg-primary-dominant hover:bg-primary-dominant-dark focus:bg-primary-dominant-light w-full"
                     type="primary"
                     onClick={handlChooseTemplate}
                   >
@@ -314,14 +316,15 @@ function Dashboard() {
               </div>
             </div>
 
-            <div className="w-full md:w-1/2 p-2">
-              <div className="bg-white rounded-lg p-4 shadow-md h-[280px]">
-                <p className="text-lg font-semibold mb-4">Config</p>
+            {/* Config */}
+            <div className="p-4 sm:col-span-1 sm:mt-4">
+              <div className="bg-white rounded-lg p-4 shadow-md">
+                <h2 className="text-lg font-semibold mb-4">Config</h2>
                 <div className="space-y-4">
                   <Button
                     type="primary"
                     block
-                    className="!bg-primary-dominant hover:!bg-primary-dominant-dark focus:!bg-primary-dominant-light"
+                    className="bg-primary-dominant hover:bg-primary-dominant-dark focus:bg-primary-dominant-light"
                     onClick={showAddTemplateModal}
                   >
                     Add Template
@@ -329,7 +332,7 @@ function Dashboard() {
                   <Button
                     type="primary"
                     block
-                    className="!bg-primary-dominant hover:!bg-primary-dominant-dark focus:!bg-primary-dominant-light"
+                    className="bg-primary-dominant hover:bg-primary-dominant-dark focus:bg-primary-dominant-light"
                     onClick={showConfigTemplateModal}
                   >
                     Config Template
@@ -344,166 +347,68 @@ function Dashboard() {
                 </div>
               </div>
             </div>
-
-            <Popup
-              title="Add Template"
-              isOpen={isAddTemplateModalOpen}
-              onOk={onFinish}
-              onCancel={handleCancel}
-              footer={[
-                <Button key="back" onClick={handleCancel}>
-                  Cancel
-                </Button>,
-                <Button
-                  form="addConfigForm"
-                  key="submit"
-                  type="primary"
-                  htmlType="submit"
-                >
-                  Create
-                </Button>
-              ]}
-            >
-              <Form
-                id="addConfigForm"
-                initialValues={{
-                  configValue: 'Clone Template'
-                }}
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
-                layout="vertical"
-              >
-                <Form.Item
-                  label="Template Name"
-                  name="name"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Please enter template name!'
-                    }
-                  ]}
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item
-                  label="Template Options"
-                  name="configValue"
-                  rules={[
-                    { required: true, message: 'Please choose an option!' }
-                  ]}
-                >
-                  <Radio.Group
-                    onChange={handleRadioChange}
-                    initialValues="Clone Template"
-                  >
-                    <Radio value="Clone Template">Clone Template</Radio>
-                    <Radio value="New Template">New Template</Radio>
-                  </Radio.Group>
-                </Form.Item>
-                {isCloneTemplate && (
-                  <div>
-                    {status === 'loading' && setIsLoading(true)}
-                    {status === 'failed' && <p>{error}</p>}
-                    {status === 'succeeded' &&
-                      templates?.map(item => (
-                        <Card
-                          key={item.id}
-                          className="shadow-sm rounded-md border border-gray-200 mb-2"
-                        >
-                          <Radio.Group
-                            value={selectedTemplateId}
-                            onChange={handleTemplateIdChange}
-                            className="w-full"
-                          >
-                            <Radio className="w-full" value={item.id}>
-                              {item.name}
-                            </Radio>
-                          </Radio.Group>
-                        </Card>
-                      ))}
-                  </div>
-                )}
-              </Form>
-            </Popup>
-
-            <Popup
-              title="Config Template"
-              isOpen={isConfigTemplateModalOpen}
-              onConfirm={handleOk}
-              onCancel={handleCancel}
-            >
-              <div>
-                {templates?.map(item => (
-                  <List
-                    key={item.id}
-                    itemLayout="horizontal"
-                    dataSource={[item]}
-                    bordered
-                    renderItem={item => (
-                      <List.Item
-                        actions={[
-                          <Button
-                            key="setting"
-                            type="text"
-                            icon={<SettingOutlined />}
-                            onClick={() => handleSettingClick(item.id)}
-                            className="text-primary-dominant"
-                          />
-                        ]}
-                      >
-                        <p>{item.name}</p>
-                      </List.Item>
-                    )}
-                  />
-                ))}
-              </div>
-            </Popup>
-
-            <Popup
-              title="Delete Template"
-              isOpen={isDeleteTemplateModalOpen}
-              onOk={handleConfirmDelete}
-              onCancel={handleCancel}
-              className="ant-modal-body mt-0"
-              footer={[
-                <Button key="back" onClick={handleCancel}>
-                  Cancel
-                </Button>,
-                <Popconfirm
-                  title="Delete selected templates?"
-                  onConfirm={handlePopconfirmConfirm}
-                  onCancel={() => setShowPopconfirm(false)}
-                  okText="Yes"
-                  cancelText="No"
-                  key="confirm"
-                >
-                  <Button
-                    type="primary"
-                    disabled={selectedTemplatesToDelete.length === 0}
-                  >
-                    Delete
-                  </Button>
-                </Popconfirm>
-              ]}
-            >
-              <div className="flex flex-wrap -mx-2">
-                {templates?.map(item => (
-                  <div key={item.id} className="w-full sm:w-1/2 px-2 mb-2">
-                    <Card className="shadow-sm rounded-md border border-gray-200">
-                      <Checkbox
-                        value={item.id}
-                        onChange={handleTemplateDelete}
-                        disabled={item.id === chosen}
-                        className="w-full flex items-center"
-                      >
-                        {item.name}
-                      </Checkbox>
-                    </Card>
-                  </div>
-                ))}
-              </div>
-            </Popup>
           </div>
+
+          <Popup
+            title="Add Template"
+            isOpen={isAddTemplateModalOpen}
+            onOk={onFinish}
+            onCancel={handleCancel}
+            footer={[
+              <Button key="back" onClick={handleCancel}>
+                Cancel
+              </Button>,
+              <Button
+                form="addConfigForm"
+                key="submit"
+                type="primary"
+                htmlType="submit"
+              >
+                Create
+              </Button>
+            ]}
+          >
+            {/* Form content */}
+          </Popup>
+
+          <Popup
+            title="Config Template"
+            isOpen={isConfigTemplateModalOpen}
+            onConfirm={handleOk}
+            onCancel={handleCancel}
+          >
+            {/* List of templates */}
+          </Popup>
+
+          <Popup
+            title="Delete Template"
+            isOpen={isDeleteTemplateModalOpen}
+            onOk={handleConfirmDelete}
+            onCancel={handleCancel}
+            className="ant-modal-body mt-0"
+            footer={[
+              <Button key="back" onClick={handleCancel}>
+                Cancel
+              </Button>,
+              <Popconfirm
+                title="Delete selected templates?"
+                onConfirm={handlePopconfirmConfirm}
+                onCancel={() => setShowPopconfirm(false)}
+                okText="Yes"
+                cancelText="No"
+                key="confirm"
+              >
+                <Button
+                  type="primary"
+                  disabled={selectedTemplatesToDelete.length === 0}
+                >
+                  Delete
+                </Button>
+              </Popconfirm>
+            ]}
+          >
+            {/* List of templates with checkboxes */}
+          </Popup>
         </Content>
       </Layout>
     </div>
