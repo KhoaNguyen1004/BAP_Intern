@@ -36,6 +36,13 @@ const Section = ({
   };
 
   const handleOk = () => {
+    console.log('Handle OK called with:', {
+      newTitle,
+      newContent1,
+      newContent2,
+      typeDraft
+    });
+
     if (newTitle.length > 20) {
       setTitleError('Title cannot exceed 20 characters');
     } else {
@@ -54,10 +61,10 @@ const Section = ({
   };
 
   const handleOptionChange = e => {
-    const newType = e.target.value;
+    const newType = Number(e.target.value);
     setTypeDraft(newType);
     setShowContentOption(newType === 2 ? 'show' : 'hide');
-    
+
     if (newType === 1) {
       setNewContent2('');
     }
