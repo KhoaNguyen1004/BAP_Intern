@@ -5,6 +5,7 @@ import { SettingOutlined, DeleteOutlined } from '@ant-design/icons';
 import Popup from '../../components/Popup';
 
 const Section = ({
+  sectionId,
   type,
   title,
   content1,
@@ -38,7 +39,7 @@ const Section = ({
     if (newTitle.length > 20) {
       setTitleError('Title cannot exceed 20 characters');
     } else {
-      onEdit(newTitle, newContent1, newContent2, typeDraft);
+      onEdit(sectionId, newTitle, newContent1, newContent2, typeDraft);
       setIsModalVisible(false);
     }
   };
@@ -198,6 +199,7 @@ const Section = ({
 };
 
 Section.propTypes = {
+  sectionId: PropTypes.string.isRequired,
   type: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   content1: PropTypes.string,
