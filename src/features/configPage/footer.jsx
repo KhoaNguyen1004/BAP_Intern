@@ -10,7 +10,7 @@ const Footer = ({ footer, onEdit, isEditable }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newContent, setNewContent] = useState(footer);
 
-  const showModal = () => {
+  const showModal = () => { 
     setIsModalVisible(true);
   };
 
@@ -39,7 +39,7 @@ const Footer = ({ footer, onEdit, isEditable }) => {
       }}
     >
       <h1
-        className="text-sm text-white m-0"
+        className="text-sm text-white m-0 pl-20"
         style={{
           textAlign: 'center'
         }}
