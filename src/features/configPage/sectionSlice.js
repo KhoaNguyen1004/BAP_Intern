@@ -26,9 +26,13 @@ export const addSection = createAsyncThunk(
 
 export const editSection = createAsyncThunk(
   'section/editSection',
-  async ({ templateId, id, section }, { rejectWithValue }) => {
+  async ({ templateId, sectionId, section }, { rejectWithValue }) => {
     try {
-      const response = await http.put(`/${templateId}/section/${id}`, section);
+      console.log('Payload being sent to API:', section);
+      const response = await http.put(
+        `/${templateId}/section/${sectionId}`,
+        section
+      );
       console.log('response.data:', response.data);
       return response.data;
     } catch (error) {

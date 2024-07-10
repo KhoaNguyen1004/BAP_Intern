@@ -126,32 +126,30 @@ const ConfigPage = () => {
     newContent2,
     newType
   ) => {
+    console.log('handleEditSection called with:', {
+      sectionId,
+      newTitle,
+      newContent1,
+      newContent2,
+      newType
+    });
+
+    const payload = {
+      title: newTitle,
+      content1: newContent1,
+      content2: newContent2,
+      type: Number(newType)
+    };
+    console.log('Payload before dispatch:', payload);
+
     setIsLoading(true);
     const templateId = id;
-    console.log('Template ID:', templateId);
-    console.log('Section ID:', sectionId);
-    console.log('Payload:', {
-      templateId,
-      sectionId,
-      section: {
-        title: newTitle,
-        content1: newContent1,
-        content2: newContent2,
-        type: newType
-      }
-    });
-    console.log('Editing section with ID:', section.section_id);
 
     dispatch(
       editSection({
         templateId,
         sectionId,
-        section: {
-          title: newTitle,
-          content1: newContent1,
-          content2: newContent2,
-          type: newType
-        }
+        section: payload
       })
     )
       .unwrap()
@@ -270,7 +268,7 @@ const ConfigPage = () => {
         {sections.map(section => (
           <Section
             key={section.section_id}
-            sectionId={section.section_id}
+            sectionId={section.id}
             type={Number(section.type)}
             title={section.title}
             content1={section.content1}
@@ -279,15 +277,7 @@ const ConfigPage = () => {
               console.log('Deleting section with id:', section.id);
               confirmDeleteSection(section.id);
             }}
-            onEdit={(newTitle, newContent1, newContent2, newType) =>
-              handleEditSection(
-                section.section_id,
-                newTitle,
-                newContent1,
-                newContent2,
-                newType
-              )
-            }
+            onEdit={handleEditSection}
           />
         ))}
         <div className="flex justify-end mt-20">
