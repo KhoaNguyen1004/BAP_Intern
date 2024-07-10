@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Modal, Input, Radio, message, Card } from 'antd';
+import { Button, Input, Radio, message, Card } from 'antd';
 import { SettingOutlined, DeleteOutlined } from '@ant-design/icons';
 import Popup from '../../components/Popup';
-import { isEditable } from '@testing-library/user-event/dist/utils';
+
 const Section = ({
+  sectionId,
   type,
   title,
   content1,
@@ -38,7 +39,7 @@ const Section = ({
     if (newTitle.length > 20) {
       setTitleError('Title cannot exceed 20 characters');
     } else {
-      onEdit(newTitle, newContent1, newContent2, typeDraft);
+      onEdit(sectionId, newTitle, newContent1, newContent2, typeDraft);
       setIsModalVisible(false);
     }
   };
@@ -53,8 +54,13 @@ const Section = ({
   };
 
   const handleOptionChange = e => {
-    setTypeDraft(e.target.value);
-    setShowContentOption(e.target.value === 2 ? 'show' : 'hide');
+    const newType = e.target.value;
+    setTypeDraft(newType);
+    setShowContentOption(newType === 2 ? 'show' : 'hide');
+    
+    if (newType === 1) {
+      setNewContent2('');
+    }
   };
 
   const handleTitleChange = e => {
@@ -68,7 +74,7 @@ const Section = ({
   };
 
   return (
-    <section className="bg-gray-100 p-2 mb-5 pb-4 relative top-16">
+    <section className="bg-gray-100 p-3 mb-5 pb-4 relative top-16">
       <div style={{ padding: '0px 30%', borderRadius: '10px' }}>
         <h2 className="text-xl font-semibold mb-4 text-center bg-white">
           {title}
@@ -106,18 +112,6 @@ const Section = ({
         )}
       </div>
       {isEditable && (
-        // <Button
-        //   type="text"
-        //   icon={<SettingOutlined />}
-        //   className="text-gray-500 absolute top-4 right-4"
-        //   onClick={showModal}
-        // />
-        // <Button
-        //   type="text"
-        //   icon={<DeleteOutlined />}
-        //   className="text-gray-500 absolute top-4 right-16"
-        //   onClick={onDelete}
-        // />
         <div className="flex justify-end">
           <Button
             type="text"
@@ -205,6 +199,7 @@ const Section = ({
 };
 
 Section.propTypes = {
+  sectionId: PropTypes.string.isRequired,
   type: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   content1: PropTypes.string,

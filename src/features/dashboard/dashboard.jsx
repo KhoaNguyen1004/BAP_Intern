@@ -41,7 +41,6 @@ function Dashboard() {
   const { templates, chosen, status, error } = useAppSelector(
     state => state.templates
   );
-  // const [cloneTemplate, setCloneTemplate] = useState(true); // Default to cloneTemplate
 
   const fetchTemplates = () => {
     setIsLoading(true);
@@ -118,6 +117,7 @@ function Dashboard() {
         setIsDeleteTemplateModalOpen(false);
       });
   };
+
   const handleAddTemplate = templates => {
     setIsLoading(true);
     dispatch(addTemplate(templates))
@@ -132,13 +132,18 @@ function Dashboard() {
         console.log('response.template.id', response.id);
         fetchTemplates();
         setIsAddTemplateModalOpen(false);
-
         onFinishComplete(response.id);
       })
       .catch(err => {
         console.error('Error adding template:', err);
+        let errorMessage = 'Failed to add template!';
+
+        if (err.response && err.response.data && err.response.data.message) {
+          errorMessage = err.response.data.message;
+        }
+
         openNotification({
-          message: 'Failed to add template!',
+          message: errorMessage,
           type: 'error',
           title: 'Error'
         });
@@ -456,14 +461,19 @@ function Dashboard() {
                     Cancel
                   </Button>,
                   <Popconfirm
-                    title="Delete this template?"
+                    title="Delete selected templates?"
                     onConfirm={handlePopconfirmConfirm}
                     onCancel={() => setShowPopconfirm(false)}
                     okText="Yes"
                     cancelText="No"
                     key="confirm"
                   >
-                    <Button type="primary">Delete</Button>
+                    <Button
+                      type="primary"
+                      disabled={selectedTemplatesToDelete.length === 0}
+                    >
+                      Delete
+                    </Button>
                   </Popconfirm>
                 ]}
               >

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Layout, Modal, Input, Button, Card } from 'antd';
+import { Layout, Input, Button, Card } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import Popup from '../../components/Popup';
 
@@ -21,6 +21,7 @@ const Footer = ({ footer, onEdit, isEditable }) => {
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setNewContent(footer);
   };
 
   return (
@@ -74,7 +75,7 @@ const Footer = ({ footer, onEdit, isEditable }) => {
             padding: '15px'
           }}
         >
-          <h1 className="text-sm text-white m-0">{footer}</h1>
+          <h1 className="text-sm text-white m-0">{newContent}</h1>
         </Card>
       </Popup>
     </AntdFooter>

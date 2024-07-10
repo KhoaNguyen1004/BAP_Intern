@@ -49,7 +49,7 @@ const ConfigPage = () => {
       type: 1
     };
     setIsLoading(true);
-    dispatch(addSection(newSection))
+    dispatch(addSection({ template: id, section: newSection }))
       .unwrap()
       .then(response => {
         setSections(prevSections => [...prevSections, response.section]);
@@ -120,16 +120,32 @@ const ConfigPage = () => {
   };
 
   const handleEditSection = (
-    id,
+    sectionId,
     newTitle,
     newContent1,
     newContent2,
     newType
   ) => {
     setIsLoading(true);
+    const templateId = id;
+    console.log('Template ID:', templateId);
+    console.log('Section ID:', sectionId);
+    console.log('Payload:', {
+      templateId,
+      sectionId,
+      section: {
+        title: newTitle,
+        content1: newContent1,
+        content2: newContent2,
+        type: newType
+      }
+    });
+    console.log('Editing section with ID:', section.section_id);
+
     dispatch(
       editSection({
-        id,
+        templateId,
+        sectionId,
         section: {
           title: newTitle,
           content1: newContent1,
@@ -142,7 +158,7 @@ const ConfigPage = () => {
       .then(() => {
         setSections(prevSections =>
           prevSections.map(section =>
-            section.section_id === id
+            section.section_id === sectionId
               ? {
                   ...section,
                   title: newTitle,
@@ -172,17 +188,6 @@ const ConfigPage = () => {
         setIsLoading(false);
       });
   };
-
-  // const handleEditHeader = (newLogo, newTitle) => {
-  //   setHeaderTitle(newTitle);
-  //   setHeaderLogo(newLogo);
-  //   setIsModalVisible(false);
-  // };
-
-  // const handleEditFooter = newContent => {
-  //   setFooterContent(newContent);
-  //   setIsModalVisible(false);
-  // };
 
   const handleEditHeader = (newLogo, newTitle) => {
     setIsLoading(true);
@@ -265,17 +270,14 @@ const ConfigPage = () => {
         {sections.map(section => (
           <Section
             key={section.section_id}
+            sectionId={section.section_id}
             type={Number(section.type)}
             title={section.title}
             content1={section.content1}
             content2={section.content2}
             onDelete={() => {
               console.log('Deleting section with id:', section.id);
-              console.log(
-                'Deleting section with section.section_id:',
-                section.section_id
-              );
-              confirmDeleteSection(section.section_id);
+              confirmDeleteSection(section.id);
             }}
             onEdit={(newTitle, newContent1, newContent2, newType) =>
               handleEditSection(
