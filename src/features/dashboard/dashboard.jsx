@@ -389,20 +389,22 @@ function Dashboard() {
                         {status === 'succeeded' &&
                           templates?.map(item => (
                             <div
-                              className="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 mb-4"
+                              className="w-full sm:w-1/2 lg:w-1/2 xl:w-1/2 mb-4"
                               key={item.id}
                             >
-                              <Card className="shadow-sm rounded-md border border-gray-200 p-5">
-                                <Radio.Group
-                                  value={selectedTemplateId}
-                                  onChange={handleTemplateIdChange}
-                                  className="w-full flex items-center"
-                                >
-                                  <Radio className="w-full" value={item.id}>
-                                    {item.name}
-                                  </Radio>
-                                </Radio.Group>
-                              </Card>
+                              <div className="mx-2">
+                                <Card className="shadow-sm rounded-md border border-gray-200 p-5">
+                                  <Radio.Group
+                                    value={selectedTemplateId}
+                                    onChange={handleTemplateIdChange}
+                                    className="w-full flex items-center"
+                                  >
+                                    <Radio className="w-full" value={item.id}>
+                                      {item.name}
+                                    </Radio>
+                                  </Radio.Group>
+                                </Card>
+                              </div>
                             </div>
                           ))}
                       </div>
@@ -422,26 +424,28 @@ function Dashboard() {
                   <div className="flex flex-wrap -mx-2">
                     {templates?.map(item => (
                       <div className="w-full sm:w-1/2" key={item.id}>
-                        <List
-                          itemLayout="horizontal"
-                          dataSource={[item]}
-                          bordered
-                          renderItem={item => (
-                            <List.Item
-                              actions={[
-                                <Button
-                                  key="setting"
-                                  type="text"
-                                  icon={<SettingOutlined />}
-                                  onClick={() => handleSettingClick(item.id)}
-                                  className="text-primary-dominant"
-                                />
-                              ]}
-                            >
-                              <p>{item.name}</p>
-                            </List.Item>
-                          )}
-                        />
+                        <div className="m-2">
+                          <List
+                            itemLayout="horizontal"
+                            dataSource={[item]}
+                            bordered
+                            renderItem={item => (
+                              <List.Item
+                                actions={[
+                                  <Button
+                                    key="setting"
+                                    type="text"
+                                    icon={<SettingOutlined />}
+                                    onClick={() => handleSettingClick(item.id)}
+                                    className="text-primary-dominant"
+                                  />
+                                ]}
+                              >
+                                <p>{item.name}</p>
+                              </List.Item>
+                            )}
+                          />
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -480,16 +484,18 @@ function Dashboard() {
                 <div className="flex flex-wrap space-y-0">
                   {templates?.map(item => (
                     <div className="w-full sm:w-1/2 mt-0" key={item.id}>
-                      <Card className="shadow-sm rounded-md border border-gray-200">
-                        <Checkbox
-                          value={item.id}
-                          onChange={handleTemplateDelete}
-                          disabled={item.id === chosen}
-                          className="w-full flex items-center"
-                        >
-                          {item.name}
-                        </Checkbox>
-                      </Card>
+                      <div className="m-2">
+                        <Card className="shadow-sm rounded-md border border-gray-200">
+                          <Checkbox
+                            value={item.id}
+                            onChange={handleTemplateDelete}
+                            disabled={item.id === chosen}
+                            className="w-full flex items-center"
+                          >
+                            {item.name}
+                          </Checkbox>
+                        </Card>
+                      </div>
                     </div>
                   ))}
                 </div>
