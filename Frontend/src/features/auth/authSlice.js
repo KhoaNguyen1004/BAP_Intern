@@ -8,7 +8,7 @@ const user = tokenService.getUser();
 const initialState = user
   ? {
       isLoggedIn: true,
-      user: user,
+      user,
       error: ''
     }
   : {
