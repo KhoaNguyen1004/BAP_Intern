@@ -187,7 +187,7 @@ const ConfigPage = () => {
       });
   };
 
-  const handleEditHeader = newTitle => {
+  const handleEditHeader = (newTitle) => {
     setIsLoading(true);
     dispatch(
       editHeader({

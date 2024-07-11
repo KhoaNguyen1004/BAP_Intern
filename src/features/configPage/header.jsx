@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Layout, Button, Input, Card } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Popup from '../../components/Popup';
 
 const { Header: AntdHeader } = Layout;
 
 const Header = ({ title, onEdit, isEditable }) => {
+  const { id } = useParams();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
   const [uploadedImages, setUploadedImages] = useState('');
-  const [chosenId, setChosenId] = useState('');
-  const [id, setId] = useState(1);
+  const [, setChosenId] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
@@ -37,10 +38,6 @@ const Header = ({ title, onEdit, isEditable }) => {
     setIsModalVisible(false);
     setNewTitle(title);
     setSelectedFile(null);
-  };
-
-  const onIDChange = event => {
-    setId(event.target.value);
   };
 
   const onFileChange = event => {
@@ -142,15 +139,7 @@ const Header = ({ title, onEdit, isEditable }) => {
         text="Save"
       >
         <div>
-          <input
-            type="number"
-            onChange={onIDChange}
-            value={id}
-            placeholder="Enter Template ID"
-          />
-          <br />
           <input type="file" onChange={onFileChange} />
-          <p>Template ID = {chosenId}</p>
         </div>
         <Input
           placeholder="Title"
@@ -202,6 +191,7 @@ const Header = ({ title, onEdit, isEditable }) => {
 };
 
 Header.propTypes = {
+  logo: PropTypes.string,
   title: PropTypes.string,
   onEdit: PropTypes.func.isRequired,
   isEditable: PropTypes.bool
