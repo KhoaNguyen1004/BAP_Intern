@@ -8,7 +8,7 @@ import Popup from '../../components/Popup';
 
 const { Header: AntdHeader } = Layout;
 
-const Header = ({ title, onEdit, isEditable }) => {
+const Header = ({ title, onEdit, isEditable, ava_path }) => {
   const { id } = useParams();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
@@ -23,6 +23,10 @@ const Header = ({ title, onEdit, isEditable }) => {
   useEffect(() => {
     fetchImages();
   }, [id]);
+
+  useEffect(() => {
+    setUploadedImages(ava_path);  
+  }, [ava_path]);
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -194,7 +198,8 @@ Header.propTypes = {
   logo: PropTypes.string,
   title: PropTypes.string,
   onEdit: PropTypes.func.isRequired,
-  isEditable: PropTypes.bool
+  isEditable: PropTypes.bool,
+  ava_path: PropTypes.string  
 };
 
 Header.defaultProps = {

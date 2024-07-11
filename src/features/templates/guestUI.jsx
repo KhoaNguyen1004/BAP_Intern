@@ -41,6 +41,7 @@ const GuestUI = () => {
         <Header
           logo={template.logo}
           title={template.title}
+          ava_path={template.ava_path} 
           isEditable={false}
         />
       </div>
