@@ -187,13 +187,12 @@ const ConfigPage = () => {
       });
   };
 
-  const handleEditHeader = (newLogo, newTitle) => {
+  const handleEditHeader = newTitle => {
     setIsLoading(true);
     dispatch(
       editHeader({
         id,
         header: {
-          logo: newLogo,
           title: newTitle
         }
       })
@@ -206,7 +205,6 @@ const ConfigPage = () => {
           title: 'Success'
         });
         setHeaderTitle(newTitle);
-        setHeaderLogo(newLogo);
         fetchSections();
       })
       .catch(error => {
