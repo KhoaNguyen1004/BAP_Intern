@@ -48,6 +48,7 @@ function Dashboard() {
       .unwrap()
       .then(response => {
         console.log('Fetched templates:', response);
+        console.log('response.chosen:', response.chosen);
         setSelectedTemplate(response.chosen);
       })
       .catch(err => {
@@ -94,11 +95,13 @@ function Dashboard() {
     dispatch(deleteTemplate(selectedTemplatesToDelete))
       .unwrap()
       .then(response => {
+        // Hiện ra return của hàm deleteTemplate trong openNotification
         openNotification({
-          message: `Deleted ${response.deleted} templates!`,
+          message: 'Template deleted successfully!',
           type: 'success',
           title: 'Success'
         });
+        
         console.log('Template deleted:', response);
         fetchTemplates();
       })
@@ -456,50 +459,49 @@ function Dashboard() {
                 </Button>
               </div>
               <Popup
-                title="Delete Template"
-                isOpen={isDeleteTemplateModalOpen}
-                onOk={handleConfirmDelete}
-                onCancel={handleCancel}
-                footer={[
-                  <Button key="back" onClick={handleCancel}>
-                    Cancel
-                  </Button>,
-                  <Popconfirm
-                    title="Delete selected templates?"
-                    onConfirm={handlePopconfirmConfirm}
-                    onCancel={() => setShowPopconfirm(false)}
-                    okText="Yes"
-                    cancelText="No"
-                    key="confirm"
-                  >
-                    <Button
-                      type="primary"
-                      disabled={selectedTemplatesToDelete.length === 0}
-                    >
-                      Delete
-                    </Button>
-                  </Popconfirm>
-                ]}
-              >
-                <div className="flex flex-wrap space-y-0">
-                  {templates?.map(item => (
-                    <div className="w-full sm:w-1/2 mt-0" key={item.id}>
-                      <div className="m-2">
-                        <Card className="shadow-sm rounded-md border border-gray-200">
-                          <Checkbox
-                            value={item.id}
-                            onChange={handleTemplateDelete}
-                            disabled={item.id === chosen}
-                            className="w-full flex items-center"
-                          >
-                            {item.name}
-                          </Checkbox>
-                        </Card>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </Popup>
+  title="Delete Template"
+  isOpen={isDeleteTemplateModalOpen}
+  onOk={handleConfirmDelete}
+  onCancel={handleCancel}
+  footer={[
+    <Button key="back" onClick={handleCancel}>
+      Cancel
+    </Button>,
+    <Popconfirm
+      title="Delete selected templates?"
+      onConfirm={handlePopconfirmConfirm}
+      onCancel={() => setShowPopconfirm(false)}
+      okText="Yes"
+      cancelText="No"
+      key="confirm"
+    >
+      <Button
+        type="primary"
+        disabled={selectedTemplatesToDelete.length === 0}
+      >
+        Delete
+      </Button>
+    </Popconfirm>
+  ]}
+>
+  <div className="flex flex-wrap space-y-2">
+    {status === 'loading' && setIsLoading(true)}
+    {status === 'failed' && <p>{error}</p>}
+    {status === 'succeeded' &&
+      templates?.map(item => (
+        <div className="w-1/2 sm:w-1/2" key={item.id}>
+          <Checkbox
+            value={item.id}
+            onChange={handleTemplateDelete}
+            disabled={item.id === chosen}
+          >
+            {item.name}
+          </Checkbox>
+        </div>
+      ))}
+  </div>
+</Popup>
+
             </div>
           </div>
         </Content>

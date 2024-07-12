@@ -4,7 +4,7 @@ import { http } from './http';
 class AuthService {
   async login(username, password) {
     try {
-      const response = await http.post('/loginProcessing', {
+      const response = await http.post('/login', {
         username,
         password
       });

@@ -56,8 +56,8 @@ module.exports = {
   },
   variants: {
     extend: {
-      backgroundColor: ['hover', 'focus'],
-    },
+      backgroundColor: ['hover', 'focus']
+    }
   },
   plugins: [],
   corePlugins: {
