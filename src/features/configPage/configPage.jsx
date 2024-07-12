@@ -128,7 +128,6 @@ const ConfigPage = () => {
   ) => {
     console.log('handleEditSection called with:', {
       sectionId,
-console.log('handleEditSection called with:', {
       sectionId,
       newTitle,
       newContent1,
