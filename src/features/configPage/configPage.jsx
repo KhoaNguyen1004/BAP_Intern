@@ -21,6 +21,7 @@ const ConfigPage = () => {
   const [modalContent, setModalContent] = useState(null);
   const [sectionToDelete, setSectionToDelete] = useState(null);
   const [headerTitle, setHeaderTitle] = useState('');
+  const [headerAva, setHeaderAva] = useState('');
   const [headerLogo, setHeaderLogo] = useState('');
   const [footerContent, setFooterContent] = useState('');
   const { openNotification } = useContext(NotificationContext);
@@ -34,10 +35,11 @@ const ConfigPage = () => {
       .unwrap()
       .then(response => {
         setTemplateData(response);
-        setSections(response.data.section);
-        setHeaderTitle(response.data.title);
-        setHeaderLogo(response.data.logo);
-        setFooterContent(response.data.footer);
+        setSections(response.section);
+        setHeaderTitle(response.title);
+        setHeaderAva(response.ava_path);
+        setHeaderLogo(response.logo);
+        setFooterContent(response.footer);
       })
       .catch(error => {
         console.error('Failed to fetch sections:', error);
@@ -262,6 +264,7 @@ const ConfigPage = () => {
         logo={templateData.logo || headerLogo}
         title={templateData.title || headerTitle}
         onEdit={handleEditHeader}
+        ava_path={templateData.ava_path || headerAva}
       />
       <div className="flex-1 mb-20 px-4">
         {sections.map(section => (

@@ -166,9 +166,9 @@ function Dashboard() {
         });
         fetchTemplates();
         setIsAddTemplateModalOpen(false);
-        onFinishComplete(response.template.id);
+        onFinishComplete(response.template.data.id);
         console.log('Template cloned:', response);
-        console.log('response.template.original.id', response.template.id);
+        console.log('response.template.original.id', response.template.data.id);
       })
       .catch(err => {
         console.error('Error cloning template:', err);

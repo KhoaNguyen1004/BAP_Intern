@@ -13,7 +13,6 @@ const Header = ({ title, onEdit, isEditable, ava_path }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
   const [uploadedImages, setUploadedImages] = useState('');
-  const [, setChosenId] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
@@ -79,9 +78,7 @@ const Header = ({ title, onEdit, isEditable, ava_path }) => {
       const response = await axios.get(
         `http://127.0.0.1:8000/api/templates/${id}`
       );
-      setUploadedImages(response.data.ava_path);
-      setChosenId(response.data.id);
-      console.log(response.data.ava_path);
+      setUploadedImages(response.data.data.ava_path);
     } catch (error) {
       console.error('There was an error fetching the images!', error);
     }

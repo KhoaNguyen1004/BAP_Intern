@@ -69,7 +69,7 @@ export const authSlice = createSlice({
         state.isLoggedIn = true;
         state.user = payload;
         state.error = '';
-        tokenService.setUser(payload);
+        tokenService.setUser(payload.data);
       })
       .addCase(loginAsync.rejected, (state, { payload }) => {
         state.isLoggedIn = false;

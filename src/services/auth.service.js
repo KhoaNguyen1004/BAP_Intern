@@ -9,7 +9,7 @@ class AuthService {
         password
       });
       if (response.data.status === 'success') {
-        TokenService.setUser(response.data);
+        TokenService.setUser(response.data.data);
         return response.data;
       } else {
         throw new Error(response.data.message);

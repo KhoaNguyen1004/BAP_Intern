@@ -67,7 +67,7 @@ export const deleteTemplate = createAsyncThunk(
       console.log('response.data:', response.data);
       console.log('response.data.template_ids:', template_ids);
       console.log('response.data.message:', response.data.message);
-      return response.data.data;
+      return response.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to delete template'
