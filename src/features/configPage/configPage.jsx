@@ -126,33 +126,32 @@ const ConfigPage = () => {
     newContent2,
     newType
   ) => {
+    console.log('handleEditSection called with:', {
+      sectionId,
+console.log('handleEditSection called with:', {
+      sectionId,
+      newTitle,
+      newContent1,
+      newContent2,
+      newType
+    });
+
+    const payload = {
+      title: newTitle,
+      content1: newContent1,
+      content2: newContent2,
+      type: Number(newType)
+    };
+    console.log('Payload before dispatch:', payload);
+
     setIsLoading(true);
     const templateId = id;
-    console.log('Template ID:', templateId);
-    console.log('Section ID:', sectionId);
-    console.log('Payload:', {
-      templateId,
-      sectionId,
-      section: {
-        
-        type: newType,
-        title: newTitle,
-        content1: newContent1,
-        content2: newContent2
-      }
-    });
-    console.log('Editing section with ID:', sectionId);
 
     dispatch(
       editSection({
         templateId,
         sectionId,
-        section: {
-          title: newTitle,
-          content1: newContent1,
-          content2: newContent2,
-          type: newType
-        }
+        section: payload
       })
     )
       .unwrap()
@@ -190,13 +189,12 @@ const ConfigPage = () => {
       });
   };
 
-  const handleEditHeader = (newLogo, newTitle) => {
+  const handleEditHeader = (newTitle) => {
     setIsLoading(true);
     dispatch(
       editHeader({
         id,
         header: {
-          logo: newLogo,
           title: newTitle
         }
       })
@@ -209,7 +207,6 @@ const ConfigPage = () => {
           title: 'Success'
         });
         setHeaderTitle(newTitle);
-        setHeaderLogo(newLogo);
         fetchSections();
       })
       .catch(error => {
@@ -270,7 +267,7 @@ const ConfigPage = () => {
       <div className="flex-1 mb-20 px-4">
         {sections.map(section => (
           <Section
-            key={section.id}
+key={section.section_id}
             sectionId={section.id}
             type={Number(section.type)}
             title={section.title}
@@ -280,7 +277,7 @@ const ConfigPage = () => {
               console.log('Deleting section with id:', section.id);
               confirmDeleteSection(section.id);
             }}
-            onEdit={(newTitle, newContent1, newContent2, newType) =>
+onEdit={(newTitle, newContent1, newContent2, newType) =>
               handleEditSection(
                 section.id,
                 newTitle,

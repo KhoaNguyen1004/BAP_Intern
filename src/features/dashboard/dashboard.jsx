@@ -279,30 +279,30 @@ function Dashboard() {
           </div>
         </Header>
 
-        <Content className="bg-transparent rounded-lg mb-4 mx-10 mt-[92px] ">
-          <div className="flex">
-            <div className="bg-white rounded-lg p-4 shadow-md flex-1">
-              <p className="text-lg font-semibold items-start m-[4]">
-                Template
-              </p>
-              <div className="flex flex-wrap">
+        <Content className="bg-transparent rounded-lg mb-4 mx-4 md:mx-10 mt-[92px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
+            {/* Template */}
+            <div className="bg-white rounded-lg p-4 shadow-md">
+              <h2 className="text-lg font-semibold mb-4">Template</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {status === 'loading' && setIsLoading(true)}
                 {status === 'failed' && <p>{error}</p>}
                 {status === 'succeeded' &&
                   templates?.map(item => (
-                    <div className="w-1/2 sm:w-1/2 p-2" key={item.id}>
-                      <Card className="shadow-sm rounded-md border border-gray-200 p-2">
-                        <Radio.Group
-                          value={selectedTemplate}
-                          onChange={handleTemplateChange}
-                          className="w-full flex items-center"
-                        >
-                          <Radio className="w-full" value={item.id}>
-                            {item.name}
-                          </Radio>
-                        </Radio.Group>
-                      </Card>
-                    </div>
+                    <Card
+                      key={item.id}
+                      className="shadow-sm rounded-md border border-gray-200 mb-2"
+                    >
+                      <Radio.Group
+                        value={selectedTemplate}
+                        onChange={handleTemplateChange}
+                        className="w-full flex items-center"
+                      >
+                        <Radio className="w-full" value={item.id}>
+                          {item.name}
+                        </Radio>
+                      </Radio.Group>
+                    </Card>
                   ))}
               </div>
               <div className="w-full flex justify-end mt-4">
@@ -315,10 +315,11 @@ function Dashboard() {
                 </Button>
               </div>
             </div>
-
+            {/* Config */}
             <div className="bg-white rounded-lg p-4 ml-4 shadow-md flex-1 h-[280px]">
-              <p className="text-lg font-semibold items-start m-[4]">Config</p>
-
+              <h2 className="text-lg font-semibold items-start m-[4]">
+                Config
+              </h2>
               <div className="flex flex-col space-y-4 justify-between items-center w-2/4 mx-auto">
                 <Button
                   type="primary"
@@ -351,9 +352,6 @@ function Dashboard() {
                     id="addConfigForm"
                     initialValues={{
                       configValue: 'Clone Template'
-                      // header: true,
-                      // section: true,
-                      // footer: true
                     }}
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
@@ -393,19 +391,23 @@ function Dashboard() {
                         {status === 'failed' && <p>{error}</p>}
                         {status === 'succeeded' &&
                           templates?.map(item => (
-                            <div className="w-1/2 sm:w-1/2" key={item.id}>
-                              <Card className="shadow-sm rounded-md border border-gray-200 p-2">
-                                <Radio.Group
-                                  value={selectedTemplateId}
-                                  // name="templateId"
-                                  onChange={handleTemplateIdChange}
-                                  className="w-full flex items-center"
-                                >
-                                  <Radio className="w-full" value={item.id}>
-                                    {item.name}
-                                  </Radio>
-                                </Radio.Group>
-                              </Card>
+                            <div
+                              className="w-full sm:w-1/2 lg:w-1/2 xl:w-1/2 mb-4"
+                              key={item.id}
+                            >
+                              <div className="mx-2">
+                                <Card className="shadow-sm rounded-md border border-gray-200 p-5">
+                                  <Radio.Group
+                                    value={selectedTemplateId}
+                                    onChange={handleTemplateIdChange}
+                                    className="w-full flex items-center"
+                                  >
+                                    <Radio className="w-full" value={item.id}>
+                                      {item.name}
+                                    </Radio>
+                                  </Radio.Group>
+                                </Card>
+                              </div>
                             </div>
                           ))}
                       </div>
@@ -425,26 +427,28 @@ function Dashboard() {
                   <div className="flex flex-wrap -mx-2">
                     {templates?.map(item => (
                       <div className="w-full sm:w-1/2" key={item.id}>
-                        <List
-                          itemLayout="horizontal"
-                          dataSource={[item]}
-                          bordered
-                          renderItem={item => (
-                            <List.Item
-                              actions={[
-                                <Button
-                                  key="setting"
-                                  type="text"
-                                  icon={<SettingOutlined />}
-                                  onClick={() => handleSettingClick(item.id)}
-                                  className="text-primary-dominant"
-                                />
-                              ]}
-                            >
-                              <p>{item.name}</p>
-                            </List.Item>
-                          )}
-                        />
+                        <div className="m-2">
+                          <List
+                            itemLayout="horizontal"
+                            dataSource={[item]}
+                            bordered
+                            renderItem={item => (
+                              <List.Item
+                                actions={[
+                                  <Button
+                                    key="setting"
+                                    type="text"
+                                    icon={<SettingOutlined />}
+                                    onClick={() => handleSettingClick(item.id)}
+                                    className="text-primary-dominant"
+                                  />
+                                ]}
+                              >
+                                <p>{item.name}</p>
+                              </List.Item>
+                            )}
+                          />
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -455,47 +459,49 @@ function Dashboard() {
                 </Button>
               </div>
               <Popup
-                title="Delete Template"
-                isOpen={isDeleteTemplateModalOpen}
-                onOk={handleConfirmDelete}
-                onCancel={handleCancel}
-                footer={[
-                  <Button key="back" onClick={handleCancel}>
-                    Cancel
-                  </Button>,
-                  <Popconfirm
-                    title="Delete selected templates?"
-                    onConfirm={handlePopconfirmConfirm}
-                    onCancel={() => setShowPopconfirm(false)}
-                    okText="Yes"
-                    cancelText="No"
-                    key="confirm"
-                  >
-                    <Button
-                      type="primary"
-                      disabled={selectedTemplatesToDelete.length === 0}
-                    >
-                      Delete
-                    </Button>
-                  </Popconfirm>
-                ]}
-              >
-                <div className="flex flex-wrap space-y-2">
-                  {status === 'loading' && setIsLoading(true)}
-                  {status === 'failed' && <p>{error}</p>}
-                  {status === 'succeeded' &&
-                    templates?.map(item => (
-                      <div className="w-1/2 sm:w-1/2" key={item.id}>
-                        <Checkbox
-                          value={item.id}
-                          onChange={handleTemplateDelete}
-                        >
-                          {item.name}
-                        </Checkbox>
-                      </div>
-                    ))}
-                </div>
-              </Popup>
+  title="Delete Template"
+  isOpen={isDeleteTemplateModalOpen}
+  onOk={handleConfirmDelete}
+  onCancel={handleCancel}
+  footer={[
+    <Button key="back" onClick={handleCancel}>
+      Cancel
+    </Button>,
+    <Popconfirm
+      title="Delete selected templates?"
+      onConfirm={handlePopconfirmConfirm}
+      onCancel={() => setShowPopconfirm(false)}
+      okText="Yes"
+      cancelText="No"
+      key="confirm"
+    >
+      <Button
+        type="primary"
+        disabled={selectedTemplatesToDelete.length === 0}
+      >
+        Delete
+      </Button>
+    </Popconfirm>
+  ]}
+>
+  <div className="flex flex-wrap space-y-2">
+    {status === 'loading' && setIsLoading(true)}
+    {status === 'failed' && <p>{error}</p>}
+    {status === 'succeeded' &&
+      templates?.map(item => (
+        <div className="w-1/2 sm:w-1/2" key={item.id}>
+          <Checkbox
+            value={item.id}
+            onChange={handleTemplateDelete}
+            disabled={item.id === chosen}
+          >
+            {item.name}
+          </Checkbox>
+        </div>
+      ))}
+  </div>
+</Popup>
+
             </div>
           </div>
         </Content>

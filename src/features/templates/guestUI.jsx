@@ -41,6 +41,7 @@ const GuestUI = () => {
         <Header
           logo={template.logo}
           title={template.title}
+          ava_path={template.ava_path} 
           isEditable={false}
         />
       </div>
@@ -57,7 +58,7 @@ const GuestUI = () => {
         ))}
       </div>
       <div className="footer-wrapper">
-        <Footer content={template.footer} isEditable={false} />
+        <Footer footer={template.footer} isEditable={false} />
       </div>
     </div>
   );

@@ -2,33 +2,89 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Layout, Button, Input, Card } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 import Popup from '../../components/Popup';
 
 const { Header: AntdHeader } = Layout;
 
-const Header = ({ logo, title, onEdit, isEditable }) => {
+const Header = ({ title, onEdit, isEditable, ava_path }) => {
+  const { id } = useParams();
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [newLogo, setNewLogo] = useState(logo);
   const [newTitle, setNewTitle] = useState(title);
+  const [uploadedImages, setUploadedImages] = useState('');
+  const [, setChosenId] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
-    setNewLogo(logo);
     setNewTitle(title);
-  }, [logo, title]);
+  }, [title]);
+
+  useEffect(() => {
+    fetchImages();
+  }, [id]);
+
+  useEffect(() => {
+    setUploadedImages(ava_path);  
+  }, [ava_path]);
 
   const showModal = () => {
     setIsModalVisible(true);
   };
 
   const handleOk = () => {
-    onEdit(newLogo, newTitle);
+    onFileUpload();
+    onEdit(newTitle);
     setIsModalVisible(false);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
-    setNewLogo(logo);
     setNewTitle(title);
+    setSelectedFile(null);
+  };
+
+  const onFileChange = event => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  const onFileUpload = async () => {
+    if (!selectedFile) {
+      console.error('Please select a file to upload.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', selectedFile);
+
+    try {
+      const response = await axios.post(
+        `http://127.0.0.1:8000/api/${id}/ava`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+      console.log(response.data);
+      fetchImages();
+    } catch (error) {
+      console.error('There was an error uploading the image!', error);
+    }
+  };
+
+  const fetchImages = async () => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/api/template/${id}`
+      );
+      setUploadedImages(response.data.ava_path);
+      setChosenId(response.data.id);
+      console.log(response.data.ava_path);
+    } catch (error) {
+      console.error('There was an error fetching the images!', error);
+    }
   };
 
   return (
@@ -47,8 +103,20 @@ const Header = ({ logo, title, onEdit, isEditable }) => {
         height: '64px'
       }}
     >
-      <div className="bg-white rounded-full p-2 ml-4 sm:ml-10">
-        <p className="text-2xl text-black m-0">{logo}</p>
+      <div className="rounded-full ml-4 sm:ml-10 mt-6">
+        {uploadedImages && (
+          <img
+            key={uploadedImages}
+            src={`http://127.0.0.1:8000${uploadedImages}`}
+            alt={`Uploaded ${uploadedImages}`}
+            style={{
+              height: '50px',
+              width: '50px',
+              borderRadius: '50px',
+              top: '5%'
+            }}
+          />
+        )}
       </div>
       <div className="flex-1 text-center pr-20">
         <h1 className="text-2xl text-black bg-white p-2 rounded">{title}</h1>
@@ -74,12 +142,9 @@ const Header = ({ logo, title, onEdit, isEditable }) => {
         onCancel={handleCancel}
         text="Save"
       >
-        <Input
-          placeholder="Logo"
-          value={newLogo}
-          onChange={e => setNewLogo(e.target.value)}
-          className="mb-4"
-        />
+        <div>
+          <input type="file" onChange={onFileChange} />
+        </div>
         <Input
           placeholder="Title"
           value={newTitle}
@@ -88,9 +153,35 @@ const Header = ({ logo, title, onEdit, isEditable }) => {
         />
         <Card className="bg-slate-500 mt-4 rounded p-4">
           <div className="w-full flex items-center gap-4 sm:gap-20">
-            <div className="bg-white rounded-full p-2 ml-4">
-              <p className="text-2xl text-black m-0">{newLogo}</p>
-            </div>
+            {selectedFile ? (
+              <div>
+                <img
+                  src={URL.createObjectURL(selectedFile)}
+                  alt={`Selected ${selectedFile.name}`}
+                  style={{
+                    height: '50px',
+                    width: '50px',
+                    borderRadius: '50px'
+                  }}
+                />
+              </div>
+            ) : uploadedImages ? (
+              <div>
+                <img
+                  src={`http://127.0.0.1:8000${uploadedImages}`}
+                  alt={`Uploaded ${uploadedImages}`}
+                  style={{
+                    height: '50px',
+                    width: '50px',
+                    borderRadius: '50px'
+                  }}
+                />
+              </div>
+            ) : (
+              <div>
+                <p>No image selected or uploaded.</p>
+              </div>
+            )}
             <div className="flex-1 text-center">
               <h1 className="text-2xl text-black bg-white p-2 rounded">
                 {newTitle}
@@ -105,9 +196,10 @@ const Header = ({ logo, title, onEdit, isEditable }) => {
 
 Header.propTypes = {
   logo: PropTypes.string,
-  title: PropTypes.string.isRequired,
-  onEdit: PropTypes.func,
-  isEditable: PropTypes.bool
+  title: PropTypes.string,
+  onEdit: PropTypes.func.isRequired,
+  isEditable: PropTypes.bool,
+  ava_path: PropTypes.string  
 };
 
 Header.defaultProps = {
