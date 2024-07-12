@@ -11,15 +11,15 @@ const GuestUI = () => {
   useEffect(() => {
     templateService
       .getTemplate()
-      .then(data => {
-        console.log('API data: ', data);
-        if (data && data.section) {
-          const updatedSections = data.section.map(sec => ({
+      .then(response => {
+        console.log('API data: ', response.data);
+        if (response && response.data.section) {
+          const updatedSections = response.data.section.map(sec => ({
             ...sec,
             type: Number(sec.type)
           }));
           console.log('Updated Sections: ', updatedSections);
-          setTemplate({ ...data, section: updatedSections });
+          setTemplate({ ...response.data, section: updatedSections });
         } else {
           setError('Invalid template data');
         }
@@ -41,7 +41,7 @@ const GuestUI = () => {
         <Header
           logo={template.logo}
           title={template.title}
-          ava_path={template.ava_path} 
+          ava_path={template.ava_path}
           isEditable={false}
         />
       </div>
