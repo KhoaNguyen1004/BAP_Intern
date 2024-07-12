@@ -30,10 +30,10 @@ export const addTemplate = createAsyncThunk(
     try {
       const response = await http.post('/templates', template);
       console.log('response.data:', response.data);
-      console.log('response.data.template:', response.data.template);
+      console.log('response.data.template:', response.data.data.template);
       return {
-        templates: response.data.templates,
-        id: response.data.template.id
+        templates: response.data.data.templates,
+        id: response.data.data.template.id
       };
     } catch (error) {
       return rejectWithValue(
@@ -48,7 +48,7 @@ export const editTemplate = createAsyncThunk(
   async ({ id, template }, { rejectWithValue }) => {
     try {
       const response = await http.put(`/templates/${id}`, template);
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to edit template'
@@ -67,7 +67,7 @@ export const deleteTemplate = createAsyncThunk(
       console.log('response.data:', response.data);
       console.log('response.data.template_ids:', template_ids);
       console.log('response.data.message:', response.data.message);
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to delete template'
@@ -80,8 +80,8 @@ export const chooseTemplate = createAsyncThunk(
   'templates/chooseTemplate',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await http.put(`/templates/${id}`);
-      return response.data;
+      const response = await http.put(`/show/${id}`);
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to choose template'
@@ -95,7 +95,7 @@ export const getTemplate = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const response = await http.get(`/templates/${id}`);
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to get template'
@@ -110,7 +110,7 @@ export const cloneTemplate = createAsyncThunk(
     try {
       const response = await http.post(`/templates/${id}`, name);
       console.log('response.data:', response.data);
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to clone template'
@@ -124,7 +124,7 @@ export const editHeader = createAsyncThunk(
     try {
       const response = await http.put(`/templates/${id}/header`, header);
       console.log('response.data:', response.data);
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to edit header'
@@ -139,7 +139,7 @@ export const editFooter = createAsyncThunk(
     try {
       const response = await http.put(`/templates/${id}/footer`, footer);
       console.log('response.data:', response.data);
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to edit footer'

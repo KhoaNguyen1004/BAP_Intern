@@ -15,7 +15,7 @@ export const addSection = createAsyncThunk(
     try {
       const response = await http.post(`/${template_id}/sections`);
       console.log('response.data:', response.data);
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to add section'
@@ -28,13 +28,13 @@ export const editSection = createAsyncThunk(
   'section/editSection',
   async ({ templateId, sectionId, section }, { rejectWithValue }) => {
     try {
-onsole.log('Payload being sent to API:', section);
+      onsole.log('Payload being sent to API:', section);
       const response = await http.put(
-        `/${templateId}/section/${sectionId}`,
+        `/${templateId}/sections/${sectionId}`,
         section
       );
       console.log('response.data:', response.data);
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to edit section'
@@ -49,7 +49,7 @@ export const deleteSection = createAsyncThunk(
     try {
       const response = await http.delete(`/sections/${id}`);
       console.log('response.data:', response.data);
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to delete section'

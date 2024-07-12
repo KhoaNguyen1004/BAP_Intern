@@ -25,7 +25,7 @@ const Header = ({ title, onEdit, isEditable, ava_path }) => {
   }, [id]);
 
   useEffect(() => {
-    setUploadedImages(ava_path);  
+    setUploadedImages(ava_path);
   }, [ava_path]);
 
   const showModal = () => {
@@ -77,7 +77,7 @@ const Header = ({ title, onEdit, isEditable, ava_path }) => {
   const fetchImages = async () => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/template/${id}`
+        `http://127.0.0.1:8000/api/templates/${id}`
       );
       setUploadedImages(response.data.ava_path);
       setChosenId(response.data.id);
@@ -199,7 +199,7 @@ Header.propTypes = {
   title: PropTypes.string,
   onEdit: PropTypes.func.isRequired,
   isEditable: PropTypes.bool,
-  ava_path: PropTypes.string  
+  ava_path: PropTypes.string
 };
 
 Header.defaultProps = {

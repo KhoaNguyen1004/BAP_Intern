@@ -34,7 +34,7 @@ const useTemplateModals = (fetchTemplates, chosen) => {
     setIsAddTemplateModalOpen(false);
     setIsDeleteTemplateModalOpen(false);
     setIsConfigTemplateModalOpen(false);
-    fetchTemplates();
+    //fetchTemplates();
     setSelectedTemplatesToDelete([]);
   };
 
