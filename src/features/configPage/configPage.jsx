@@ -20,9 +20,9 @@ const ConfigPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [sectionToDelete, setSectionToDelete] = useState(null);
-  const [headerTitle, setHeaderTitle] = useState(templateData.title);
-  const [headerLogo, setHeaderLogo] = useState(templateData.logo);
-  const [footerContent, setFooterContent] = useState(templateData.footer);
+  const [headerTitle, setHeaderTitle] = useState('');
+  const [headerLogo, setHeaderLogo] = useState('');
+  const [footerContent, setFooterContent] = useState('');
   const { openNotification } = useContext(NotificationContext);
 
   useEffect(() => {
@@ -34,9 +34,10 @@ const ConfigPage = () => {
       .unwrap()
       .then(response => {
         setTemplateData(response);
-        setSections(response.section || []);
-        console.log('response:', response);
-        console.log('response.footer:', response.footer);
+        setSections(response.data.section);
+        setHeaderTitle(response.data.title);
+        setHeaderLogo(response.data.logo);
+        setFooterContent(response.data.footer);
       })
       .catch(error => {
         console.error('Failed to fetch sections:', error);
@@ -44,12 +45,11 @@ const ConfigPage = () => {
   };
 
   const handleAddSection = () => {
-    const newSection = {
-      template_id: id,
-      type: 1
-    };
+    const template_id = id;
     setIsLoading(true);
-    dispatch(addSection({ template: id, section: newSection }))
+    console.log('Adding new section:', template_id);
+    console.log('Template ID:', id);
+    dispatch(addSection(template_id))
       .unwrap()
       .then(response => {
         setSections(prevSections => [...prevSections, response.section]);
@@ -134,13 +134,14 @@ const ConfigPage = () => {
       templateId,
       sectionId,
       section: {
+        
+        type: newType,
         title: newTitle,
         content1: newContent1,
-        content2: newContent2,
-        type: newType
+        content2: newContent2
       }
     });
-    console.log('Editing section with ID:', section.section_id);
+    console.log('Editing section with ID:', sectionId);
 
     dispatch(
       editSection({
@@ -158,14 +159,14 @@ const ConfigPage = () => {
       .then(() => {
         setSections(prevSections =>
           prevSections.map(section =>
-            section.section_id === sectionId
+            section.id === sectionId
               ? {
-                  ...section,
-                  title: newTitle,
-                  content1: newContent1,
-                  content2: newContent2,
-                  type: newType
-                }
+                ...section,
+                title: newTitle,
+                content1: newContent1,
+                content2: newContent2,
+                type: newType
+              }
               : section
           )
         );
@@ -269,8 +270,8 @@ const ConfigPage = () => {
       <div className="flex-1 mb-20 px-4">
         {sections.map(section => (
           <Section
-            key={section.section_id}
-            sectionId={section.section_id}
+            key={section.id}
+            sectionId={section.id}
             type={Number(section.type)}
             title={section.title}
             content1={section.content1}
@@ -281,7 +282,7 @@ const ConfigPage = () => {
             }}
             onEdit={(newTitle, newContent1, newContent2, newType) =>
               handleEditSection(
-                section.section_id,
+                section.id,
                 newTitle,
                 newContent1,
                 newContent2,

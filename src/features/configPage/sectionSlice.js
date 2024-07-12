@@ -11,9 +11,9 @@ const initialState = {
 
 export const addSection = createAsyncThunk(
   'section/addSection',
-  async ({ template, section }, { rejectWithValue }) => {
+  async (template_id, { rejectWithValue }) => {
     try {
-      const response = await http.post(`/${template}/section`, section);
+      const response = await http.post(`/${template_id}/sections`);
       console.log('response.data:', response.data);
       return response.data;
     } catch (error) {
@@ -26,9 +26,9 @@ export const addSection = createAsyncThunk(
 
 export const editSection = createAsyncThunk(
   'section/editSection',
-  async ({ templateId, id, section }, { rejectWithValue }) => {
+  async ({ templateId, sectionId, section }, { rejectWithValue }) => {
     try {
-      const response = await http.put(`/${templateId}/section/${id}`, section);
+      const response = await http.put(`/${templateId}/section/${sectionId}`, section);
       console.log('response.data:', response.data);
       return response.data;
     } catch (error) {
@@ -43,9 +43,9 @@ export const deleteSection = createAsyncThunk(
   'section/deleteSection',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await http.delete(`/section/${id}`);
+      const response = await http.delete(`/sections/${id}`);
       console.log('response.data:', response.data);
-      return { id };
+      return response.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to delete section'
