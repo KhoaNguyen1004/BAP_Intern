@@ -1,11 +1,11 @@
 import { Navigate } from 'react-router-dom';
 import React from 'react';
+import propTypes from 'prop-types';
 import { useAppSelector } from '../store/hooks';
 import { selectAuth } from '../features/auth/authSlice';
 // import { history } from '../helpers/history';
-import propTypes from 'prop-types';
 
-const PrivateRoute = ({ children }) => {
+function PrivateRoute({ children }) {
   const { isLoggedIn } = useAppSelector(selectAuth);
 
   return isLoggedIn ? children : <Navigate to="/login" />;
@@ -15,7 +15,7 @@ const PrivateRoute = ({ children }) => {
   // }
 
   // return children;
-};
+}
 
 PrivateRoute.propTypes = {
   children: propTypes.node

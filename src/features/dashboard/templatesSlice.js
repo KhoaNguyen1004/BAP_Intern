@@ -59,15 +59,15 @@ export const editTemplate = createAsyncThunk(
 
 export const deleteTemplate = createAsyncThunk(
   'templates/deleteTemplate',
-  async (template_ids, { rejectWithValue }) => {
+  async (templateId, { rejectWithValue }) => {
     try {
       const response = await http.delete('templates', {
-        data: { template_ids }
+        data: { templateId }
       });
       console.log('response.data:', response.data);
-      console.log('response.data.template_ids:', template_ids);
+      console.log('response.data.templateId:', templateId);
       console.log('response.data.message:', response.data.message);
-      return response.data.data;
+      return response.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to delete template'
@@ -155,9 +155,9 @@ const templateSlice = createSlice({
       state.user = TokenService.getUser();
     }
   },
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder
-      .addCase(getAllTemplates.pending, state => {
+      .addCase(getAllTemplates.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(getAllTemplates.fulfilled, (state, { payload }) => {
@@ -175,16 +175,16 @@ const templateSlice = createSlice({
       })
       .addCase(editTemplate.fulfilled, (state, { payload }) => {
         const index = state.templates.findIndex(
-          template => template.id === payload.id
+          (template) => template.id === payload.id
         );
         if (index !== -1) {
           state.templates[index] = payload;
         }
       })
       .addCase(deleteTemplate.fulfilled, (state, action) => {
-        const { template_ids } = action.payload;
+        const { templateId } = action.payload;
         state.templates = state.templates.filter(
-          template => !template_ids.includes(template.id)
+          (template) => !templateId.includes(template.id)
         );
         state.status = 'succeeded';
       })
@@ -192,7 +192,7 @@ const templateSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload;
       })
-      .addCase(deleteTemplate.pending, state => {
+      .addCase(deleteTemplate.pending, (state) => {
         state.status = 'loading';
       })
 
@@ -204,7 +204,7 @@ const templateSlice = createSlice({
         state.templates = payload.templates;
         state.chosen = payload.chosen;
       })
-      .addCase(cloneTemplate.pending, state => {
+      .addCase(cloneTemplate.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(cloneTemplate.fulfilled, (state, { payload }) => {

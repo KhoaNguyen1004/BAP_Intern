@@ -33,7 +33,7 @@ export function Login() {
       .unwrap()
       .then(response => {
         console.log('Login successful, response:', response);
-        TokenService.setUser(response);
+        TokenService.setUser(response.data);
         navigate('/admin/dashboard');
       })
       .catch(error => {

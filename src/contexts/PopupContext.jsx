@@ -1,17 +1,17 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 const PopupContext = createContext();
 
-export const usePopup = () => {
+export function usePopup() {
   return useContext(PopupContext);
-};
+}
 
-export const PopupProvider = ({ children }) => {
+export function PopupProvider({ children }) {
   const [isOpen, setIsOpen] = useState(false);
   const [content, setContent] = useState(null);
 
-  const openPopup = content => {
+  const openPopup = (content) => {
     setContent(content);
     setIsOpen(true);
   };
@@ -21,13 +21,21 @@ export const PopupProvider = ({ children }) => {
     setIsOpen(false);
   };
 
-  return (
-    <PopupContext.Provider value={{ isOpen, openPopup, closePopup, content }}>
-      {children}
-    </PopupContext.Provider>
+  const value = useMemo(
+    () => ({
+      isOpen,
+      openPopup,
+      closePopup,
+      content
+    }),
+    [isOpen, content] // Dependencies for useMemo
   );
-};
+
+  return (
+    <PopupContext.Provider value={value}>{children}</PopupContext.Provider>
+  );
+}
 
 PopupProvider.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node.isRequired
 };

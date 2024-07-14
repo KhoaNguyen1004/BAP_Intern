@@ -1,8 +1,6 @@
-/* eslint-disable react/prop-types */
-
 import React, { useMemo } from 'react';
-import LoadingPage from '../components/Loading';
 import PropTypes from 'prop-types';
+import LoadingPage from '../components/Loading';
 
 const LoadingContext = React.createContext({
   isLoading: false,
@@ -10,7 +8,7 @@ const LoadingContext = React.createContext({
   // handleLoading: TODO
 });
 
-const LoadingProvider = ({ children }) => {
+function LoadingProvider({ children }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [configLoading, setConfigLoading] = React.useState({});
   const handleLoading = ({ config }) => {
@@ -27,7 +25,7 @@ const LoadingProvider = ({ children }) => {
       {isLoading && <LoadingPage {...configLoading} />}
     </LoadingContext.Provider>
   );
-};
+}
 
 LoadingProvider.prototype = {
   children: PropTypes.node

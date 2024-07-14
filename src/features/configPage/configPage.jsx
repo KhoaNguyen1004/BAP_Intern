@@ -4,14 +4,17 @@ import { Button, Modal, Input } from 'antd';
 import Header from './header';
 import Footer from './footer';
 import Section from './section';
-import { getTemplate } from '../dashboard/templatesSlice';
+import {
+  getTemplate,
+  editHeader,
+  editFooter
+} from '../dashboard/templatesSlice';
 import { addSection, deleteSection, editSection } from './sectionSlice';
-import { editHeader, editFooter } from '../dashboard/templatesSlice';
 import { useAppDispatch } from '../../store/hooks';
 import { LoadingContext } from '../../contexts/LoadingContext';
 import { NotificationContext } from '../../contexts/NotificationContext';
 
-const ConfigPage = () => {
+function ConfigPage() {
   const { id } = useParams();
   const dispatch = useAppDispatch();
   const [templateData, setTemplateData] = useState({});
@@ -21,6 +24,7 @@ const ConfigPage = () => {
   const [modalContent, setModalContent] = useState(null);
   const [sectionToDelete, setSectionToDelete] = useState(null);
   const [headerTitle, setHeaderTitle] = useState('');
+  const [headerAva, setHeaderAva] = useState('');
   const [headerLogo, setHeaderLogo] = useState('');
   const [footerContent, setFooterContent] = useState('');
   const { openNotification } = useContext(NotificationContext);
@@ -32,27 +36,28 @@ const ConfigPage = () => {
   const fetchSections = () => {
     dispatch(getTemplate(id))
       .unwrap()
-      .then(response => {
+      .then((response) => {
         setTemplateData(response);
-        setSections(response.data.section);
-        setHeaderTitle(response.data.title);
-        setHeaderLogo(response.data.logo);
-        setFooterContent(response.data.footer);
+        setSections(response.section);
+        setHeaderTitle(response.title);
+        setHeaderAva(response.ava_path);
+        setHeaderLogo(response.logo);
+        setFooterContent(response.footer);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Failed to fetch sections:', error);
       });
   };
 
   const handleAddSection = () => {
-    const template_id = id;
+    const templateId = id;
     setIsLoading(true);
-    console.log('Adding new section:', template_id);
+    console.log('Adding new section:', templateId);
     console.log('Template ID:', id);
-    dispatch(addSection(template_id))
+    dispatch(addSection(templateId))
       .unwrap()
-      .then(response => {
-        setSections(prevSections => [...prevSections, response.section]);
+      .then((response) => {
+        setSections((prevSections) => [...prevSections, response.section]);
         openNotification({
           message: 'Section added successfully',
           type: 'success',
@@ -60,7 +65,7 @@ const ConfigPage = () => {
         });
         fetchSections();
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Failed to add section:', error);
       })
       .finally(() => {
@@ -68,7 +73,7 @@ const ConfigPage = () => {
       });
   };
 
-  const confirmDeleteSection = sectionId => {
+  const confirmDeleteSection = (sectionId) => {
     console.log('Confirming delete for section with id:', sectionId);
     if (sections.length > 1) {
       setIsModalVisible(true);
@@ -89,8 +94,10 @@ const ConfigPage = () => {
     dispatch(deleteSection(sectionToDelete))
       .unwrap()
       .then(() => {
-        setSections(prevSections =>
-          prevSections.filter(section => section.section_id !== sectionToDelete)
+        setSections((prevSections) =>
+          prevSections.filter(
+            (section) => section.section_id !== sectionToDelete
+          )
         );
         openNotification({
           message: 'Section deleted successfully',
@@ -99,7 +106,7 @@ const ConfigPage = () => {
         });
         fetchSections();
       })
-      .catch(error => {
+      .catch((error) => {
         openNotification({
           message: 'Failed to delete section',
           type: 'error',
@@ -128,7 +135,6 @@ const ConfigPage = () => {
   ) => {
     console.log('handleEditSection called with:', {
       sectionId,
-      sectionId,
       newTitle,
       newContent1,
       newContent2,
@@ -155,16 +161,16 @@ const ConfigPage = () => {
     )
       .unwrap()
       .then(() => {
-        setSections(prevSections =>
-          prevSections.map(section =>
+        setSections((prevSections) =>
+          prevSections.map((section) =>
             section.id === sectionId
               ? {
-                ...section,
-                title: newTitle,
-                content1: newContent1,
-                content2: newContent2,
-                type: newType
-              }
+                  ...section,
+                  title: newTitle,
+                  content1: newContent1,
+                  content2: newContent2,
+                  type: newType
+                }
               : section
           )
         );
@@ -175,7 +181,7 @@ const ConfigPage = () => {
         });
         fetchSections();
       })
-      .catch(error => {
+      .catch((error) => {
         openNotification({
           message: 'Failed to edit section',
           type: 'error',
@@ -208,7 +214,7 @@ const ConfigPage = () => {
         setHeaderTitle(newTitle);
         fetchSections();
       })
-      .catch(error => {
+      .catch((error) => {
         openNotification({
           message: 'Failed to edit header',
           type: 'error',
@@ -222,7 +228,7 @@ const ConfigPage = () => {
     setIsModalVisible(false);
   };
 
-  const handleEditFooter = newContent => {
+  const handleEditFooter = (newContent) => {
     setIsLoading(true);
     dispatch(
       editFooter({
@@ -242,7 +248,7 @@ const ConfigPage = () => {
         setFooterContent(newContent);
         fetchSections();
       })
-      .catch(error => {
+      .catch((error) => {
         openNotification({
           message: 'Failed to edit footer',
           type: 'error',
@@ -262,11 +268,12 @@ const ConfigPage = () => {
         logo={templateData.logo || headerLogo}
         title={templateData.title || headerTitle}
         onEdit={handleEditHeader}
+        ava_path={templateData.ava_path || headerAva}
       />
       <div className="flex-1 mb-20 px-4">
-        {sections.map(section => (
+        {sections.map((section) => (
           <Section
-key={section.section_id}
+            key={section.section_id}
             sectionId={section.id}
             type={Number(section.type)}
             title={section.title}
@@ -276,7 +283,7 @@ key={section.section_id}
               console.log('Deleting section with id:', section.id);
               confirmDeleteSection(section.id);
             }}
-onEdit={(newTitle, newContent1, newContent2, newType) =>
+            onEdit={(newTitle, newContent1, newContent2, newType) =>
               handleEditSection(
                 section.id,
                 newTitle,
@@ -324,25 +331,25 @@ onEdit={(newTitle, newContent1, newContent2, newType) =>
             <Input
               placeholder="Logo"
               value={headerLogo}
-              onChange={e => setHeaderLogo(e.target.value)}
+              onChange={(e) => setHeaderLogo(e.target.value)}
               style={{ marginBottom: '10px' }}
             />
             <Input
               placeholder="Title"
               value={headerTitle}
-              onChange={e => setHeaderTitle(e.target.value)}
+              onChange={(e) => setHeaderTitle(e.target.value)}
             />
           </div>
         ) : (
           <Input
             placeholder="Footer Content"
             value={footerContent}
-            onChange={e => setFooterContent(e.target.value)}
+            onChange={(e) => setFooterContent(e.target.value)}
           />
         )}
       </Modal>
     </div>
   );
-};
+}
 
 export default ConfigPage;
