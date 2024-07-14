@@ -8,7 +8,7 @@ import Popup from '../../components/Popup';
 
 const { Header: AntdHeader } = Layout;
 
-const Header = ({ title, onEdit, isEditable, ava_path }) => {
+function Header({ title, onEdit, isEditable, avaPath }) {
   const { id } = useParams();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
@@ -24,8 +24,8 @@ const Header = ({ title, onEdit, isEditable, ava_path }) => {
   }, [id]);
 
   useEffect(() => {
-    setUploadedImages(ava_path);
-  }, [ava_path]);
+    setUploadedImages(avaPath);
+  }, [avaPath]);
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -43,7 +43,7 @@ const Header = ({ title, onEdit, isEditable, ava_path }) => {
     setSelectedFile(null);
   };
 
-  const onFileChange = event => {
+  const onFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
   };
 
@@ -78,7 +78,7 @@ const Header = ({ title, onEdit, isEditable, ava_path }) => {
       const response = await axios.get(
         `http://127.0.0.1:8000/api/templates/${id}`
       );
-      setUploadedImages(response.data.data.ava_path);
+      setUploadedImages(response.data.data.avaPath);
     } catch (error) {
       console.error('There was an error fetching the images!', error);
     }
@@ -145,7 +145,7 @@ const Header = ({ title, onEdit, isEditable, ava_path }) => {
         <Input
           placeholder="Title"
           value={newTitle}
-          onChange={e => setNewTitle(e.target.value)}
+          onChange={(e) => setNewTitle(e.target.value)}
           className="mb-4"
         />
         <Card className="bg-slate-500 mt-4 rounded p-4">
@@ -189,14 +189,13 @@ const Header = ({ title, onEdit, isEditable, ava_path }) => {
       </Popup>
     </AntdHeader>
   );
-};
+}
 
 Header.propTypes = {
-  logo: PropTypes.string,
   title: PropTypes.string,
   onEdit: PropTypes.func.isRequired,
   isEditable: PropTypes.bool,
-  ava_path: PropTypes.string
+  avaPath: PropTypes.string
 };
 
 Header.defaultProps = {

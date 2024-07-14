@@ -8,7 +8,7 @@ const user = tokenService.getUser();
 const initialState = user
   ? {
       isLoggedIn: true,
-      user: user,
+      user,
       error: ''
     }
   : {
@@ -29,10 +29,9 @@ export const loginAsync = createAsyncThunk(
       //   return thunkApi.rejectWithValue(response.error);
       // }
       if (response.status === 'success') {
-        return response; // Successful login
-      } else {
-        return thunkApi.rejectWithValue(response.message || 'Login failed!');
+        return response;
       }
+      return thunkApi.rejectWithValue(response.message || 'Login failed!');
     } catch (_error) {
       const error = _error;
       if (axios.isAxiosError(error)) {
@@ -62,7 +61,7 @@ export const authSlice = createSlice({
       state.user.refreshToken = payload.refreshToken;
     }
   },
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder
       .addCase(loginAsync.fulfilled, (state, { payload }) => {
         console.log('Redux state updated:', payload);
@@ -75,7 +74,7 @@ export const authSlice = createSlice({
         state.isLoggedIn = false;
         state.error = payload || 'Login failed!';
       })
-      .addCase(logoutAsync.fulfilled, state => {
+      .addCase(logoutAsync.fulfilled, (state) => {
         state.isLoggedIn = false;
         state.user = null;
         state.error = '';
@@ -85,6 +84,6 @@ export const authSlice = createSlice({
 
 export const { setError, refreshToken } = authSlice.actions;
 
-export const selectAuth = state => state.auth;
+export const selectAuth = (state) => state.auth;
 
 export default authSlice.reducer;

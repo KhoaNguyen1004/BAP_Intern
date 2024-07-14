@@ -4,17 +4,17 @@ import Header from '../configPage/header';
 import Footer from '../configPage/footer';
 import Section from '../configPage/section';
 
-const GuestUI = () => {
+function GuestUI() {
   const [template, setTemplate] = useState(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
     templateService
       .getTemplate()
-      .then(response => {
+      .then((response) => {
         console.log('API data: ', response.data);
         if (response && response.data.section) {
-          const updatedSections = response.data.section.map(sec => ({
+          const updatedSections = response.data.section.map((sec) => ({
             ...sec,
             type: Number(sec.type)
           }));
@@ -62,6 +62,6 @@ const GuestUI = () => {
       </div>
     </div>
   );
-};
+}
 
 export default GuestUI;

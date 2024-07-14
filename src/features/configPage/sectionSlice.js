@@ -11,9 +11,9 @@ const initialState = {
 
 export const addSection = createAsyncThunk(
   'section/addSection',
-  async (template_id, { rejectWithValue }) => {
+  async (templateId, { rejectWithValue }) => {
     try {
-      const response = await http.post(`/${template_id}/sections`);
+      const response = await http.post(`/${templateId}/sections`);
       console.log('response.data:', response.data);
       return response.data.data;
     } catch (error) {
@@ -28,7 +28,7 @@ export const editSection = createAsyncThunk(
   'section/editSection',
   async ({ templateId, sectionId, section }, { rejectWithValue }) => {
     try {
-      onsole.log('Payload being sent to API:', section);
+      console.log('Payload being sent to API:', section);
       const response = await http.put(
         `/${templateId}/sections/${sectionId}`,
         section
@@ -69,9 +69,9 @@ export const sectionSlice = createSlice({
       state.user = TokenService.getUser();
     }
   },
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder
-      .addCase(addSection.pending, state => {
+      .addCase(addSection.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(addSection.fulfilled, (state, action) => {
@@ -82,12 +82,12 @@ export const sectionSlice = createSlice({
         state.error = action.payload;
         state.status = 'failed';
       })
-      .addCase(editSection.pending, state => {
+      .addCase(editSection.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(editSection.fulfilled, (state, action) => {
         const index = state.section.findIndex(
-          section => section['section-id'] === action.payload['section-id']
+          (section) => section['section-id'] === action.payload['section-id']
         );
         if (index !== -1) {
           state.section[index] = action.payload;
@@ -98,12 +98,12 @@ export const sectionSlice = createSlice({
         state.error = action.payload;
         state.status = 'failed';
       })
-      .addCase(deleteSection.pending, state => {
+      .addCase(deleteSection.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(deleteSection.fulfilled, (state, action) => {
         state.section = state.section.filter(
-          section => section['section-id'] !== action.payload.id
+          (section) => section['section-id'] !== action.payload.id
         );
         state.status = 'succeeded';
       })

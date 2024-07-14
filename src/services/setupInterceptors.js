@@ -3,32 +3,31 @@ import { refreshToken } from '../features/auth/authSlice';
 import { http } from './http';
 import { httpPublic } from './httpPublic';
 
-const setup = store => {
+const setup = (store) => {
   http.interceptors.request.use(
-    config => {
+    (config) => {
       const token = TokenService.getLocalAccessToken();
       if (token) {
-        config.headers['Authorization'] = 'Bearer ' + token;
+        config.headers.Authorization = `Bearer ${token}`;
       }
       return config;
     },
-    error => {
+    (error) => {
       return Promise.reject(error);
     }
   );
 
   const { dispatch } = store;
   http.interceptors.response.use(
-    res => {
+    (res) => {
       return res;
     },
 
-    async err => {
+    async (err) => {
       console.log(http.defaults.headers.common);
       const originalConfig = err.config;
 
       if (originalConfig.url !== '/auth/signin' && err.response) {
-        // Access Token was expired
         if (err.response.status === 401 && !originalConfig._retry) {
           originalConfig._retry = true;
           try {

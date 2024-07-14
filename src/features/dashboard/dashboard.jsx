@@ -31,6 +31,7 @@ import {
   cloneTemplate
 } from './templatesSlice';
 import useTemplateModals from '../../store/useTemplateModals';
+
 const { Header, Content } = Layout;
 
 function Dashboard() {
@@ -39,18 +40,18 @@ function Dashboard() {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(selectAuth);
   const { templates, chosen, status, error } = useAppSelector(
-    state => state.templates
+    (state) => state.templates
   );
 
   const fetchTemplates = () => {
     setIsLoading(true);
     dispatch(getAllTemplates())
       .unwrap()
-      .then(response => {
+      .then((response) => {
         console.log('Fetched templates:', response);
         setSelectedTemplate(response.chosen);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('Error fetching templates:', err);
       })
       .finally(() => setIsLoading(false));
@@ -81,19 +82,21 @@ function Dashboard() {
     handleTemplateIdChange
   } = useTemplateModals(fetchTemplates, chosen);
 
-  const handleTemplateDelete = e => {
+  const handleTemplateDelete = (e) => {
     const { value, checked } = e.target;
     if (checked) {
-      setSelectedTemplatesToDelete(prev => [...prev, value]);
+      setSelectedTemplatesToDelete((prev) => [...prev, value]);
     } else {
-      setSelectedTemplatesToDelete(prev => prev.filter(item => item !== value));
+      setSelectedTemplatesToDelete((prev) =>
+        prev.filter((item) => item !== value)
+      );
     }
   };
   const handlePopconfirmConfirm = () => {
     setIsLoading(true);
     dispatch(deleteTemplate(selectedTemplatesToDelete))
       .unwrap()
-      .then(response => {
+      .then((response) => {
         openNotification({
           message: `Deleted ${response.deleted} templates!`,
           type: 'success',
@@ -102,7 +105,7 @@ function Dashboard() {
         console.log('Template deleted:', response);
         fetchTemplates();
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('Error deleting template:', err);
         openNotification({
           message: 'Failed to delete template!',
@@ -118,11 +121,11 @@ function Dashboard() {
       });
   };
 
-  const handleAddTemplate = templates => {
+  const handleAddTemplate = (templates) => {
     setIsLoading(true);
     dispatch(addTemplate(templates))
       .unwrap()
-      .then(response => {
+      .then((response) => {
         openNotification({
           message: 'Template added successfully!',
           type: 'success',
@@ -134,7 +137,7 @@ function Dashboard() {
         setIsAddTemplateModalOpen(false);
         onFinishComplete(response.id);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('Error adding template:', err);
         let errorMessage = 'Failed to add template!';
 
@@ -158,7 +161,7 @@ function Dashboard() {
     setIsLoading(true);
     dispatch(cloneTemplate({ id, name: { name } }))
       .unwrap()
-      .then(response => {
+      .then((response) => {
         openNotification({
           message: 'Template cloned successfully!',
           type: 'success',
@@ -170,7 +173,7 @@ function Dashboard() {
         console.log('Template cloned:', response);
         console.log('response.template.original.id', response.template.data.id);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('Error cloning template:', err);
         openNotification({
           message: 'Failed to clone template!',
@@ -182,11 +185,11 @@ function Dashboard() {
       .finally(() => setIsLoading(false));
   };
 
-  const onFinishComplete = id => {
+  const onFinishComplete = (id) => {
     window.open(`${window.location.origin}/admin/config-page/${id}`, '_blank');
   };
 
-  const onFinish = values => {
+  const onFinish = (values) => {
     setIsAddTemplateModalOpen(false);
     if (isCloneTemplate) {
       handleCloneTemplate(selectedTemplateId, values.name);
@@ -197,17 +200,17 @@ function Dashboard() {
     }
   };
 
-  const onFinishFailed = errorInfo => {
+  const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
 
-  const handleRadioChange = e => {
+  const handleRadioChange = (e) => {
     const { value } = e.target;
 
     setIsCloneTemplate(value === 'Clone Template');
     setSelectedTemplateId('');
   };
-  const handleSettingClick = templateValue => {
+  const handleSettingClick = (templateValue) => {
     window.open(
       `${window.location.origin}/admin/config-page/${templateValue}`,
       '_blank'
@@ -230,7 +233,7 @@ function Dashboard() {
     setIsLoading(true);
     dispatch(chooseTemplate(selectedTemplate))
       .unwrap()
-      .then(response => {
+      .then((response) => {
         openNotification({
           message: 'Template chosen successfully!',
           type: 'success',
@@ -239,7 +242,7 @@ function Dashboard() {
         console.log('Template chosen:', response);
         fetchTemplates();
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('Error choosing template:', err);
       })
       .finally(() => setIsLoading(false));
@@ -287,7 +290,7 @@ function Dashboard() {
                 {status === 'loading' && setIsLoading(true)}
                 {status === 'failed' && <p>{error}</p>}
                 {status === 'succeeded' &&
-                  templates?.map(item => (
+                  templates?.map((item) => (
                     <Card
                       key={item.id}
                       className="shadow-sm rounded-md border border-gray-200 mb-2"
@@ -389,7 +392,7 @@ function Dashboard() {
                         {status === 'loading' && setIsLoading(true)}
                         {status === 'failed' && <p>{error}</p>}
                         {status === 'succeeded' &&
-                          templates?.map(item => (
+                          templates?.map((item) => (
                             <div
                               className="w-full sm:w-1/2 lg:w-1/2 xl:w-1/2 mb-4"
                               key={item.id}
@@ -424,14 +427,14 @@ function Dashboard() {
                   onCancel={handleCancel}
                 >
                   <div className="flex flex-wrap -mx-2">
-                    {templates?.map(item => (
+                    {templates?.map((item) => (
                       <div className="w-full sm:w-1/2" key={item.id}>
                         <div className="m-2">
                           <List
                             itemLayout="horizontal"
                             dataSource={[item]}
                             bordered
-                            renderItem={item => (
+                            renderItem={(item) => (
                               <List.Item
                                 actions={[
                                   <Button
@@ -484,7 +487,7 @@ function Dashboard() {
                 ]}
               >
                 <div className="flex flex-wrap space-y-0">
-                  {templates?.map(item => (
+                  {templates?.map((item) => (
                     <div className="w-full sm:w-1/2 mt-0" key={item.id}>
                       <div className="m-2">
                         <Card className="shadow-sm rounded-md border border-gray-200">

@@ -2,7 +2,8 @@ import TokenService from './token.service';
 import { http } from './http';
 
 class AuthService {
-  async login(username, password) {
+  // Define static methods as they do not use `this`
+  static async login(username, password) {
     try {
       const response = await http.post('/login', {
         username,
@@ -11,27 +12,26 @@ class AuthService {
       if (response.data.status === 'success') {
         TokenService.setUser(response.data.data);
         return response.data;
-      } else {
-        throw new Error(response.data.message);
       }
+      throw new Error(response.data.message); // No need for an `else` here
     } catch (error) {
       console.log('Login error:', error);
       throw new Error(error.response?.data?.message || 'Login failed!');
     }
   }
 
-  logout() {
+  static logout() {
     TokenService.removeUser();
     return http.post('/logout');
   }
 
-  async getProfile() {
+  static async getProfile() {
     try {
       return await http.get('/profile');
     } catch (error) {
-      throw error.response?.data?.message || 'Failed to get profile';
+      throw new Error(error.response?.data?.message || 'Failed to get profile');
     }
   }
 }
 
-export default new AuthService();
+export default AuthService;

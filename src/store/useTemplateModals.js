@@ -34,7 +34,6 @@ const useTemplateModals = (fetchTemplates, chosen) => {
     setIsAddTemplateModalOpen(false);
     setIsDeleteTemplateModalOpen(false);
     setIsConfigTemplateModalOpen(false);
-    //fetchTemplates();
     setSelectedTemplatesToDelete([]);
   };
 
@@ -44,10 +43,10 @@ const useTemplateModals = (fetchTemplates, chosen) => {
     setShowPopconfirm(false);
   };
 
-  const handleTemplateChange = e => {
+  const handleTemplateChange = (e) => {
     setSelectedTemplate(e.target.value);
   };
-  const handleTemplateIdChange = e => {
+  const handleTemplateIdChange = (e) => {
     setSelectedTemplateId(e.target.value);
   };
 

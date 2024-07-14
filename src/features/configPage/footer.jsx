@@ -6,11 +6,11 @@ import Popup from '../../components/Popup';
 
 const { Footer: AntdFooter } = Layout;
 
-const Footer = ({ footer, onEdit, isEditable }) => {
+function Footer({ footer, onEdit, isEditable }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newContent, setNewContent] = useState(footer);
 
-  const showModal = () => { 
+  const showModal = () => {
     setIsModalVisible(true);
   };
 
@@ -64,7 +64,7 @@ const Footer = ({ footer, onEdit, isEditable }) => {
         <Input
           placeholder="Footer Content"
           value={newContent}
-          onChange={e => setNewContent(e.target.value)}
+          onChange={(e) => setNewContent(e.target.value)}
         />
 
         <Card
@@ -80,7 +80,7 @@ const Footer = ({ footer, onEdit, isEditable }) => {
       </Popup>
     </AntdFooter>
   );
-};
+}
 
 Footer.propTypes = {
   footer: PropTypes.string.isRequired,

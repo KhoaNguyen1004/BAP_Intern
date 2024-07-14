@@ -4,7 +4,7 @@ import { Button, Input, Radio, message, Card } from 'antd';
 import { SettingOutlined, DeleteOutlined } from '@ant-design/icons';
 import Popup from '../../components/Popup';
 
-const Section = ({
+function Section({
   sectionId,
   type,
   title,
@@ -13,7 +13,7 @@ const Section = ({
   onDelete,
   onEdit,
   isEditable
-}) => {
+}) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [showContentOption, setShowContentOption] = useState(
     type === 2 ? 'show' : 'hide'
@@ -60,7 +60,7 @@ const Section = ({
     setShowContentOption(type === 2 ? 'show' : 'hide');
   };
 
-  const handleOptionChange = e => {
+  const handleOptionChange = (e) => {
     const newType = Number(e.target.value);
     setTypeDraft(newType);
     setShowContentOption(newType === 2 ? 'show' : 'hide');
@@ -70,7 +70,7 @@ const Section = ({
     }
   };
 
-  const handleTitleChange = e => {
+  const handleTitleChange = (e) => {
     const { value } = e.target;
     if (value.length <= 20) {
       setNewTitle(value);
@@ -151,14 +151,14 @@ const Section = ({
         <Input
           placeholder="Content 1"
           value={newContent1}
-          onChange={e => setNewContent1(e.target.value)}
+          onChange={(e) => setNewContent1(e.target.value)}
           style={{ marginBottom: '10px' }}
         />
         {showContentOption === 'show' && (
           <Input
             placeholder="Content 2"
             value={newContent2}
-            onChange={e => setNewContent2(e.target.value)}
+            onChange={(e) => setNewContent2(e.target.value)}
             style={{ marginBottom: '10px' }}
           />
         )}
@@ -203,7 +203,7 @@ const Section = ({
       </Popup>
     </section>
   );
-};
+}
 
 Section.propTypes = {
   sectionId: PropTypes.string.isRequired,

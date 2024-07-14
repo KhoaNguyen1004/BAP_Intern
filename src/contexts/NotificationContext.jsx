@@ -6,7 +6,7 @@ const NotificationContext = React.createContext({
   openNotification: () => {}
 });
 
-const NotificationProvider = ({ children }) => {
+function NotificationProvider({ children }) {
   const [api, contextHolder] = notification.useNotification();
 
   const openNotification = ({ message, type, title }) => {
@@ -28,7 +28,7 @@ const NotificationProvider = ({ children }) => {
       {children}
     </NotificationContext.Provider>
   );
-};
+}
 
 // Add PropTypes validation for `children`
 NotificationProvider.propTypes = {

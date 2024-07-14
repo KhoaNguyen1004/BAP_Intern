@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
+import { Link, Route, Routes } from 'react-router-dom';
 import { PrivateRoute } from './components/privateRoute';
 import { Login } from './features/auth/login';
-import { Link, Route, Routes } from 'react-router-dom';
+
 import Dashboard from './features/dashboard/dashboard';
 import ConfigPage from './features/configPage/configPage';
 import { useAppDispatch } from './store/hooks';

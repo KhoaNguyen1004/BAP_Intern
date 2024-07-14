@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal } from 'antd';
+
 function Popup({ title, children, isOpen, onCancel, onConfirm, text, footer }) {
   return (
     <Modal
