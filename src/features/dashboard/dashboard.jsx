@@ -136,6 +136,7 @@ function Dashboard() {
         console.log('response.template.id', response.id);
         fetchTemplates();
         setIsAddTemplateModalOpen(false);
+        form.resetFields();
         onFinishComplete(response.id);
       })
       .catch((err) => {
@@ -170,6 +171,7 @@ function Dashboard() {
         });
         fetchTemplates();
         setIsAddTemplateModalOpen(false);
+        form.resetFields(); 
         onFinishComplete(response.template.data.id);
         console.log('Template cloned:', response);
         console.log('response.template.original.id', response.template.data.id);
@@ -207,10 +209,16 @@ function Dashboard() {
 
   const handleRadioChange = (e) => {
     const { value } = e.target;
-
+  
     setIsCloneTemplate(value === 'Clone Template');
-    setSelectedTemplateId('');
+  
+    if (value === 'Clone Template' && templates.length > 0) {
+      setSelectedTemplateId(templates[0].id);
+    } else {
+      setSelectedTemplateId('');
+    }
   };
+  
   const handleSettingClick = (templateValue) => {
     window.open(
       `${window.location.origin}/admin/config-page/${templateValue}`,
@@ -405,7 +413,7 @@ function Dashboard() {
                                     value={selectedTemplateId}
                                     onChange={handleTemplateIdChange}
                                     className="w-full flex items-center"
-                                  >
+                                    >
                                     <Radio className="w-full" value={item.id}>
                                       {item.name}
                                     </Radio>
