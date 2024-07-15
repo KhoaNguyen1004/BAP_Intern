@@ -5,6 +5,7 @@ import { SettingOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Popup from '../../components/Popup';
+import TokenService from '../../services/token.service'
 
 const { Header: AntdHeader } = Layout;
 
@@ -76,8 +77,11 @@ function Header({ title, onEdit, isEditable, avaPath }) {
   const fetchImages = async () => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/templates/${id}`
-      );
+        `http://127.0.0.1:8000/api/templates/${id}`,{
+          headers: {
+            'Authorization': `Bearer ${TokenService.getLocalAccessToken()}`
+          }
+        });
       setUploadedImages(response.data.data.avaPath);
     } catch (error) {
       console.error('There was an error fetching the images!', error);
