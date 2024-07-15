@@ -72,6 +72,7 @@ function Dashboard() {
     showConfigTemplateModal,
     handleCancel,
     handleOk,
+    form,
     setIsCloneTemplate,
     setShowPopconfirm,
     setIsDeleteTemplateModalOpen,
@@ -351,6 +352,7 @@ function Dashboard() {
                   ]}
                 >
                   <Form
+                    form={form}
                     id="addConfigForm"
                     initialValues={{
                       configValue: 'Clone Template'
