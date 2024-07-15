@@ -72,6 +72,7 @@ function Dashboard() {
     showConfigTemplateModal,
     handleCancel,
     handleOk,
+    form,
     setIsCloneTemplate,
     setShowPopconfirm,
     setIsDeleteTemplateModalOpen,
@@ -118,6 +119,7 @@ function Dashboard() {
         setIsLoading(false);
         setShowPopconfirm(false);
         setIsDeleteTemplateModalOpen(false);
+        setSelectedTemplatesToDelete([]);
       });
   };
 
@@ -135,6 +137,7 @@ function Dashboard() {
         console.log('response.template.id', response.id);
         fetchTemplates();
         setIsAddTemplateModalOpen(false);
+        form.resetFields();
         onFinishComplete(response.id);
       })
       .catch((err) => {
@@ -169,6 +172,7 @@ function Dashboard() {
         });
         fetchTemplates();
         setIsAddTemplateModalOpen(false);
+        form.resetFields();
         onFinishComplete(response.template.data.id);
         console.log('Template cloned:', response);
         console.log('response.template.original.id', response.template.data.id);
@@ -208,8 +212,14 @@ function Dashboard() {
     const { value } = e.target;
 
     setIsCloneTemplate(value === 'Clone Template');
-    setSelectedTemplateId('');
+
+    if (value === 'Clone Template' && templates.length > 0) {
+      setSelectedTemplateId(templates[0].id);
+    } else {
+      setSelectedTemplateId('');
+    }
   };
+
   const handleSettingClick = (templateValue) => {
     window.open(
       `${window.location.origin}/admin/config-page/${templateValue}`,
@@ -351,6 +361,7 @@ function Dashboard() {
                   ]}
                 >
                   <Form
+                    form={form}
                     id="addConfigForm"
                     initialValues={{
                       configValue: 'Clone Template'
@@ -493,6 +504,9 @@ function Dashboard() {
                         <Card className="shadow-sm rounded-md border border-gray-200">
                           <Checkbox
                             value={item.id}
+                            checked={selectedTemplatesToDelete.includes(
+                              item.id
+                            )}
                             onChange={handleTemplateDelete}
                             disabled={item.id === chosen}
                             className="w-full flex items-center"

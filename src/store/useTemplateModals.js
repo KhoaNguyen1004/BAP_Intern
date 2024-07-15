@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Form } from 'antd';
 
 const useTemplateModals = (fetchTemplates, chosen) => {
   const [selectedTemplate, setSelectedTemplate] = useState(chosen);
@@ -13,6 +14,7 @@ const useTemplateModals = (fetchTemplates, chosen) => {
     useState(false);
   const [isCloneTemplate, setIsCloneTemplate] = useState(true);
   const [, setShowPopconfirm] = useState(false);
+  const [form] = Form.useForm();
 
   const handleConfirmDelete = () => {
     setShowPopconfirm(true);
@@ -35,6 +37,7 @@ const useTemplateModals = (fetchTemplates, chosen) => {
     setIsDeleteTemplateModalOpen(false);
     setIsConfigTemplateModalOpen(false);
     setSelectedTemplatesToDelete([]);
+    form.resetFields();
   };
 
   const handleOk = () => {
@@ -65,6 +68,7 @@ const useTemplateModals = (fetchTemplates, chosen) => {
     showConfigTemplateModal,
     handleCancel,
     handleOk,
+    form,
     setIsCloneTemplate,
     setShowPopconfirm,
     setIsDeleteTemplateModalOpen,

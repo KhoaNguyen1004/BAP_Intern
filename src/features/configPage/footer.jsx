@@ -11,6 +11,7 @@ function Footer({ footer, onEdit, isEditable }) {
   const [newContent, setNewContent] = useState(footer);
 
   const showModal = () => {
+    setNewContent(footer);
     setIsModalVisible(true);
   };
 
