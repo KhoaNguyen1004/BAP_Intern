@@ -119,6 +119,7 @@ function Dashboard() {
         setIsLoading(false);
         setShowPopconfirm(false);
         setIsDeleteTemplateModalOpen(false);
+        setSelectedTemplatesToDelete([]);
       });
   };
 
@@ -171,7 +172,7 @@ function Dashboard() {
         });
         fetchTemplates();
         setIsAddTemplateModalOpen(false);
-        form.resetFields(); 
+        form.resetFields();
         onFinishComplete(response.template.data.id);
         console.log('Template cloned:', response);
         console.log('response.template.original.id', response.template.data.id);
@@ -209,16 +210,16 @@ function Dashboard() {
 
   const handleRadioChange = (e) => {
     const { value } = e.target;
-  
+
     setIsCloneTemplate(value === 'Clone Template');
-  
+
     if (value === 'Clone Template' && templates.length > 0) {
       setSelectedTemplateId(templates[0].id);
     } else {
       setSelectedTemplateId('');
     }
   };
-  
+
   const handleSettingClick = (templateValue) => {
     window.open(
       `${window.location.origin}/admin/config-page/${templateValue}`,
@@ -413,7 +414,7 @@ function Dashboard() {
                                     value={selectedTemplateId}
                                     onChange={handleTemplateIdChange}
                                     className="w-full flex items-center"
-                                    >
+                                  >
                                     <Radio className="w-full" value={item.id}>
                                       {item.name}
                                     </Radio>
@@ -503,6 +504,9 @@ function Dashboard() {
                         <Card className="shadow-sm rounded-md border border-gray-200">
                           <Checkbox
                             value={item.id}
+                            checked={selectedTemplatesToDelete.includes(
+                              item.id
+                            )}
                             onChange={handleTemplateDelete}
                             disabled={item.id === chosen}
                             className="w-full flex items-center"
