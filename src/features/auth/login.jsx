@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Form, Input, Button } from 'antd';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loginAsync, selectAuth } from './authSlice';
 import { LoadingContext } from '../../contexts/LoadingContext';
@@ -14,67 +15,90 @@ export function Login() {
   const { openNotification } = useContext(NotificationContext);
 
   useEffect(() => {
-    console.log('Is logged in first? ', isLoggedIn);
     if (isLoggedIn) {
       navigate('/admin/dashboard');
-      console.log('Navigating to admin/dashboard in useEffect');
-      console.log('Is logged in second? ', isLoggedIn);
     }
   }, [isLoggedIn, navigate]);
 
-  const handleSubmit = async event => {
-    event.preventDefault();
-    const username = event.currentTarget.username.value;
-    const password = event.currentTarget.password.value;
+  const onFinish = async (values) => {
+    const { username, password } = values;
 
     setIsLoading(true);
 
-    dispatch(loginAsync({ username, password }))
-      .unwrap()
-      .then(response => {
-        console.log('Login successful, response:', response);
-        TokenService.setUser(response.data);
-        navigate('/admin/dashboard');
-      })
-      .catch(error => {
-        console.error('Login error:', error);
-        openNotification({
-          message: 'Invalid username or password!',
-          type: 'error',
-          title: 'Login Failed'
-        });
-      })
-      .finally(() => {
-        setIsLoading(false);
+    try {
+      const response = await dispatch(
+        loginAsync({ username, password })
+      ).unwrap();
+      console.log('Login successful, response:', response);
+      TokenService.setUser(response.data);
+      navigate('/admin/dashboard');
+    } catch (error) {
+      console.error('Login error:', error);
+      openNotification({
+        message: 'Invalid username or password!',
+        type: 'error',
+        title: 'Login Failed'
       });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <>
-      <main>
-        <div>
-          <div>Login</div>
-          {error && <div className="error">{error}</div>}
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              name="username"
-              placeholder="Username"
-              required
-            />
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              required
-            />
-            <button type="submit">Log in</button>
-            <div>
-              Don’t have an account yet? <Link to="/register">Sign up</Link>
-            </div>
-          </form>
-        </div>
-      </main>
-    </>
+    <main>
+      <div
+        style={{
+          border: '1px solid #ccc',
+          borderRadius: '5px',
+          width: 'fit-content',
+          marginTop: '10%',
+          margin: 'auto',
+          padding: '30px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          textAlign: 'center'
+        }}
+      >
+        <h2>Login</h2>
+        {error && <div className="error">{error}</div>}
+        <Form
+          name="loginForm"
+          initialValues={{ remember: true }}
+          onFinish={onFinish}
+        >
+          <Form.Item
+            label="Username"
+            name="username"
+            rules={[{ required: true, message: 'Please input your username!' }]}
+            labelCol={{ span: 24 }}
+            wrapperCol={{ span: 24 }}
+            style={{ marginBottom: '10px' }}
+          >
+            <Input placeholder="Enter your username" />
+          </Form.Item>
+          <Form.Item
+            label="Password"
+            name="password"
+            rules={[{ required: true, message: 'Please input your password!' }]}
+            labelCol={{ span: 24 }}
+            wrapperCol={{ span: 24 }}
+            style={{ marginBottom: '10px' }}
+          >
+            <Input.Password placeholder="Enter your password" />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Log in
+            </Button>
+          </Form.Item>
+          <div>
+            Don’t have an account yet? <Link to="/register">Sign up</Link>
+          </div>
+        </Form>
+      </div>
+    </main>
   );
 }
