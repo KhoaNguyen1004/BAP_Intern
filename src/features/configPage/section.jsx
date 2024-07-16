@@ -5,14 +5,13 @@ import { SettingOutlined, DeleteOutlined } from '@ant-design/icons';
 import Popup from '../../components/Popup';
 
 function Section({
-  sectionId,
   type,
   title,
   content1,
   content2,
   onDelete,
   onEdit,
-  isEditable
+  isEditable = true
 }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [showContentOption, setShowContentOption] = useState(
@@ -36,17 +35,10 @@ function Section({
   };
 
   const handleOk = () => {
-    console.log('Handle OK called with:', {
-      newTitle,
-      newContent1,
-      newContent2,
-      typeDraft
-    });
-
     if (newTitle.length > 20) {
       setTitleError('Title cannot exceed 20 characters');
     } else {
-      onEdit(sectionId, newTitle, newContent1, newContent2, typeDraft);
+      onEdit(newTitle, newContent1, newContent2, typeDraft);
       setIsModalVisible(false);
     }
   };
@@ -60,17 +52,16 @@ function Section({
     setShowContentOption(type === 2 ? 'show' : 'hide');
   };
 
-  const handleOptionChange = (e) => {
-    const newType = Number(e.target.value);
-    setTypeDraft(newType);
-    setShowContentOption(newType === 2 ? 'show' : 'hide');
-
-    if (newType === 1) {
+  const handleOptionChange = e => {
+    const newValue = e.target.value;
+    setTypeDraft(newValue);
+    if (newValue === 1) {
       setNewContent2('');
     }
+    setShowContentOption(newValue === 2 ? 'show' : 'hide');
   };
 
-  const handleTitleChange = (e) => {
+  const handleTitleChange = e => {
     const { value } = e.target;
     if (value.length <= 20) {
       setNewTitle(value);
@@ -81,7 +72,7 @@ function Section({
   };
 
   return (
-    <section className="bg-gray-100 p-3 mb-5 pb-4 relative top-16">
+    <section className="bg-gray-100 p-2 mb-5 pb-4 relative top-16">
       <div style={{ padding: '0px 30%', borderRadius: '10px' }}>
         <h2 className="text-xl font-semibold mb-4 text-center bg-white">
           {title}
@@ -151,14 +142,14 @@ function Section({
         <Input
           placeholder="Content 1"
           value={newContent1}
-          onChange={(e) => setNewContent1(e.target.value)}
+          onChange={e => setNewContent1(e.target.value)}
           style={{ marginBottom: '10px' }}
         />
-        {showContentOption === 'show' && (
+        {showContentOption === 'show'&& (
           <Input
             placeholder="Content 2"
             value={newContent2}
-            onChange={(e) => setNewContent2(e.target.value)}
+            onChange={e => setNewContent2(e.target.value)}
             style={{ marginBottom: '10px' }}
           />
         )}
@@ -176,18 +167,18 @@ function Section({
               {newTitle}
             </h2>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', justifyContent: 'pace-between' }}>
             <Card
               style={{
                 flex: 1,
-                marginRight: showContentOption === 'show' ? '10px' : '0px',
+                marginRight: showContentOption === 'how'? '10px' : '0px',
                 maxWidth:
-                  showContentOption === 'show' ? 'calc(50% - 10px)' : '100%'
+                  showContentOption === 'how'? 'calc(50% - 10px)' : '100%'
               }}
             >
               <p style={{ overflowWrap: 'break-word' }}>{newContent1}</p>
             </Card>
-            {showContentOption === 'show' && (
+            {showContentOption === 'how' && (
               <Card
                 style={{
                   flex: 1,
@@ -206,7 +197,6 @@ function Section({
 }
 
 Section.propTypes = {
-  sectionId: PropTypes.string.isRequired,
   type: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   content1: PropTypes.string,
@@ -215,6 +205,7 @@ Section.propTypes = {
   onEdit: PropTypes.func,
   isEditable: PropTypes.bool
 };
+
 Section.defaultProps = {
   isEditable: true
 };
