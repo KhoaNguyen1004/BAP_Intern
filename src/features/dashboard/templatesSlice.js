@@ -67,7 +67,7 @@ export const deleteTemplate = createAsyncThunk(
       console.log('response.data:', response.data);
       console.log('response.data.templateId:', templateId);
       console.log('response.data.message:', response.data.message);
-      return response.data;
+      return templateId;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Failed to delete template'
@@ -184,9 +184,9 @@ const templateSlice = createSlice({
       .addCase(deleteTemplate.fulfilled, (state, action) => {
         const { templateId } = action.payload;
         state.templates = state.templates.filter(
-          (template) => !templateId.includes(template.id)
+          (template) => template.id !== templateId
         );
-        state.status = 'succeeded';
+        state.status = 'Deleted templates successful';
       })
       .addCase(deleteTemplate.rejected, (state, action) => {
         state.status = 'failed';
