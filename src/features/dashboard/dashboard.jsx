@@ -217,16 +217,17 @@ function Dashboard() {
 
   const handleRadioChange = (e) => {
     const { value } = e.target;
-
     setIsCloneTemplate(value === 'Clone Template');
-
+  
     if (value === 'Clone Template' && templates.length > 0) {
-      setSelectedTemplateId(templates[0].id);
+      setSelectedTemplateId(templates[0].id);}
+      else if (value === 'New Template') {
+        setSelectedTemplateId(templates[0].id);
     } else {
       setSelectedTemplateId('');
     }
   };
-
+  
   const handleSettingClick = (templateValue) => {
     window.open(
       `${window.location.origin}/admin/config-page/${templateValue}`,
