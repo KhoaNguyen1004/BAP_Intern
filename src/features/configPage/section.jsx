@@ -52,7 +52,7 @@ function Section({
     setShowContentOption(type === 2 ? 'show' : 'hide');
   };
 
-  const handleOptionChange = e => {
+  const handleOptionChange = (e) => {
     const newValue = e.target.value;
     setTypeDraft(newValue);
     if (newValue === 1) {
@@ -61,7 +61,7 @@ function Section({
     setShowContentOption(newValue === 2 ? 'show' : 'hide');
   };
 
-  const handleTitleChange = e => {
+  const handleTitleChange = (e) => {
     const { value } = e.target;
     if (value.length <= 20) {
       setNewTitle(value);
@@ -142,14 +142,14 @@ function Section({
         <Input
           placeholder="Content 1"
           value={newContent1}
-          onChange={e => setNewContent1(e.target.value)}
+          onChange={(e) => setNewContent1(e.target.value)}
           style={{ marginBottom: '10px' }}
         />
-        {showContentOption === 'show'&& (
+        {showContentOption === 'show' && (
           <Input
             placeholder="Content 2"
             value={newContent2}
-            onChange={e => setNewContent2(e.target.value)}
+            onChange={(e) => setNewContent2(e.target.value)}
             style={{ marginBottom: '10px' }}
           />
         )}
@@ -171,14 +171,14 @@ function Section({
             <Card
               style={{
                 flex: 1,
-                marginRight: showContentOption === 'how'? '10px' : '0px',
+                marginRight: showContentOption === 'show' ? '10px' : '0px',
                 maxWidth:
-                  showContentOption === 'how'? 'calc(50% - 10px)' : '100%'
+                  showContentOption === 'show' ? 'calc(50% - 10px)' : '100%'
               }}
             >
               <p style={{ overflowWrap: 'break-word' }}>{newContent1}</p>
             </Card>
-            {showContentOption === 'how' && (
+            {showContentOption === 'show' && (
               <Card
                 style={{
                   flex: 1,
