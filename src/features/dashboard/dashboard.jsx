@@ -98,7 +98,7 @@ function Dashboard() {
       .unwrap()
       .then((response) => {
         openNotification({
-          message: `Deleted ${response.deleted} templates!`,
+          message: `Templates successfully deleted!`,
           type: 'success',
           title: 'Success'
         });
