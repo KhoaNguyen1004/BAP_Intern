@@ -17,7 +17,6 @@ import {
   LogoutOutlined,
   SettingOutlined
 } from '@ant-design/icons';
-// import AuthService from '../../services/auth.service';
 import Popup from '../../components/Popup';
 import { LoadingContext } from '../../contexts/LoadingContext';
 import { NotificationContext } from '../../contexts/NotificationContext';
@@ -161,6 +160,14 @@ function Dashboard() {
   };
 
   const handleCloneTemplate = (id, name) => {
+    if (!selectedTemplateId) {
+      openNotification({
+        message: 'Please select a template to clone!',
+        type: 'error',
+        title: 'Error'
+      });
+      return;
+    }
     setIsLoading(true);
     dispatch(cloneTemplate({ id, name: { name } }))
       .unwrap()
@@ -355,6 +362,7 @@ function Dashboard() {
                       key="submit"
                       type="primary"
                       htmlType="submit"
+                      disabled={!selectedTemplateId}
                     >
                       Create
                     </Button>
