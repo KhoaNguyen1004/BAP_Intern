@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Form, Input, Button } from 'antd';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loginAsync, selectAuth } from './authSlice';
@@ -13,6 +13,7 @@ export function Login() {
   const { error, isLoggedIn } = useAppSelector(selectAuth);
   const { setIsLoading } = useContext(LoadingContext);
   const { openNotification } = useContext(NotificationContext);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -24,6 +25,7 @@ export function Login() {
     const { username, password } = values;
 
     setIsLoading(true);
+    setIsSubmitting(true);
 
     try {
       const response = await dispatch(
@@ -41,6 +43,7 @@ export function Login() {
       });
     } finally {
       setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -90,13 +93,10 @@ export function Login() {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" disabled={isSubmitting}>
               Log in
             </Button>
           </Form.Item>
-          <div>
-            Don’t have an account yet? <Link to="/register">Sign up</Link>
-          </div>
         </Form>
       </div>
     </main>
