@@ -3,11 +3,12 @@ import templateService from '../../services/template.service';
 import Header from '../configPage/header';
 import Footer from '../configPage/footer';
 import Section from '../configPage/section';
+import BackUpUI from './backUpUI'; 
 
 function GuestUI() {
   const [template, setTemplate] = useState(null);
   const [error, setError] = useState('');
-
+  const [showBackupUI, setShowBackupUI] = useState(false); 
   useEffect(() => {
     templateService
       .getTemplate()
@@ -22,10 +23,18 @@ function GuestUI() {
           setTemplate({ ...response.data, section: updatedSections });
         } else {
           setError('Invalid template data');
+          setShowBackupUI(true); 
         }
       })
-      .catch(() => setError('Failed to fetch template'));
+      .catch(() => {
+        setError('Failed to fetch template');
+        setShowBackupUI(true); 
+      });
   }, []);
+
+  if (showBackupUI) {
+    return <BackUpUI />;
+  }
 
   if (error) {
     return <div>{error}</div>;
