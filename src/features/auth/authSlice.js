@@ -64,9 +64,9 @@ export const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(loginAsync.fulfilled, (state, { payload }) => {
-        console.log('Redux state updated:', payload);
+        console.log('Redux state updated:', payload.data);
         state.isLoggedIn = true;
-        state.user = payload;
+        state.user = payload.data;
         state.error = '';
         tokenService.setUser(payload.data);
       })
