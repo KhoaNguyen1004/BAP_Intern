@@ -3,12 +3,12 @@ import templateService from '../../services/template.service';
 import Header from '../configPage/header';
 import Footer from '../configPage/footer';
 import Section from '../configPage/section';
-import BackUpUI from './backUpUI'; 
+import BackUpUI from './backUpUI';
 
 function GuestUI() {
   const [template, setTemplate] = useState(null);
   const [error, setError] = useState('');
-  const [showBackupUI, setShowBackupUI] = useState(false); 
+  const [showBackupUI, setShowBackupUI] = useState(false);
   useEffect(() => {
     templateService
       .getTemplate()
@@ -23,12 +23,12 @@ function GuestUI() {
           setTemplate({ ...response.data, section: updatedSections });
         } else {
           setError('Invalid template data');
-          setShowBackupUI(true); 
+          setShowBackupUI(true);
         }
       })
       .catch(() => {
         setError('Failed to fetch template');
-        setShowBackupUI(true); 
+        setShowBackupUI(true);
       });
   }, []);
 
@@ -50,7 +50,7 @@ function GuestUI() {
         <Header
           logo={template.logo}
           title={template.title}
-          ava_path={template.ava_path}
+          avaPath={template.avaPath}
           isEditable={false}
         />
       </div>
