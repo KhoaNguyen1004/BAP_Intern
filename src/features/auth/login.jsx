@@ -29,7 +29,7 @@ export function Login() {
       const response = await dispatch(
         loginAsync({ username, password })
       ).unwrap();
-      console.log('Login successful, response:', response);
+      console.log('Login successful, response:', response.data);
       TokenService.setUser(response.data);
       navigate('/admin/dashboard');
     } catch (error) {

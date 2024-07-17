@@ -279,10 +279,10 @@ function Dashboard() {
                 <Avatar shape="square" size="large" icon={<UserOutlined />} />
                 <div className="ml-2">
                   <p className="text-lg text-start m-0 mb-2 leading-none font-semibold">
-                    {user?.data?.username}
+                    {user?.username}
                   </p>
                   <p className="m-0 leading-none text-start">
-                    {user?.data?.role}
+                    {user?.role}
                   </p>
                 </div>
               </div>
