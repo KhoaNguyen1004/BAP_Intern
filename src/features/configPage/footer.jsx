@@ -69,6 +69,7 @@ function Footer({ footer, onEdit, isEditable }) {
         />
 
         <Card
+          bodyStyle={{ padding: '0 10px' }}
           className="bg-slate-500"
           style={{
             marginTop: '20px',
