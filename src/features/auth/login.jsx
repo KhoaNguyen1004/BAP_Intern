@@ -10,10 +10,11 @@ import TokenService from '../../services/token.service';
 export function Login() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { error, isLoggedIn } = useAppSelector(selectAuth);
+  const { isLoggedIn } = useAppSelector(selectAuth);
   const { setIsLoading } = useContext(LoadingContext);
   const { openNotification } = useContext(NotificationContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [notificationShown, setNotificationShown] = useState(false);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -36,11 +37,14 @@ export function Login() {
       navigate('/admin/dashboard');
     } catch (error) {
       console.error('Login error:', error);
-      openNotification({
-        message: 'Invalid username or password!',
-        type: 'error',
-        title: 'Login Failed'
-      });
+      if (!notificationShown) {
+        openNotification({
+          message: 'Invalid username or password!',
+          type: 'error',
+          title: 'Login Failed'
+        });
+        setNotificationShown(true);
+      }
     } finally {
       setIsLoading(false);
       setIsSubmitting(false);
@@ -65,11 +69,13 @@ export function Login() {
         }}
       >
         <h2>Login</h2>
-        {error && <div className="error">{error}</div>}
         <Form
           name="loginForm"
           initialValues={{ remember: true }}
           onFinish={onFinish}
+          onFinishFailed={() => {
+            setNotificationShown(false);
+          }}
         >
           <Form.Item
             label="Username"
