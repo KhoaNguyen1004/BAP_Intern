@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Form, Input, Button } from 'antd';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loginAsync, selectAuth } from './authSlice';
@@ -10,9 +10,11 @@ import TokenService from '../../services/token.service';
 export function Login() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { error, isLoggedIn } = useAppSelector(selectAuth);
+  const { isLoggedIn } = useAppSelector(selectAuth);
   const { setIsLoading } = useContext(LoadingContext);
   const { openNotification } = useContext(NotificationContext);
+
+  const [notificationShown, setNotificationShown] = useState(false);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -26,22 +28,30 @@ export function Login() {
     setIsLoading(true);
 
     try {
-      const response = await dispatch(
-        loginAsync({ username, password })
-      ).unwrap();
+      const response = await dispatch(loginAsync({ username, password })).unwrap();
       console.log('Login successful, response:', response);
       TokenService.setUser(response.data);
       navigate('/admin/dashboard');
     } catch (error) {
       console.error('Login error:', error);
-      openNotification({
-        message: 'Invalid username or password!',
-        type: 'error',
-        title: 'Login Failed'
-      });
+      // Show notification only if it hasn't been shown before
+      if (!notificationShown) {
+        openNotification({
+          message: 'Invalid username or password!',
+          type: 'error',
+          title: 'Login Failed',
+        });
+        setNotificationShown(true); // Mark notification as shown
+      }
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleFinishFailed = (errorInfo) => {
+    console.log('Failed:', errorInfo);
+    // Reset notificationShown state on form submission failure
+    setNotificationShown(false);
   };
 
   return (
@@ -62,11 +72,11 @@ export function Login() {
         }}
       >
         <h2>Login</h2>
-        {error && <div className="error">{error}</div>}
         <Form
           name="loginForm"
           initialValues={{ remember: true }}
           onFinish={onFinish}
+          onFinishFailed={handleFinishFailed}
         >
           <Form.Item
             label="Username"
@@ -94,9 +104,6 @@ export function Login() {
               Log in
             </Button>
           </Form.Item>
-          <div>
-            Don’t have an account yet? <Link to="/register">Sign up</Link>
-          </div>
         </Form>
       </div>
     </main>
