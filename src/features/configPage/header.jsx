@@ -45,25 +45,33 @@ function Header({ title, onEdit, isEditable, avaPath }) {
   };
 
   const onFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
+    const file = event.target.files[0];
+    const fileType = file.type;
+  
+    if (!fileType.match(/image\/(jpg|jpeg|png|gif)/)) {
+      console.error('Only image files are allowed (jpg, jpeg, png, gif)');
+      return;
+    }
+  
+    setSelectedFile(file);
   };
-
+  
   const onFileUpload = async () => {
     if (!selectedFile) {
       console.error('Please select a file to upload.');
       return;
     }
-
+  
     const formData = new FormData();
     formData.append('image', selectedFile);
-
+  
     try {
       const response = await axios.post(
         `http://127.0.0.1:8000/api/${id}/ava`,
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'ultipart/form-data',
             'Authorization': `Bearer ${TokenService.getLocalAccessToken()}`
           }
         }
@@ -145,7 +153,7 @@ function Header({ title, onEdit, isEditable, avaPath }) {
         text="Save"
       >
         <div>
-          <input type="file" onChange={onFileChange} />
+          <input type="file" onChange={onFileChange} accept=".jpg,.jpeg,.png,.gif" />
         </div>
         <Input
           placeholder="Title"
