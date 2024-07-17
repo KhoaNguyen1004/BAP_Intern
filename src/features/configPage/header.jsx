@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Layout, Button, Input, Card } from 'antd';
+import { Layout, Button, Input, Card, message } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Popup from '../../components/Popup';
-import TokenService from '../../services/token.service'
+import TokenService from '../../services/token.service';
 
 const { Header: AntdHeader } = Layout;
 
@@ -33,7 +33,9 @@ function Header({ title, onEdit, isEditable, avaPath }) {
   };
 
   const handleOk = () => {
-    onFileUpload();
+    if (selectedFile) {
+      onFileUpload();
+    }
     onEdit(newTitle);
     setIsModalVisible(false);
   };
@@ -46,39 +48,37 @@ function Header({ title, onEdit, isEditable, avaPath }) {
 
   const onFileChange = (event) => {
     const file = event.target.files[0];
-    const fileType = file.type;
-  
-    if (!fileType.match(/image\/(jpg|jpeg|png|gif)/)) {
-      console.error('Only image files are allowed (jpg, jpeg, png, gif)');
-      return;
+    if (file) {
+      const fileType = file.type;
+      if (!fileType.match(/image\/(jpg|jpeg|png|gif)/)) {
+        message.error('Only image files are allowed (jpg, jpeg, png, gif)');
+        event.target.value = null;  
+        setSelectedFile(null);
+        return;
+      }
+      setSelectedFile(file);
     }
-  
-    setSelectedFile(file);
   };
-  
+
   const onFileUpload = async () => {
-    if (!selectedFile) {
-      console.error('Please select a file to upload.');
-      return;
-    }
-  
     const formData = new FormData();
     formData.append('image', selectedFile);
-  
+
     try {
       const response = await axios.post(
         `http://127.0.0.1:8000/api/${id}/ava`,
         formData,
         {
           headers: {
-            'Content-Type': 'ultipart/form-data',
-            'Authorization': `Bearer ${TokenService.getLocalAccessToken()}`
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${TokenService.getLocalAccessToken()}`
           }
         }
       );
       console.log(response.data);
       fetchImages();
     } catch (error) {
+      message.error('There was an error uploading the image!');
       console.error('There was an error uploading the image!', error);
     }
   };
@@ -86,11 +86,13 @@ function Header({ title, onEdit, isEditable, avaPath }) {
   const fetchImages = async () => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/templates/${id}`,{
+        `http://127.0.0.1:8000/api/templates/${id}`,
+        {
           headers: {
-            'Authorization': `Bearer ${TokenService.getLocalAccessToken()}`
+            Authorization: `Bearer ${TokenService.getLocalAccessToken()}`
           }
-        });
+        }
+      );
       setUploadedImages(response.data.data.avaPath);
     } catch (error) {
       console.error('There was an error fetching the images!', error);
@@ -152,8 +154,12 @@ function Header({ title, onEdit, isEditable, avaPath }) {
         onCancel={handleCancel}
         text="Save"
       >
-        <div>
-          <input type="file" onChange={onFileChange} accept=".jpg,.jpeg,.png,.gif" />
+        <div className="pb-3">
+          <input
+            type="file"
+            onChange={onFileChange}
+            accept=".jpg,.jpeg,.png,.gif"
+          />
         </div>
         <Input
           placeholder="Title"
@@ -161,7 +167,7 @@ function Header({ title, onEdit, isEditable, avaPath }) {
           onChange={(e) => setNewTitle(e.target.value)}
           className="mb-4"
         />
-        <Card className="bg-slate-500 mt-4 rounded p-4">
+        <Card bodyStyle={{ padding: '0 10px'}} className="bg-slate-500 mt-4 rounded">
           <div className="w-full flex items-center gap-4 sm:gap-20">
             {selectedFile ? (
               <div>
