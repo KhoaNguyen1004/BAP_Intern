@@ -188,11 +188,12 @@ function Dashboard() {
       .catch((err) => {
         console.error('Error cloning template:', err);
         openNotification({
-          message: 'Failed to clone template!',
+          message: 'Duplicated template name',
           type: 'error',
           title: 'Error'
         });
         setIsAddTemplateModalOpen(false);
+        fetchTemplates();
       })
       .finally(() => setIsLoading(false));
   };
@@ -305,7 +306,6 @@ function Dashboard() {
               <h2 className="text-lg font-semibold mb-4">Template</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {status === 'loading' && setIsLoading(true)}
-                {status === 'failed' && <p>{error}</p>}
                 {status === 'succeeded' &&
                   templates?.map((item) => (
                     <Card
@@ -416,7 +416,6 @@ function Dashboard() {
                         value={
                           isCloneTemplate ? 'Clone Template' : 'New Template'
                         }
-                        // initialValues="Clone Template"
                       >
                         <Radio value="New Template">New Template</Radio>
                         <Radio value="Clone Template">Clone Template</Radio>
