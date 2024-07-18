@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Layout,
   Space,
@@ -41,6 +41,7 @@ function Dashboard() {
   const { templates, chosen, status, error } = useAppSelector(
     (state) => state.templates
   );
+  const [templateName, setTemplateName] = useState('');
 
   const fetchTemplates = () => {
     setIsLoading(true);
@@ -351,9 +352,18 @@ function Dashboard() {
                   title="Add Template"
                   isOpen={isAddTemplateModalOpen}
                   onOk={onFinish}
-                  onCancel={handleCancel}
+                  onCancel={() => {
+                    handleCancel();
+                    setTemplateName('');
+                  }}
                   footer={[
-                    <Button key="back" onClick={handleCancel}>
+                    <Button
+                      key="back"
+                      onClick={() => {
+                        setTemplateName('');
+                        handleCancel();
+                      }}
+                    >
                       Cancel
                     </Button>,
                     <Button
@@ -361,7 +371,10 @@ function Dashboard() {
                       key="submit"
                       type="primary"
                       htmlType="submit"
-                      disabled={!selectedTemplateId}
+                      disabled={
+                        (!selectedTemplateId && isCloneTemplate) ||
+                        (templateName.trim() === '' && !isCloneTemplate)
+                      }
                     >
                       Create
                     </Button>
@@ -371,7 +384,7 @@ function Dashboard() {
                     form={form}
                     id="addConfigForm"
                     initialValues={{
-                      configValue: 'Clone Template'
+                      configValue: 'New Template'
                     }}
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
@@ -387,7 +400,9 @@ function Dashboard() {
                         }
                       ]}
                     >
-                      <Input />
+                      <Input
+                        onChange={(e) => setTemplateName(e.target.value)}
+                      />
                     </Form.Item>
                     <Form.Item
                       label="Template Options"
@@ -398,10 +413,13 @@ function Dashboard() {
                     >
                       <Radio.Group
                         onChange={handleRadioChange}
-                        initialValues="Clone Template"
+                        value={
+                          isCloneTemplate ? 'Clone Template' : 'New Template'
+                        }
+                        // initialValues="Clone Template"
                       >
-                        <Radio value="Clone Template">Clone Template</Radio>
                         <Radio value="New Template">New Template</Radio>
+                        <Radio value="Clone Template">Clone Template</Radio>
                       </Radio.Group>
                     </Form.Item>
 

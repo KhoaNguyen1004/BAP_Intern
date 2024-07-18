@@ -12,7 +12,7 @@ const useTemplateModals = (fetchTemplates, chosen) => {
     useState(false);
   const [isConfigTemplateModalOpen, setIsConfigTemplateModalOpen] =
     useState(false);
-  const [isCloneTemplate, setIsCloneTemplate] = useState(true);
+  const [isCloneTemplate, setIsCloneTemplate] = useState(false);
   const [, setShowPopconfirm] = useState(false);
   const [form] = Form.useForm();
 
