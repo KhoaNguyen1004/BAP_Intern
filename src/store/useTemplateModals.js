@@ -37,6 +37,7 @@ const useTemplateModals = (fetchTemplates, chosen) => {
     setIsDeleteTemplateModalOpen(false);
     setIsConfigTemplateModalOpen(false);
     setSelectedTemplatesToDelete([]);
+    setIsCloneTemplate(false);
     form.resetFields();
   };
 
