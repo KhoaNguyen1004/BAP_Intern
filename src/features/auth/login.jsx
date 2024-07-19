@@ -6,7 +6,6 @@ import { loginAsync, selectAuth } from './authSlice';
 import { LoadingContext } from '../../contexts/LoadingContext';
 import { NotificationContext } from '../../contexts/NotificationContext';
 import TokenService from '../../services/token.service';
-import BackUpUI from '../templates/backUpUI';
 
 export function Login() {
   const dispatch = useAppDispatch();
@@ -16,7 +15,6 @@ export function Login() {
   const { openNotification } = useContext(NotificationContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notificationShown, setNotificationShown] = useState(false);
-  const [showBackupUI, setShowBackupUI] = useState(false);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -39,9 +37,7 @@ export function Login() {
       navigate('/admin/dashboard');
     } catch (error) {
       console.error('Login error:', error);
-      if (!error.response) {
-        setShowBackupUI(true); 
-      } else if (!notificationShown) {
+      if (!notificationShown) {
         openNotification({
           message: 'Invalid username or password!',
           type: 'error',
@@ -57,62 +53,58 @@ export function Login() {
 
   return (
     <main>
-      {showBackupUI ? (
-        <BackUpUI />
-      ) : (
-        <div
-          style={{
-            border: '1px solid #ccc',
-            borderRadius: '5px',
-            width: 'fit-content',
-            marginTop: '10%',
-            margin: 'auto',
-            padding: '30px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            textAlign: 'center'
+      <div
+        style={{
+          border: '1px solid #ccc',
+          borderRadius: '5px',
+          width: 'fit-content',
+          marginTop: '10%',
+          margin: 'auto',
+          padding: '30px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          textAlign: 'center'
+        }}
+      >
+        <h2>Login</h2>
+        <Form
+          name="loginForm"
+          initialValues={{ remember: true }}
+          onFinish={onFinish}
+          onFinishFailed={() => {
+            setNotificationShown(false);
           }}
         >
-          <h2>Login</h2>
-          <Form
-            name="loginForm"
-            initialValues={{ remember: true }}
-            onFinish={onFinish}
-            onFinishFailed={() => {
-              setNotificationShown(false);
-            }}
+          <Form.Item
+            label="Username"
+            name="username"
+            rules={[{ required: true, message: 'Please input your username!' }]}
+            labelCol={{ span: 24 }}
+            wrapperCol={{ span: 24 }}
+            style={{ marginBottom: '10px' }}
           >
-            <Form.Item
-              label="Username"
-              name="username"
-              rules={[{ required: true, message: 'Please input your username!' }]}
-              labelCol={{ span: 24 }}
-              wrapperCol={{ span: 24 }}
-              style={{ marginBottom: '10px' }}
-            >
-              <Input placeholder="Enter your username" />
-            </Form.Item>
-            <Form.Item
-              label="Password"
-              name="password"
-              rules={[{ required: true, message: 'Please input your password!' }]}
-              labelCol={{ span: 24 }}
-              wrapperCol={{ span: 24 }}
-              style={{ marginBottom: '10px' }}
-            >
-              <Input.Password placeholder="Enter your password" />
-            </Form.Item>
+            <Input placeholder="Enter your username" />
+          </Form.Item>
+          <Form.Item
+            label="Password"
+            name="password"
+            rules={[{ required: true, message: 'Please input your password!' }]}
+            labelCol={{ span: 24 }}
+            wrapperCol={{ span: 24 }}
+            style={{ marginBottom: '10px' }}
+          >
+            <Input.Password placeholder="Enter your password" />
+          </Form.Item>
 
-            <Form.Item>
-              <Button type="primary" htmlType="submit" disabled={isSubmitting}>
-                Log in
-              </Button>
-            </Form.Item>
-          </Form>
-        </div>
-      )}
+          <Form.Item>
+            <Button type="primary" htmlType="submit" disabled={isSubmitting}>
+              Log in
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
     </main>
   );
 }
