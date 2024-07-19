@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Layout, Button, Input, Card, message } from 'antd';
+import { Layout, Button, Input, Card, message, Radio } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -15,6 +15,8 @@ function Header({ title, onEdit, isEditable, avaPath }) {
   const [newTitle, setNewTitle] = useState(title);
   const [uploadedImages, setUploadedImages] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
+  const [logoPosition, setLogoPosition] = useState('left'); // State to control logo position
+  const [tempLogoPosition, setTempLogoPosition] = useState('left'); // Temporary state for popup
 
   useEffect(() => {
     setNewTitle(title);
@@ -30,6 +32,7 @@ function Header({ title, onEdit, isEditable, avaPath }) {
 
   const showModal = () => {
     setIsModalVisible(true);
+    setTempLogoPosition(logoPosition); // Initialize temporary state
   };
 
   const handleOk = () => {
@@ -37,6 +40,7 @@ function Header({ title, onEdit, isEditable, avaPath }) {
       onFileUpload();
     }
     onEdit(newTitle);
+    setLogoPosition(tempLogoPosition); // Apply temporary state to actual state
     setIsModalVisible(false);
   };
 
@@ -44,6 +48,7 @@ function Header({ title, onEdit, isEditable, avaPath }) {
     setIsModalVisible(false);
     setNewTitle(title);
     setSelectedFile(null);
+    setTempLogoPosition(logoPosition); // Reset temporary state
   };
 
   const onFileChange = (event) => {
@@ -52,7 +57,7 @@ function Header({ title, onEdit, isEditable, avaPath }) {
       const fileType = file.type;
       if (!fileType.match(/image\/(jpg|jpeg|png|gif)/)) {
         message.error('Only image files are allowed (jpg, jpeg, png, gif)');
-        event.target.value = null;  
+        event.target.value = null;
         setSelectedFile(null);
         return;
       }
@@ -115,37 +120,64 @@ function Header({ title, onEdit, isEditable, avaPath }) {
         height: '64px'
       }}
     >
-      <div className="rounded-full ml-4 sm:ml-10 mt-6">
-        {uploadedImages && (
-          <img
-            key={uploadedImages}
-            src={`http://127.0.0.1:8000${uploadedImages}`}
-            alt={`Uploaded ${uploadedImages}`}
-            style={{
-              height: '50px',
-              width: '50px',
-              borderRadius: '50px',
-              top: '5%'
-            }}
-          />
-        )}
-      </div>
-      <div className="flex-1 text-center pr-20">
-        <h1 className="text-2xl text-black bg-white p-2 rounded">{title}</h1>
-      </div>
+      {logoPosition === 'right' ? (
+        <>
+          <div className="flex-1 text-center pl-0">
+            <h1 className="text-2xl text-black bg-white p-2 rounded">{title}</h1>
+          </div>
+          <div className="rounded-full mr-4 sm:mr-10 mt-6 pr-20">
+            {uploadedImages && (
+              <img
+                key={uploadedImages}
+                src={`http://127.0.0.1:8000${uploadedImages}`}
+                alt={`Uploaded ${uploadedImages}`}
+                style={{
+                  height: '50px',
+                  width: '50px',
+                  borderRadius: '50px',
+                  top: '5%'
+                }}
+              />
+            )}
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="rounded-full ml-4 sm:ml-10 mt-6">
+            {uploadedImages && (
+              <img
+                key={uploadedImages}
+                src={`http://127.0.0.1:8000${uploadedImages}`}
+                alt={`Uploaded ${uploadedImages}`}
+                style={{
+                  height: '50px',
+                  width: '50px',
+                  borderRadius: '50px',
+                  top: '5%'
+                }}
+              />
+            )}
+          </div>
+          <div className="flex-1 text-center pr-20">
+            <h1 className="text-2xl text-black bg-white p-2 rounded">{title}</h1>
+          </div>
+        </>
+      )}
       {isEditable && (
-        <Button
-          type="text"
-          icon={<SettingOutlined />}
-          className="text-white"
-          style={{
-            position: 'absolute',
-            top: '50%',
-            right: '50px',
-            transform: 'translateY(-50%)'
-          }}
-          onClick={showModal}
-        />
+        <>
+          <Button
+            type="text"
+            icon={<SettingOutlined />}
+            className="text-white"
+            style={{
+              position: 'absolute',
+              top: '50%',
+              right: '50px',
+              transform: 'translateY(-50%)'
+            }}
+            onClick={showModal}
+          />
+        </>
       )}
       <Popup
         title="Edit Header"
@@ -167,42 +199,91 @@ function Header({ title, onEdit, isEditable, avaPath }) {
           onChange={(e) => setNewTitle(e.target.value)}
           className="mb-4"
         />
-        <Card bodyStyle={{ padding: '0 10px'}} className="bg-slate-500 mt-4 rounded">
+        <Radio.Group
+          value={tempLogoPosition}
+          onChange={(e) => setTempLogoPosition(e.target.value)}
+          className="mb-4"
+        >
+          <Radio value="left">Logo Left</Radio>
+          <Radio value="right">Logo Right</Radio>
+        </Radio.Group>
+        <Card bodyStyle={{ padding: '0 10px' }} className="bg-slate-500 mt-4 rounded">
           <div className="w-full flex items-center gap-4 sm:gap-20">
-            {selectedFile ? (
-              <div>
-                <img
-                  src={URL.createObjectURL(selectedFile)}
-                  alt={`Selected ${selectedFile.name}`}
-                  style={{
-                    height: '50px',
-                    width: '50px',
-                    borderRadius: '50px'
-                  }}
-                />
-              </div>
-            ) : uploadedImages ? (
-              <div>
-                <img
-                  src={`http://127.0.0.1:8000${uploadedImages}`}
-                  alt={`Uploaded ${uploadedImages}`}
-                  style={{
-                    height: '50px',
-                    width: '50px',
-                    borderRadius: '50px'
-                  }}
-                />
-              </div>
+            {tempLogoPosition === 'left' ? (
+              <>
+                {selectedFile ? (
+                  <div>
+                    <img
+                      src={URL.createObjectURL(selectedFile)}
+                      alt={`Selected ${selectedFile.name}`}
+                      style={{
+                        height: '50px',
+                        width: '50px',
+                        borderRadius: '50px'
+                      }}
+                    />
+                  </div>
+                ) : uploadedImages ? (
+                  <div>
+                    <img
+                      src={`http://127.0.0.1:8000${uploadedImages}`}
+                      alt={`Uploaded ${uploadedImages}`}
+                      style={{
+                        height: '50px',
+                        width: '50px',
+                        borderRadius: '50px'
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <p>No image selected or uploaded.</p>
+                  </div>
+                )}
+                <div className="flex-1 text-center">
+                  <h1 className="text-2xl text-black bg-white p-2 rounded">
+                    {newTitle}
+                  </h1>
+                </div>
+              </>
             ) : (
-              <div>
-                <p>No image selected or uploaded.</p>
-              </div>
+              <>
+                <div className="flex-1 text-center">
+                  <h1 className="text-2xl text-black bg-white p-2 rounded">
+                    {newTitle}
+                  </h1>
+                </div>
+                {selectedFile ? (
+                  <div>
+                    <img
+                      src={URL.createObjectURL(selectedFile)}
+                      alt={`Selected ${selectedFile.name}`}
+                      style={{
+                        height: '50px',
+                        width: '50px',
+                        borderRadius: '50px'
+                      }}
+                    />
+                  </div>
+                ) : uploadedImages ? (
+                  <div>
+                    <img
+                      src={`http://127.0.0.1:8000${uploadedImages}`}
+                      alt={`Uploaded ${uploadedImages}`}
+                      style={{
+                        height: '50px',
+                        width: '50px',
+                        borderRadius: '50px'
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <p>No image selected or uploaded.</p>
+                  </div>
+                )}
+              </>
             )}
-            <div className="flex-1 text-center">
-              <h1 className="text-2xl text-black bg-white p-2 rounded">
-                {newTitle}
-              </h1>
-            </div>
           </div>
         </Card>
       </Popup>
