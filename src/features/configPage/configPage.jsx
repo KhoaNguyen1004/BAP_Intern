@@ -13,6 +13,7 @@ import { addSection, deleteSection, editSection } from './sectionSlice';
 import { useAppDispatch } from '../../store/hooks';
 import { LoadingContext } from '../../contexts/LoadingContext';
 import { NotificationContext } from '../../contexts/NotificationContext';
+import BackUpUI from '../templates/backUpUI';
 
 function ConfigPage() {
   const { id } = useParams();
@@ -28,6 +29,7 @@ function ConfigPage() {
   const [headerLogo, setHeaderLogo] = useState('');
   const [footerContent, setFooterContent] = useState('');
   const { openNotification } = useContext(NotificationContext);
+  const [showBackupUI, setShowBackupUI] = useState(false);
 
   useEffect(() => {
     fetchSections();
@@ -46,6 +48,7 @@ function ConfigPage() {
       })
       .catch((error) => {
         console.error('Failed to fetch sections:', error);
+        setShowBackupUI(true);
       });
   };
 
@@ -261,6 +264,10 @@ function ConfigPage() {
         setIsModalVisible(false);
       });
   };
+
+  if (showBackupUI) {
+    return <BackUpUI />;
+  }
 
   return (
     <div className="flex flex-col min-h-screen">

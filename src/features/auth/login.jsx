@@ -6,6 +6,7 @@ import { loginAsync, selectAuth } from './authSlice';
 import { LoadingContext } from '../../contexts/LoadingContext';
 import { NotificationContext } from '../../contexts/NotificationContext';
 import TokenService from '../../services/token.service';
+import BackUpUI from '../templates/backUpUI';
 
 export function Login() {
   const dispatch = useAppDispatch();
@@ -15,6 +16,7 @@ export function Login() {
   const { openNotification } = useContext(NotificationContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notificationShown, setNotificationShown] = useState(false);
+  const [showBackupUI, setShowBackupUI] = useState(false);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -37,19 +39,24 @@ export function Login() {
       navigate('/admin/dashboard');
     } catch (error) {
       console.error('Login error:', error);
-      if (!notificationShown) {
+      if (!notificationShown && error === 'Username or password incorrect') {
         openNotification({
           message: 'Invalid username or password!',
           type: 'error',
           title: 'Login Failed'
         });
         setNotificationShown(true);
+      } else if (error === 'Login failed!') {
+        setShowBackupUI(true);
       }
     } finally {
       setIsLoading(false);
       setIsSubmitting(false);
     }
   };
+  if (showBackupUI) {
+    return <BackUpUI />;
+  }
 
   return (
     <main>
