@@ -30,6 +30,7 @@ function ConfigPage() {
   const [footerContent, setFooterContent] = useState('');
   const { openNotification } = useContext(NotificationContext);
   const [showBackupUI, setShowBackupUI] = useState(false);
+  const [headerLogoPosition, setHeaderLogoPosition] = useState('');
 
   useEffect(() => {
     fetchSections();
@@ -44,6 +45,7 @@ function ConfigPage() {
         setHeaderTitle(response.title);
         setHeaderAva(response.ava_path);
         setHeaderLogo(response.logo);
+        setHeaderLogoPosition(response.logoPosition); 
         setFooterContent(response.footer);
       })
       .catch((error) => {
@@ -197,13 +199,14 @@ function ConfigPage() {
       });
   };
 
-  const handleEditHeader = (newTitle) => {
+  const handleEditHeader = (newTitle, newLogoPosition) => {
     setIsLoading(true);
     dispatch(
       editHeader({
         id,
         header: {
-          title: newTitle
+          title: newTitle,
+          logoPosition: newLogoPosition,
         }
       })
     )
@@ -215,6 +218,7 @@ function ConfigPage() {
           title: 'Success'
         });
         setHeaderTitle(newTitle);
+        setHeaderLogoPosition(newLogoPosition);
         fetchSections();
       })
       .catch((error) => {
@@ -274,6 +278,7 @@ function ConfigPage() {
       <Header
         logo={templateData.logo || headerLogo}
         title={templateData.title || headerTitle}
+        logoPosition={templateData.logoPosition || headerLogoPosition}
         onEdit={handleEditHeader}
         ava_path={templateData.ava_path || headerAva}
       />
