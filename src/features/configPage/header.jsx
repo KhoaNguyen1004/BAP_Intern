@@ -122,7 +122,7 @@ function Header({ title, onEdit, isEditable, avaPath }) {
     >
       {logoPosition === 'right' ? (
         <>
-          <div className="flex-1 text-center pl-0">
+          <div className="flex-1 text-center pl-10">
             <h1 className="text-2xl text-black bg-white p-2 rounded">{title}</h1>
           </div>
           <div className="rounded-full mr-4 sm:mr-10 mt-6 pr-20">
