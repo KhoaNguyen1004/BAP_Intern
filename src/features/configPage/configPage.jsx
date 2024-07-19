@@ -284,7 +284,7 @@ function ConfigPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {templateData.header_type === 1 ? (
+      {templateData.header_type === undefined ? (
         <Header
           logo={templateData.logo || headerLogo}
           title={templateData.title || headerTitle}
