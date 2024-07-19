@@ -9,12 +9,14 @@ const initialState = user
   ? {
       isLoggedIn: true,
       user,
-      error: ''
+      error: '',
+      backupUI: false
     }
   : {
       isLoggedIn: false,
       user: null,
-      error: ''
+      error: '',
+      backupUI: false
     };
 
 export const loginAsync = createAsyncThunk(
@@ -25,9 +27,6 @@ export const loginAsync = createAsyncThunk(
         userCredentials.username,
         userCredentials.password
       );
-      // if (response.error) {
-      //   return thunkApi.rejectWithValue(response.error);
-      // }
       if (response.status === 'success') {
         return response;
       }
@@ -36,9 +35,11 @@ export const loginAsync = createAsyncThunk(
       const error = _error;
       if (axios.isAxiosError(error)) {
         thunkApi.dispatch(setError(error.response?.data.message));
+        thunkApi.dispatch(showBackupUI());
         return thunkApi.rejectWithValue(error.response?.data.message);
       }
       thunkApi.dispatch(setError(error.message));
+      thunkApi.dispatch(showBackupUI());
       return thunkApi.rejectWithValue(error.message);
     }
   }
@@ -56,33 +57,40 @@ export const authSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
     },
+    showBackupUI: (state) => {
+      state.backupUI = true;
+    },
+    hideBackupUI: (state) => {
+      state.backupUI = false;
+    },
     refreshToken: (state, { payload }) => {
-      state.user.accessToken = payload.acessToken;
+      state.user.accessToken = payload.accessToken;
       state.user.refreshToken = payload.refreshToken;
     }
   },
   extraReducers: (builder) => {
     builder
       .addCase(loginAsync.fulfilled, (state, { payload }) => {
-        console.log('Redux state updated:', payload.data);
         state.isLoggedIn = true;
         state.user = payload.data;
         state.error = '';
+        state.backupUI = false; 
         tokenService.setUser(payload.data);
       })
-      .addCase(loginAsync.rejected, (state, { payload }) => {
+      .addCase(loginAsync.rejected, (state) => {
         state.isLoggedIn = false;
-        state.error = payload || 'Login failed!';
+        state.error = 'Login failed!';
       })
       .addCase(logoutAsync.fulfilled, (state) => {
         state.isLoggedIn = false;
         state.user = null;
         state.error = '';
+        state.backupUI = false;
       });
   }
 });
 
-export const { setError, refreshToken } = authSlice.actions;
+export const { setError, showBackupUI, hideBackupUI, refreshToken } = authSlice.actions;
 
 export const selectAuth = (state) => state.auth;
 
