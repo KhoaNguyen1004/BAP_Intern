@@ -30,6 +30,7 @@ import {
   cloneTemplate
 } from './templatesSlice';
 import useTemplateModals from '../../store/useTemplateModals';
+import BackUpUI from '../templates/backUpUI';
 
 const { Header, Content } = Layout;
 
@@ -42,6 +43,7 @@ function Dashboard() {
     (state) => state.templates
   );
   const [templateName, setTemplateName] = useState('');
+  const [showBackupUI, setShowBackupUI] = useState(false);
 
   const fetchTemplates = () => {
     setIsLoading(true);
@@ -53,6 +55,7 @@ function Dashboard() {
       })
       .catch((err) => {
         console.error('Error fetching templates:', err);
+        setShowBackupUI(true);
       })
       .finally(() => setIsLoading(false));
   };
@@ -267,6 +270,9 @@ function Dashboard() {
       })
       .finally(() => setIsLoading(false));
   };
+  if (showBackupUI) {
+    return <BackUpUI />;
+  }
   return (
     <div className="min-h-screen">
       <Layout className="min-h-screen w-full">
