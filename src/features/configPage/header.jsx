@@ -9,14 +9,13 @@ import TokenService from '../../services/token.service';
 
 const { Header: AntdHeader } = Layout;
 
-function Header({ title, onEdit, isEditable, avaPath }) {
+function Header({ title, onEdit, logoPosition: initialLogoPosition, isEditable, avaPath }) {
   const { id } = useParams();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
   const [uploadedImages, setUploadedImages] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
-  const [logoPosition, setLogoPosition] = useState('left'); // State to control logo position
-  const [tempLogoPosition, setTempLogoPosition] = useState('left'); // Temporary state for popup
+  const [tempLogoPosition, setTempLogoPosition] = useState(initialLogoPosition); 
 
   useEffect(() => {
     setNewTitle(title);
@@ -32,23 +31,27 @@ function Header({ title, onEdit, isEditable, avaPath }) {
 
   const showModal = () => {
     setIsModalVisible(true);
-    setTempLogoPosition(logoPosition); // Initialize temporary state
+    setTempLogoPosition(initialLogoPosition); 
   };
 
-  const handleOk = () => {
-    if (selectedFile) {
-      onFileUpload();
+  const handleOk = async () => {
+    try {
+      if (selectedFile) {
+        await onFileUpload();
+      }
+      await onEdit(newTitle, tempLogoPosition); 
+      setIsModalVisible(false);
+    } catch (error) {
+      message.error('There was an error updating the header!');
+      console.error('Error updating the header:', error);
     }
-    onEdit(newTitle);
-    setLogoPosition(tempLogoPosition); // Apply temporary state to actual state
-    setIsModalVisible(false);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
     setNewTitle(title);
     setSelectedFile(null);
-    setTempLogoPosition(logoPosition); // Reset temporary state
+    setTempLogoPosition(initialLogoPosition); 
   };
 
   const onFileChange = (event) => {
@@ -120,10 +123,10 @@ function Header({ title, onEdit, isEditable, avaPath }) {
         height: '64px'
       }}
     >
-      {logoPosition === 'right' ? (
+      {tempLogoPosition === 'right' ? (
         <>
           <div className="flex-1 text-center pl-10">
-            <h1 className="text-2xl text-black bg-white p-2 rounded">{title}</h1>
+            <h1 className="text-2xl text-black bg-white p-2 rounded">{newTitle}</h1>
           </div>
           <div className="rounded-full mr-4 sm:mr-10 mt-6 pr-20">
             {uploadedImages && (
@@ -159,7 +162,7 @@ function Header({ title, onEdit, isEditable, avaPath }) {
             )}
           </div>
           <div className="flex-1 text-center pr-20">
-            <h1 className="text-2xl text-black bg-white p-2 rounded">{title}</h1>
+            <h1 className="text-2xl text-black bg-white p-2 rounded">{newTitle}</h1>
           </div>
         </>
       )}
@@ -293,6 +296,7 @@ function Header({ title, onEdit, isEditable, avaPath }) {
 
 Header.propTypes = {
   title: PropTypes.string,
+  logoPosition: PropTypes.string,
   onEdit: PropTypes.func.isRequired,
   isEditable: PropTypes.bool,
   avaPath: PropTypes.string
