@@ -126,7 +126,7 @@ function Header({ title, onEdit, headerType, isEditable, avaPath }) {
         height: '64px'
       }}
     >
-      {newHeaderType === 2 ? (
+      {headerType === 2 ? (
         <>
           <div className="flex-1 text-center pl-10">
             <h1 className="text-2xl text-black bg-white p-2 rounded">{newTitle}</h1>
