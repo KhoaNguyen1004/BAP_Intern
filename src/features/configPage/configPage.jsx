@@ -58,7 +58,7 @@ function ConfigPage() {
         setHeaderTitle(response.title);
         setHeaderAva(response.ava_path);
         setHeaderLogo(response.logo);
-        setHeaderType(response.headerType); 
+        setHeaderType(response.headerType);
         setFooterContent(response.footer);
       })
       .catch((error) => {
@@ -288,7 +288,7 @@ function ConfigPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {templateData.headerType === 1||templateData.headerType === 2 ? (
+      {templateData.headerType === 1 || templateData.headerType === 2 ? (
         <Header
           logo={templateData.logo || headerLogo}
           title={templateData.title || headerTitle}
@@ -297,39 +297,44 @@ function ConfigPage() {
           ava_path={templateData.ava_path || headerAva}
         />
       ) : (
-        <div
-          className="relative inline-block"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
+        templateData.headerType === 3 ? (
           <div
-            type="button"
-            className="bg-slate-500 text-white p-4 text-base cursor-pointer"
-            aria-haspopup="true"
-            aria-expanded={show}
+            className="relative inline-block"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           >
-            Menu
+            <div
+              type="button"
+              className="bg-slate-500 text-white p-4 text-base cursor-pointer"
+              aria-haspopup="true"
+              aria-expanded={show}
+            >
+              Menu
+            </div>
+            <div
+              className={`absolute bg-white min-w-[160px] shadow-lg z-10 ${show ? 'block' : 'hidden'}`}
+              role="menu"
+            >
+              {sections.map((section) => (
+                <a
+                  className="block text-black p-3 no-underline hover:bg-gray-200"
+                  key={section.section_id}
+                  id={`menu ${section.id}`}
+                  onClick={() => handleClick(section.id)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleClick(section.id); }}
+                  role="menuitem"
+                  tabIndex={0}
+                >
+                  {section.title}
+                </a>
+              ))}
+            </div>
           </div>
-          <div
-            className={`absolute bg-white min-w-[160px] shadow-lg z-10 ${show ? 'block' : 'hidden'}`}
-            role="menu"
-          >
-            {sections.map((section) => (
-              <a
-                className="block text-black p-3 no-underline hover:bg-gray-200"
-                key={section.section_id}
-                id={section.id}
-                onClick={() => handleClick(section.id)}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleClick(section.id); }}
-                role="menuitem"
-                tabIndex={0}
-              >
-                {section.title}
-              </a>
-            ))}
+        ) : (
+          <div>
+            headerType greater than 3
           </div>
-        </div>
-      )}
+      ))}
 
 
       <div className="flex-1 mb-20 px-4">

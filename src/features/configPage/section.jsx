@@ -5,6 +5,7 @@ import { SettingOutlined, DeleteOutlined } from '@ant-design/icons';
 import Popup from '../../components/Popup';
 
 function Section({
+  sectionId,
   type,
   title,
   content1,
@@ -72,7 +73,7 @@ function Section({
   };
 
   return (
-    <section className="bg-gray-100 p-2 mb-5 pb-4 relative top-16">
+    <section id={sectionId} className="bg-gray-100 p-2 mb-5 pb-4 relative top-16">
       <div style={{ padding: '0px 30%', borderRadius: '10px' }}>
         <h2 className="text-xl font-semibold mb-4 text-center bg-white">
           {title}
