@@ -6,6 +6,8 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Popup from '../../components/Popup';
 import TokenService from '../../services/token.service';
+import { useAppDispatch } from '../../store/hooks';
+import { getTemplate } from '../dashboard/templatesSlice';
 
 const { Header: AntdHeader } = Layout;
 
@@ -15,8 +17,11 @@ function Header({ title, onEdit, headerType, isEditable, avaPath }) {
   const [newTitle, setNewTitle] = useState(title);
   const [uploadedImages, setUploadedImages] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
-  const [newHeaderType, setNewHeaderType] = useState(headerType); 
-
+  const [newHeaderType, setNewHeaderType] = useState(headerType);
+  const [show, setShow] = useState(false);
+  const dispatch = useAppDispatch();
+  const [sections, setSections] = useState([]);
+  
   useEffect(() => {
     setNewTitle(title);
   }, [title]);
@@ -37,12 +42,38 @@ function Header({ title, onEdit, headerType, isEditable, avaPath }) {
     setIsModalVisible(true);
   };
 
+  useEffect(() => {
+    fetchSections();
+  }, [id]);
+
+  const fetchSections = () => {
+    dispatch(getTemplate(id))
+      .unwrap()
+      .then((response) => {
+        setSections(response.section);
+      })
+      .catch((error) => {
+        console.error('Failed to fetch sections:', error);
+      });
+  };
+
+  const handleClick = (id) => {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  };
+  const handleMouseEnter = () => {
+    setShow(true);
+  };
+
+  const handleMouseLeave = () => {
+    setShow(false);
+  };
+
   const handleOk = async () => {
     try {
       if (selectedFile) {
         await onFileUpload();
       }
-      await onEdit(newTitle, newHeaderType); 
+      await onEdit(newTitle, newHeaderType);
       setIsModalVisible(false);
     } catch (error) {
       message.error('There was an error updating the header!');
@@ -54,7 +85,7 @@ function Header({ title, onEdit, headerType, isEditable, avaPath }) {
     setIsModalVisible(false);
     setNewTitle(title);
     setSelectedFile(null);
-    setNewHeaderType(headerType); 
+    setNewHeaderType(headerType);
   };
 
   const onFileChange = (event) => {
@@ -148,27 +179,61 @@ function Header({ title, onEdit, headerType, isEditable, avaPath }) {
           </div>
         </>
       ) : (
-        <>
-          <div className="rounded-full ml-4 sm:ml-10 mt-6">
-            {uploadedImages && (
-              <img
-                key={uploadedImages}
-                src={`http://127.0.0.1:8000${uploadedImages}`}
-                alt={`Uploaded ${uploadedImages}`}
-                style={{
-                  height: '50px',
-                  width: '50px',
-                  borderRadius: '50px',
-                  top: '5%'
-                }}
-              />
-            )}
+        headerType === 1 ? (
+          <>
+            <div className="rounded-full ml-4 sm:ml-10 mt-6">
+              {uploadedImages && (
+                <img
+                  key={uploadedImages}
+                  src={`http://127.0.0.1:8000${uploadedImages}`}
+                  alt={`Uploaded ${uploadedImages}`}
+                  style={{
+                    height: '50px',
+                    width: '50px',
+                    borderRadius: '50px',
+                    top: '5%'
+                  }}
+                />
+              )}
+            </div>
+            <div className="flex-1 text-center pr-20">
+              <h1 className="text-2xl text-black bg-white p-2 rounded">{newTitle}</h1>
+            </div>
+          </>
+        ) : (
+          <div
+            className="relative inline-block"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            <div
+              type="button"
+              className="bg-slate-500 text-white p-4 text-base cursor-pointer"
+              aria-haspopup="true"
+              aria-expanded={show}
+            >
+              Menu
+            </div>
+            <div
+              className={`absolute bg-white min-w-[160px] shadow-lg z-10 ${show ? 'block' : 'hidden'}`}
+              role="menu"
+            >
+              {sections.map((section) => (
+                <a
+                  className="block text-black p-3 no-underline hover:bg-gray-200"
+                  key={section.section_id}
+                  id={`menu ${section.id}`}
+                  onClick={() => handleClick(section.id)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleClick(section.id); }}
+                  role="menuitem"
+                  tabIndex={0}
+                >
+                  {section.title}
+                </a>
+              ))}
+            </div>
           </div>
-          <div className="flex-1 text-center pr-20">
-            <h1 className="text-2xl text-black bg-white p-2 rounded">{newTitle}</h1>
-          </div>
-        </>
-      )}
+        ))}
       {isEditable && (
         <>
           <Button
