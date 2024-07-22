@@ -247,6 +247,7 @@ function Dashboard() {
         setIsLoading(false);
       });
   };
+
   useEffect(() => {
     fetchTemplates();
   }, []);
@@ -296,7 +297,7 @@ function Dashboard() {
                 icon={<LogoutOutlined />}
                 onClick={() => {
                   handleLogout();
-                  window.location.href = '/login';
+                  window.location.href = '/admin/login';
                 }}
                 className="w-full border-none bg-transparent text-start p-0 m-0"
               />
@@ -431,8 +432,6 @@ function Dashboard() {
                               key={item.id}
                             >
                               <div className="mx-2">
-                           
-
                                 <CardComponent
                                   item={{ id: item.id, name: item.name }}
                                   value={selectedTemplateId}
@@ -521,7 +520,6 @@ function Dashboard() {
                   {templates?.map((item) => (
                     <div className="w-full sm:w-1/2 mt-0" key={item.id}>
                       <div className="m-2">
-
                         <CardComponent
                           item={{ id: item.id, name: item.name }}
                           value={item.id}
