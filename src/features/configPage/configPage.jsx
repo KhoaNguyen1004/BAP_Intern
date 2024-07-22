@@ -42,7 +42,7 @@ function ConfigPage() {
   const [footerContent, setFooterContent] = useState('');
   const { openNotification } = useContext(NotificationContext);
   const [showBackupUI, setShowBackupUI] = useState(false);
-  const [headerLogoPosition, setHeaderLogoPosition] = useState('');
+  const [headerType, setHeaderType] = useState('');
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ function ConfigPage() {
         setHeaderTitle(response.title);
         setHeaderAva(response.ava_path);
         setHeaderLogo(response.logo);
-        setHeaderLogoPosition(response.logoPosition); 
+        setHeaderType(response.headerType); 
         setFooterContent(response.footer);
       })
       .catch((error) => {
@@ -212,14 +212,14 @@ function ConfigPage() {
       });
   };
 
-  const handleEditHeader = (newTitle, newLogoPosition) => {
+  const handleEditHeader = (newTitle, newHeaderType) => {
     setIsLoading(true);
     dispatch(
       editHeader({
         id,
         header: {
           title: newTitle,
-          logoPosition: newLogoPosition,
+          headerType: newHeaderType,
         }
       })
     )
@@ -231,7 +231,7 @@ function ConfigPage() {
           title: 'Success'
         });
         setHeaderTitle(newTitle);
-        setHeaderLogoPosition(newLogoPosition);
+        setHeaderType(newHeaderType);
         fetchSections();
       })
       .catch((error) => {
@@ -288,11 +288,11 @@ function ConfigPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {templateData.header_type === undefined ? (
+      {templateData.headerType === 1 ? (
         <Header
           logo={templateData.logo || headerLogo}
           title={templateData.title || headerTitle}
-          logoPosition={templateData.logoPosition || headerLogoPosition}
+          headerType={templateData.headerType || headerType}
           onEdit={handleEditHeader}
           ava_path={templateData.ava_path || headerAva}
         />

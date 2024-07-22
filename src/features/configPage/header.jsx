@@ -9,17 +9,21 @@ import TokenService from '../../services/token.service';
 
 const { Header: AntdHeader } = Layout;
 
-function Header({ title, onEdit, logoPosition: initialLogoPosition, isEditable, avaPath }) {
+function Header({ title, onEdit, headerType, isEditable, avaPath }) {
   const { id } = useParams();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
   const [uploadedImages, setUploadedImages] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
-  const [tempLogoPosition, setTempLogoPosition] = useState(initialLogoPosition); 
+  const [newHeaderType, setNewHeaderType] = useState(headerType); 
 
   useEffect(() => {
     setNewTitle(title);
   }, [title]);
+
+  useEffect(() => {
+    setNewHeaderType(headerType);
+  }, [headerType]);
 
   useEffect(() => {
     fetchImages();
@@ -31,7 +35,6 @@ function Header({ title, onEdit, logoPosition: initialLogoPosition, isEditable, 
 
   const showModal = () => {
     setIsModalVisible(true);
-    setTempLogoPosition(initialLogoPosition); 
   };
 
   const handleOk = async () => {
@@ -39,7 +42,7 @@ function Header({ title, onEdit, logoPosition: initialLogoPosition, isEditable, 
       if (selectedFile) {
         await onFileUpload();
       }
-      await onEdit(newTitle, tempLogoPosition); 
+      await onEdit(newTitle, newHeaderType); 
       setIsModalVisible(false);
     } catch (error) {
       message.error('There was an error updating the header!');
@@ -51,7 +54,7 @@ function Header({ title, onEdit, logoPosition: initialLogoPosition, isEditable, 
     setIsModalVisible(false);
     setNewTitle(title);
     setSelectedFile(null);
-    setTempLogoPosition(initialLogoPosition); 
+    setNewHeaderType(headerType); 
   };
 
   const onFileChange = (event) => {
@@ -123,7 +126,7 @@ function Header({ title, onEdit, logoPosition: initialLogoPosition, isEditable, 
         height: '64px'
       }}
     >
-      {tempLogoPosition === 'right' ? (
+      {newHeaderType === 2 ? (
         <>
           <div className="flex-1 text-center pl-10">
             <h1 className="text-2xl text-black bg-white p-2 rounded">{newTitle}</h1>
@@ -203,16 +206,16 @@ function Header({ title, onEdit, logoPosition: initialLogoPosition, isEditable, 
           className="mb-4"
         />
         <Radio.Group
-          value={tempLogoPosition}
-          onChange={(e) => setTempLogoPosition(e.target.value)}
+          value={newHeaderType}
+          onChange={(e) => setNewHeaderType(e.target.value)}
           className="mb-4"
         >
-          <Radio value="left">Logo Left</Radio>
-          <Radio value="right">Logo Right</Radio>
+          <Radio value={1}>Logo Left</Radio>
+          <Radio value={2}>Logo Right</Radio>
         </Radio.Group>
         <Card bodyStyle={{ padding: '0 10px' }} className="bg-slate-500 mt-4 rounded">
           <div className="w-full flex items-center gap-4 sm:gap-20">
-            {tempLogoPosition === 'left' ? (
+            {newHeaderType === 1 ? (
               <>
                 {selectedFile ? (
                   <div>
@@ -295,9 +298,9 @@ function Header({ title, onEdit, logoPosition: initialLogoPosition, isEditable, 
 }
 
 Header.propTypes = {
-  title: PropTypes.string,
-  logoPosition: PropTypes.string,
-  onEdit: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
+  headerType: PropTypes.number.isRequired,
+  onEdit: PropTypes.func,
   isEditable: PropTypes.bool,
   avaPath: PropTypes.string
 };
