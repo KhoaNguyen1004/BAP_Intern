@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button, Modal, Input } from 'antd';
@@ -181,12 +180,12 @@ function ConfigPage() {
           prevSections.map((section) =>
             section.id === sectionId
               ? {
-                ...section,
-                title: newTitle,
-                content1: newContent1,
-                content2: newContent2,
-                type: newType
-              }
+                  ...section,
+                  title: newTitle,
+                  content1: newContent1,
+                  content2: newContent2,
+                  type: newType
+                }
               : section
           )
         );
@@ -315,7 +314,9 @@ function ConfigPage() {
                 key={section.section_id}
                 id={section.id}
                 onClick={() => handleClick(section.id)}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleClick(section.id); }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleClick(section.id);
+                }}
                 role="menuitem"
                 tabIndex={0}
               >
@@ -326,7 +327,6 @@ function ConfigPage() {
         </div>
       )}
 
-
       <div className="flex-1 mb-20 px-4">
         {sections.map((section) => (
           <Section
@@ -336,6 +336,7 @@ function ConfigPage() {
             title={section.title}
             content1={section.content1}
             content2={section.content2}
+            isDeletable={sections.length > 1}
             onDelete={() => {
               console.log('Deleting section with id:', section.id);
               confirmDeleteSection(section.id);
