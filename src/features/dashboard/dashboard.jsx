@@ -15,6 +15,7 @@ import {
   LogoutOutlined,
   SettingOutlined
 } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import Popup from '../../components/Popup';
 import { LoadingContext } from '../../contexts/LoadingContext';
 import { NotificationContext } from '../../contexts/NotificationContext';
@@ -43,7 +44,7 @@ function Dashboard() {
   );
   const [templateName, setTemplateName] = useState('');
   const [showBackupUI, setShowBackupUI] = useState(false);
-
+  const { t } = useTranslation();
   const fetchTemplates = () => {
     setIsLoading(true);
     dispatch(getAllTemplates())
@@ -286,7 +287,8 @@ function Dashboard() {
                 <Avatar shape="square" size="large" icon={<UserOutlined />} />
                 <div className="ml-2">
                   <p className="text-lg text-start m-0 mb-2 leading-none font-semibold">
-                    {user?.username}
+                              {user?.username}
+
                   </p>
                   <p className="m-0 leading-none text-start">{user?.role}</p>
                 </div>
@@ -308,7 +310,7 @@ function Dashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
             {/* Template */}
             <div className="bg-white rounded-lg p-4 shadow-md">
-              <h2 className="text-lg font-semibold mb-4">Template</h2>
+              <h2 className="text-lg font-semibold mb-4">{t('ADMIN/DASHBOARD.Template.Title')}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {status === 'loading' && setIsLoading(true)}
                 {status === 'succeeded' &&
@@ -328,14 +330,14 @@ function Dashboard() {
                   type="primary"
                   onClick={handlChooseTemplate}
                 >
-                  Save
+                  {t('BUTTON.Save')}
                 </Button>
               </div>
             </div>
             {/* Config */}
             <div className="bg-white rounded-lg p-4 ml-4 shadow-md flex-1 h-[280px]">
               <h2 className="text-lg font-semibold items-start m-[4]">
-                Config
+                {t('ADMIN/DASHBOARD.Config.Config')}
               </h2>
               <div className="flex flex-col space-y-4 justify-between items-center w-2/4 mx-auto">
                 <Button
@@ -344,10 +346,10 @@ function Dashboard() {
                   className="!bg-primary-dominant hover:!bg-primary-dominant-dark focus:!bg-primary-dominant-light"
                   onClick={showAddTemplateModal}
                 >
-                  Add Template
+                  {t('ADMIN/DASHBOARD.Config.Add_Template.Title')}
                 </Button>
                 <Popup
-                  title="Add Template"
+                  title={t('ADMIN/DASHBOARD.Config.Add_Template.Title')}
                   isOpen={isAddTemplateModalOpen}
                   onOk={onFinish}
                   onCancel={() => {
@@ -362,7 +364,7 @@ function Dashboard() {
                         handleCancel();
                       }}
                     >
-                      Cancel
+                      {t('BUTTON.Cancel')}
                     </Button>,
                     <Button
                       form="addConfigForm"
@@ -374,7 +376,7 @@ function Dashboard() {
                         (templateName.trim() === '' && !isCloneTemplate)
                       }
                     >
-                      Create
+                      {t('BUTTON.Create')}
                     </Button>
                   ]}
                 >
@@ -389,7 +391,7 @@ function Dashboard() {
                     layout="vertical"
                   >
                     <Form.Item
-                      label="Template Name"
+                      label={t('ADMIN/DASHBOARD.Config.Add_Template.Template_Name')}
                       name="name"
                       rules={[
                         {
@@ -403,7 +405,7 @@ function Dashboard() {
                       />
                     </Form.Item>
                     <Form.Item
-                      label="Template Options"
+                      label={t('ADMIN/DASHBOARD.Config.Add_Template.Template_Option')}
                       name="configValue"
                       rules={[
                         { required: true, message: 'Please choose an option!' }
@@ -415,8 +417,8 @@ function Dashboard() {
                           isCloneTemplate ? 'Clone Template' : 'New Template'
                         }
                       >
-                        <Radio value="New Template">New Template</Radio>
-                        <Radio value="Clone Template">Clone Template</Radio>
+                        <Radio value="New Template">{t('ADMIN/DASHBOARD.Config.Add_Template.New_Template')}</Radio>  
+                        <Radio value="Clone Template">{t('ADMIN/DASHBOARD.Config.Add_Template.Clone_Template')}</Radio>
                       </Radio.Group>
                     </Form.Item>
 
@@ -431,8 +433,6 @@ function Dashboard() {
                               key={item.id}
                             >
                               <div className="mx-2">
-                           
-
                                 <CardComponent
                                   item={{ id: item.id, name: item.name }}
                                   value={selectedTemplateId}
@@ -448,10 +448,10 @@ function Dashboard() {
                 </Popup>
 
                 <Button type="primary" block onClick={showConfigTemplateModal}>
-                  Config Template
+                  {t('ADMIN/DASHBOARD.Config.Config_Template')}
                 </Button>
                 <Popup
-                  title="Config Template"
+                  title={t('ADMIN/DASHBOARD.Config.Config')}
                   isOpen={isConfigTemplateModalOpen}
                   onConfirm={handleOk}
                   onCancel={handleCancel}
@@ -488,17 +488,17 @@ function Dashboard() {
                 </Popup>
 
                 <Button type="primary" block onClick={showDeleteTemplateModal}>
-                  Delete Template
+                  {t('ADMIN/DASHBOARD.Config.Delete_Template')}
                 </Button>
               </div>
               <Popup
-                title="Delete Template"
+                title={t('ADMIN/DASHBOARD.Config.Delete_Template')}
                 isOpen={isDeleteTemplateModalOpen}
                 onOk={handleConfirmDelete}
                 onCancel={handleCancel}
                 footer={[
                   <Button key="back" onClick={handleCancel}>
-                    Cancel
+                    {t('BUTTON.Cancel')}
                   </Button>,
                   <Popconfirm
                     title="Delete selected templates?"
@@ -512,7 +512,7 @@ function Dashboard() {
                       type="primary"
                       disabled={selectedTemplatesToDelete.length === 0}
                     >
-                      Delete
+                     {t('BUTTON.Delete')}
                     </Button>
                   </Popconfirm>
                 ]}
@@ -521,7 +521,6 @@ function Dashboard() {
                   {templates?.map((item) => (
                     <div className="w-full sm:w-1/2 mt-0" key={item.id}>
                       <div className="m-2">
-
                         <CardComponent
                           item={{ id: item.id, name: item.name }}
                           value={item.id}
@@ -537,6 +536,7 @@ function Dashboard() {
               </Popup>
             </div>
           </div>
+
         </Content>
       </Layout>
     </div>

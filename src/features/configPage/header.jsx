@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
 import { Layout, Button, Input, Card, message } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
@@ -11,6 +12,7 @@ const { Header: AntdHeader } = Layout;
 
 function Header({ title, onEdit, isEditable, avaPath }) {
   const { id } = useParams();
+  const { t } = useTranslation();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
   const [uploadedImages, setUploadedImages] = useState('');
@@ -148,11 +150,11 @@ function Header({ title, onEdit, isEditable, avaPath }) {
         />
       )}
       <Popup
-        title="Edit Header"
-        isOpen={isModalVisible}
+        title={t('CONFIG/PAGE.EDIT_HEADER.Title')} 
+               isOpen={isModalVisible}
         onConfirm={handleOk}
         onCancel={handleCancel}
-        text="Save"
+        text={t('BUTTON.Save')}
       >
         <div className="pb-3">
           <input
@@ -162,7 +164,7 @@ function Header({ title, onEdit, isEditable, avaPath }) {
           />
         </div>
         <Input
-          placeholder="Title"
+          placeholder={t('CONFIG/PAGE.EDIT_HEADER.Header_Name')}
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           className="mb-4"
@@ -195,7 +197,7 @@ function Header({ title, onEdit, isEditable, avaPath }) {
               </div>
             ) : (
               <div>
-                <p>No image selected or uploaded.</p>
+                <p>{t('CONFIG/PAGE.EDIT_HEADER.No_Image')}</p>
               </div>
             )}
             <div className="flex-1 text-center">

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
 import { Layout, Input, Button, Card } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import Popup from '../../components/Popup';
@@ -9,7 +10,7 @@ const { Footer: AntdFooter } = Layout;
 function Footer({ footer, onEdit, isEditable }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newContent, setNewContent] = useState(footer);
-
+  const { t } = useTranslation();
   const showModal = () => {
     setNewContent(footer);
     setIsModalVisible(true);
@@ -56,14 +57,14 @@ function Footer({ footer, onEdit, isEditable }) {
         />
       )}
       <Popup
-        title="Edit Footer"
+        title={t('CONFIG/PAGE.EDIT_FOOTER.Title')}
         isOpen={isModalVisible}
         onConfirm={handleOk}
         onCancel={handleCancel}
-        text="Save"
+        text={t('BUTTON.Save')}
       >
         <Input
-          placeholder="Footer Content"
+          placeholder={t('CONFIG/PAGE.EDIT_FOOTER.Footer_Content')}
           value={newContent}
           onChange={(e) => setNewContent(e.target.value)}
         />

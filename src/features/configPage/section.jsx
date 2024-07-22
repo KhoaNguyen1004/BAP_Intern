@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
 import { Button, Input, Radio, message, Card } from 'antd';
 import { SettingOutlined, DeleteOutlined } from '@ant-design/icons';
 import Popup from '../../components/Popup';
@@ -17,6 +18,7 @@ function Section({
   const [showContentOption, setShowContentOption] = useState(
     type === 2 ? 'show' : 'hide'
   );
+    const { t } = useTranslation();
   const [newTitle, setNewTitle] = useState(title);
   const [newContent1, setNewContent1] = useState(content1);
   const [newContent2, setNewContent2] = useState(content2);
@@ -126,28 +128,28 @@ function Section({
         </div>
       )}
       <Popup
-        title="Edit Section"
+        title={t('CONFIG/PAGE.EDIT_SECTION.Title')}
         isOpen={isModalVisible}
         onConfirm={handleOk}
         onCancel={handleCancel}
-        text="Save"
+        text={t('BUTTON.Save')}
       >
         <Input
-          placeholder="Title"
+          placeholder={t('CONFIG/PAGE.EDIT_SECTION.Section_Title')}
           value={newTitle}
           onChange={handleTitleChange}
           style={{ marginBottom: '10px' }}
         />
         {titleError && <p style={{ color: 'red' }}>{titleError}</p>}
         <Input
-          placeholder="Content 1"
+          placeholder={t('CONFIG/PAGE.EDIT_SECTION.Section_Content_1')}
           value={newContent1}
           onChange={(e) => setNewContent1(e.target.value)}
           style={{ marginBottom: '10px' }}
         />
         {showContentOption === 'show' && (
           <Input
-            placeholder="Content 2"
+            placeholder={t('CONFIG/PAGE.EDIT_SECTION.Section_Content_2')}
             value={newContent2}
             onChange={(e) => setNewContent2(e.target.value)}
             style={{ marginBottom: '10px' }}
@@ -158,8 +160,8 @@ function Section({
           value={typeDraft}
           style={{ marginBottom: '10px' }}
         >
-          <Radio value={1}>Type 1</Radio>
-          <Radio value={2}>Type 2</Radio>
+          <Radio value={1}>{t('CONFIG/PAGE.EDIT_SECTION.Type_1')}</Radio>
+          <Radio value={2}>{t('CONFIG/PAGE.EDIT_SECTION.Type_2')}</Radio>
         </Radio.Group>
         <Card className="mt-5 bg-gray-100 relative">
           <div style={{ padding: '0px 30%', borderRadius: '10px' }}>

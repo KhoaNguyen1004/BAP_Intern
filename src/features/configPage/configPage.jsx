@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button, Modal, Input } from 'antd';
 import Header from './header';
 import Footer from './footer';
@@ -17,6 +18,7 @@ import { NotificationContext } from '../../contexts/NotificationContext';
 import BackUpUI from '../templates/backUpUI';
 
 function ConfigPage() {
+  const { t } = useTranslation();
   const handleClick = (id) => {
     document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
   };
@@ -353,7 +355,7 @@ function ConfigPage() {
         ))}
         <div className="flex justify-end mt-20">
           <Button type="primary" onClick={handleAddSection}>
-            Add more Section
+           {t('CONFIG/PAGE.ADD_MORE_SECTION')}
           </Button>
         </div>
       </div>
@@ -364,7 +366,7 @@ function ConfigPage() {
       <Modal
         title={
           modalContent === 'deleteSection'
-            ? 'Confirm Delete'
+            ? t('CONFIG/PAGE.DELETE_SECTION.Confirm')
             : modalContent === 'editHeader'
               ? 'Edit Header'
               : 'Edit Footer'
@@ -379,10 +381,10 @@ function ConfigPage() {
         }
         onCancel={handleCancel}
         okText={modalContent === 'deleteSection' ? 'Delete' : 'Save'}
-        cancelText="Cancel"
+        cancelText={t('BUTTON.Cancel')}
       >
         {modalContent === 'deleteSection' ? (
-          <p>Are you sure you want to delete this section?</p>
+          <p>{t('CONFIG/PAGE.DELETE_SECTION.Content')}</p>
         ) : modalContent === 'editHeader' ? (
           <div>
             <Input
