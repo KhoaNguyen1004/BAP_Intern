@@ -30,13 +30,13 @@ function App() {
             </PrivateRoute>
           }
         />
-        <Route path="/login" element={<Login />} />
+        <Route path="/admin/login" element={<Login />} />
         <Route
           path="*"
           element={
             <div>
               Not Found
-              <Link to="/login">Login</Link>
+              <Link to="/admin/login">Login</Link>
             </div>
           }
         />
