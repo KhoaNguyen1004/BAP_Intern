@@ -6,7 +6,7 @@ import Popup from '../../components/Popup';
 
 const { Footer: AntdFooter } = Layout;
 
-function Footer({ footer, onEdit, isEditable }) {
+function Footer({ footer, onEdit, isEditable, footerType }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newContent, setNewContent] = useState(footer);
 
@@ -25,6 +25,72 @@ function Footer({ footer, onEdit, isEditable }) {
     setNewContent(footer);
   };
 
+  const getFooterContent = () => {
+    switch (footerType) {
+      case 'type1':
+        return (
+          <h1 className="text-sm text-white m-0 pl-20">
+            {footer}
+          </h1>
+        );
+      case 'type2':
+        return (
+          <footer className="footer bg-body-tertiary fixed-bottom">
+            <div className="row">
+              <div className="col-md-6 d-flex justify-content-center align-items-center flex-column">
+                <h4>
+                  Created by{' '}
+                  <a
+                    href="https://codepen.io/MFM-347"
+                    className="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+                  >
+                    @MFM-347
+                  </a>
+                </h4>
+                <ul className="mt-2 list-unstyled">
+                  <li className="my-2">
+                    <a
+                      href="https://codepen.io/MFM-347"
+                      className="link-light link-underline-secondary"
+                    >
+                      <i className="fab fa-codepen"></i>&nbsp;CodePen
+                    </a>
+                  </li>
+                  <li className="my-2">
+                    <a
+                      href="https://github.com/MFM-347"
+                      className="link-light link-underline-light"
+                    >
+                      <i className="fab fa-github"></i>&nbsp;GitHub
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div className="col-md-6 d-flex justify-content-center align-items-center flex-column">
+                <h5>Powered By</h5>
+                <ul className="mt-2 list-unstyled">
+                  <li>
+                    <a
+                      href="https://github.com/twbs/bootstrap"
+                      className="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+                    >
+                      BootStrap
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </footer>
+        );
+      default:
+        return (
+          <h1 className="text-sm text-white m-0 pl-20">
+            {footer}
+          </h1>
+        );
+    }
+  };
+
   return (
     <AntdFooter
       className="bg-slate-500"
@@ -36,17 +102,10 @@ function Footer({ footer, onEdit, isEditable }) {
         width: '100%',
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
       }}
     >
-      <h1
-        className="text-sm text-white m-0 pl-20"
-        style={{
-          textAlign: 'center'
-        }}
-      >
-        {footer}
-      </h1>
+      {getFooterContent()}
       {isEditable && (
         <Button
           type="text"
@@ -74,7 +133,7 @@ function Footer({ footer, onEdit, isEditable }) {
           style={{
             marginTop: '20px',
             textAlign: 'center',
-            padding: '15px'
+            padding: '15px',
           }}
         >
           <h1 className="text-sm text-white m-0">{newContent}</h1>
@@ -87,11 +146,13 @@ function Footer({ footer, onEdit, isEditable }) {
 Footer.propTypes = {
   footer: PropTypes.string.isRequired,
   onEdit: PropTypes.func,
-  isEditable: PropTypes.bool
+  isEditable: PropTypes.bool,
+  footerType: PropTypes.oneOf(['type1', 'type2']),
 };
 
 Footer.defaultProps = {
-  isEditable: true
+  isEditable: true,
+  footerType: 'type1',
 };
 
 export default Footer;
