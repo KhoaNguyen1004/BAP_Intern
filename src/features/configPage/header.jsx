@@ -1,24 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Layout, Button, Input, Card, message } from 'antd';
+import { Layout, Button, Input, Card, message, Radio } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Popup from '../../components/Popup';
 import TokenService from '../../services/token.service';
+import { useAppDispatch } from '../../store/hooks';
+import { getTemplate } from '../dashboard/templatesSlice';
 
 const { Header: AntdHeader } = Layout;
 
-function Header({ title, onEdit, isEditable, avaPath }) {
+function Header({ title, onEdit, headerType, isEditable, avaPath }) {
   const { id } = useParams();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
   const [uploadedImages, setUploadedImages] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
-
+  const [newHeaderType, setNewHeaderType] = useState(headerType);
+  const [show, setShow] = useState(false);
+  const dispatch = useAppDispatch();
+  const [sections, setSections] = useState([]);
+  
   useEffect(() => {
     setNewTitle(title);
   }, [title]);
+
+  useEffect(() => {
+    setNewHeaderType(headerType);
+  }, [headerType]);
 
   useEffect(() => {
     fetchImages();
@@ -32,18 +42,50 @@ function Header({ title, onEdit, isEditable, avaPath }) {
     setIsModalVisible(true);
   };
 
-  const handleOk = () => {
-    if (selectedFile) {
-      onFileUpload();
+  useEffect(() => {
+    fetchSections();
+  }, [id]);
+
+  const fetchSections = () => {
+    dispatch(getTemplate(id))
+      .unwrap()
+      .then((response) => {
+        setSections(response.section);
+      })
+      .catch((error) => {
+        console.error('Failed to fetch sections:', error);
+      });
+  };
+
+  const handleClick = (id) => {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  };
+  const handleMouseEnter = () => {
+    setShow(true);
+  };
+
+  const handleMouseLeave = () => {
+    setShow(false);
+  };
+
+  const handleOk = async () => {
+    try {
+      if (selectedFile) {
+        await onFileUpload();
+      }
+      await onEdit(newTitle, newHeaderType);
+      setIsModalVisible(false);
+    } catch (error) {
+      message.error('There was an error updating the header!');
+      console.error('Error updating the header:', error);
     }
-    onEdit(newTitle);
-    setIsModalVisible(false);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
     setNewTitle(title);
     setSelectedFile(null);
+    setNewHeaderType(headerType);
   };
 
   const onFileChange = (event) => {
@@ -52,7 +94,7 @@ function Header({ title, onEdit, isEditable, avaPath }) {
       const fileType = file.type;
       if (!fileType.match(/image\/(jpg|jpeg|png|gif)/)) {
         message.error('Only image files are allowed (jpg, jpeg, png, gif)');
-        event.target.value = null;  
+        event.target.value = null;
         setSelectedFile(null);
         return;
       }
@@ -115,37 +157,98 @@ function Header({ title, onEdit, isEditable, avaPath }) {
         height: '64px'
       }}
     >
-      <div className="rounded-full ml-4 sm:ml-10 mt-6">
-        {uploadedImages && (
-          <img
-            key={uploadedImages}
-            src={`http://127.0.0.1:8000${uploadedImages}`}
-            alt={`Uploaded ${uploadedImages}`}
-            style={{
-              height: '50px',
-              width: '50px',
-              borderRadius: '50px',
-              top: '5%'
-            }}
-          />
-        )}
-      </div>
-      <div className="flex-1 text-center pr-20">
-        <h1 className="text-2xl text-black bg-white p-2 rounded">{title}</h1>
-      </div>
+      {headerType === 2 ? (
+        <>
+          <div className="flex-1 text-center pl-10">
+            <h1 className="text-2xl text-black bg-white p-2 rounded">{newTitle}</h1>
+          </div>
+          <div className="rounded-full mr-4 sm:mr-10 mt-6 pr-20">
+            {uploadedImages && (
+              <img
+                key={uploadedImages}
+                src={`http://127.0.0.1:8000${uploadedImages}`}
+                alt={`Uploaded ${uploadedImages}`}
+                style={{
+                  height: '50px',
+                  width: '50px',
+                  borderRadius: '50px',
+                  top: '5%'
+                }}
+              />
+            )}
+          </div>
+        </>
+      ) : (
+        headerType === 1 ? (
+          <>
+            <div className="rounded-full ml-4 sm:ml-10 mt-6">
+              {uploadedImages && (
+                <img
+                  key={uploadedImages}
+                  src={`http://127.0.0.1:8000${uploadedImages}`}
+                  alt={`Uploaded ${uploadedImages}`}
+                  style={{
+                    height: '50px',
+                    width: '50px',
+                    borderRadius: '50px',
+                    top: '5%'
+                  }}
+                />
+              )}
+            </div>
+            <div className="flex-1 text-center pr-20">
+              <h1 className="text-2xl text-black bg-white p-2 rounded">{newTitle}</h1>
+            </div>
+          </>
+        ) : (
+          <div
+            className="relative inline-block"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            <div
+              type="button"
+              className="bg-slate-500 text-white p-4 text-base cursor-pointer"
+              aria-haspopup="true"
+              aria-expanded={show}
+            >
+              Menu
+            </div>
+            <div
+              className={`absolute bg-white min-w-[160px] shadow-lg z-10 ${show ? 'block' : 'hidden'}`}
+              role="menu"
+            >
+              {sections.map((section) => (
+                <a
+                  className="block text-black p-3 no-underline hover:bg-gray-200"
+                  key={section.section_id}
+                  id={`menu ${section.id}`}
+                  onClick={() => handleClick(section.id)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleClick(section.id); }}
+                  role="menuitem"
+                  tabIndex={0}
+                >
+                  {section.title}
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
       {isEditable && (
-        <Button
-          type="text"
-          icon={<SettingOutlined />}
-          className="text-white"
-          style={{
-            position: 'absolute',
-            top: '50%',
-            right: '50px',
-            transform: 'translateY(-50%)'
-          }}
-          onClick={showModal}
-        />
+        <>
+          <Button
+            type="text"
+            icon={<SettingOutlined />}
+            className="text-white"
+            style={{
+              position: 'absolute',
+              top: '50%',
+              right: '50px',
+              transform: 'translateY(-50%)'
+            }}
+            onClick={showModal}
+          />
+        </>
       )}
       <Popup
         title="Edit Header"
@@ -167,42 +270,91 @@ function Header({ title, onEdit, isEditable, avaPath }) {
           onChange={(e) => setNewTitle(e.target.value)}
           className="mb-4"
         />
-        <Card bodyStyle={{ padding: '0 10px'}} className="bg-slate-500 mt-4 rounded">
+        <Radio.Group
+          value={newHeaderType}
+          onChange={(e) => setNewHeaderType(e.target.value)}
+          className="mb-4"
+        >
+          <Radio value={1}>Logo Left</Radio>
+          <Radio value={2}>Logo Right</Radio>
+        </Radio.Group>
+        <Card bodyStyle={{ padding: '0 10px' }} className="bg-slate-500 mt-4 rounded">
           <div className="w-full flex items-center gap-4 sm:gap-20">
-            {selectedFile ? (
-              <div>
-                <img
-                  src={URL.createObjectURL(selectedFile)}
-                  alt={`Selected ${selectedFile.name}`}
-                  style={{
-                    height: '50px',
-                    width: '50px',
-                    borderRadius: '50px'
-                  }}
-                />
-              </div>
-            ) : uploadedImages ? (
-              <div>
-                <img
-                  src={`http://127.0.0.1:8000${uploadedImages}`}
-                  alt={`Uploaded ${uploadedImages}`}
-                  style={{
-                    height: '50px',
-                    width: '50px',
-                    borderRadius: '50px'
-                  }}
-                />
-              </div>
+            {newHeaderType === 1 ? (
+              <>
+                {selectedFile ? (
+                  <div>
+                    <img
+                      src={URL.createObjectURL(selectedFile)}
+                      alt={`Selected ${selectedFile.name}`}
+                      style={{
+                        height: '50px',
+                        width: '50px',
+                        borderRadius: '50px'
+                      }}
+                    />
+                  </div>
+                ) : uploadedImages ? (
+                  <div>
+                    <img
+                      src={`http://127.0.0.1:8000${uploadedImages}`}
+                      alt={`Uploaded ${uploadedImages}`}
+                      style={{
+                        height: '50px',
+                        width: '50px',
+                        borderRadius: '50px'
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <p>No image selected or uploaded.</p>
+                  </div>
+                )}
+                <div className="flex-1 text-center">
+                  <h1 className="text-2xl text-black bg-white p-2 rounded">
+                    {newTitle}
+                  </h1>
+                </div>
+              </>
             ) : (
-              <div>
-                <p>No image selected or uploaded.</p>
-              </div>
+              <>
+                <div className="flex-1 text-center">
+                  <h1 className="text-2xl text-black bg-white p-2 rounded">
+                    {newTitle}
+                  </h1>
+                </div>
+                {selectedFile ? (
+                  <div>
+                    <img
+                      src={URL.createObjectURL(selectedFile)}
+                      alt={`Selected ${selectedFile.name}`}
+                      style={{
+                        height: '50px',
+                        width: '50px',
+                        borderRadius: '50px'
+                      }}
+                    />
+                  </div>
+                ) : uploadedImages ? (
+                  <div>
+                    <img
+                      src={`http://127.0.0.1:8000${uploadedImages}`}
+                      alt={`Uploaded ${uploadedImages}`}
+                      style={{
+                        height: '50px',
+                        width: '50px',
+                        borderRadius: '50px'
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <p>No image selected or uploaded.</p>
+                  </div>
+                )}
+              </>
             )}
-            <div className="flex-1 text-center">
-              <h1 className="text-2xl text-black bg-white p-2 rounded">
-                {newTitle}
-              </h1>
-            </div>
           </div>
         </Card>
       </Popup>
@@ -211,8 +363,9 @@ function Header({ title, onEdit, isEditable, avaPath }) {
 }
 
 Header.propTypes = {
-  title: PropTypes.string,
-  onEdit: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
+  headerType: PropTypes.number.isRequired,
+  onEdit: PropTypes.func,
   isEditable: PropTypes.bool,
   avaPath: PropTypes.string
 };

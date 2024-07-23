@@ -16,16 +16,6 @@ import { NotificationContext } from '../../contexts/NotificationContext';
 import BackUpUI from '../templates/backUpUI';
 
 function ConfigPage() {
-  const handleClick = (id) => {
-    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-  };
-  const handleMouseEnter = () => {
-    setShow(true);
-  };
-
-  const handleMouseLeave = () => {
-    setShow(false);
-  };
 
   const { id } = useParams();
   const dispatch = useAppDispatch();
@@ -41,7 +31,7 @@ function ConfigPage() {
   const [footerContent, setFooterContent] = useState('');
   const { openNotification } = useContext(NotificationContext);
   const [showBackupUI, setShowBackupUI] = useState(false);
-  const [show, setShow] = useState(false);
+  const [headerType, setHeaderType] = useState('');
 
   useEffect(() => {
     fetchSections();
@@ -56,6 +46,7 @@ function ConfigPage() {
         setHeaderTitle(response.title);
         setHeaderAva(response.ava_path);
         setHeaderLogo(response.logo);
+        setHeaderType(response.headerType);
         setFooterContent(response.footer);
       })
       .catch((error) => {
@@ -209,13 +200,14 @@ function ConfigPage() {
       });
   };
 
-  const handleEditHeader = (newTitle) => {
+  const handleEditHeader = (newTitle, newHeaderType) => {
     setIsLoading(true);
     dispatch(
       editHeader({
         id,
         header: {
-          title: newTitle
+          title: newTitle,
+          headerType: newHeaderType,
         }
       })
     )
@@ -227,6 +219,7 @@ function ConfigPage() {
           title: 'Success'
         });
         setHeaderTitle(newTitle);
+        setHeaderType(newHeaderType);
         fetchSections();
       })
       .catch((error) => {
@@ -283,50 +276,13 @@ function ConfigPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {templateData.header_type === undefined ? (
         <Header
           logo={templateData.logo || headerLogo}
           title={templateData.title || headerTitle}
+          headerType={templateData.headerType || headerType}
           onEdit={handleEditHeader}
           ava_path={templateData.ava_path || headerAva}
         />
-      ) : (
-        <div
-          className="relative inline-block"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <div
-            type="button"
-            className="bg-slate-500 text-white p-4 text-base cursor-pointer"
-            aria-haspopup="true"
-            aria-expanded={show}
-          >
-            Menu
-          </div>
-          <div
-            className={`absolute bg-white min-w-[160px] shadow-lg z-10 ${show ? 'block' : 'hidden'}`}
-            role="menu"
-          >
-            {sections.map((section) => (
-              <a
-                className="block text-black p-3 no-underline hover:bg-gray-200"
-                key={section.section_id}
-                id={section.id}
-                onClick={() => handleClick(section.id)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleClick(section.id);
-                }}
-                role="menuitem"
-                tabIndex={0}
-              >
-                {section.title}
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
-
       <div className="flex-1 mb-20 px-4">
         {sections.map((section) => (
           <Section
