@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Layout, Input, Button, Card, Radio, Row, Col } from 'antd';
 import {
@@ -14,32 +14,43 @@ function Footer({ footer, onEdit, isEditable, footerType }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newContent, setNewContent] = useState(footer);
   const [newFooterType, setNewFooterType] = useState(footerType);
+  const [displayContent, setDisplayContent] = useState(footer);
+  const [displayFooterType, setDisplayFooterType] = useState(footerType);
+
+  useEffect(() => {
+    setDisplayContent(footer);
+    setDisplayFooterType(footerType);
+  }, [footer, footerType]);
 
   const showModal = () => {
-    setNewContent(footer);
-    setNewFooterType(footerType);
+    setNewContent(displayContent);
+    setNewFooterType(displayFooterType);
     setIsModalVisible(true);
   };
 
   const handleOk = () => {
     onEdit(newContent, newFooterType);
+    setDisplayContent(newContent);
+    setDisplayFooterType(newFooterType);
     setIsModalVisible(false);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
-    setNewContent(footer);
-    setNewFooterType(footerType);
+    setNewContent(displayContent);
+    setNewFooterType(displayFooterType);
   };
 
   const getFooterContent = () => {
-    switch (newFooterType) {
-      case 'type1':
-        return <h1 className="text-sm text-white m-0 pl-20">{footer}</h1>;
-      case 'type2':
+    switch (displayFooterType) {
+      case 1:
         return (
-          <footer className="footer bg-body-tertiary fixed-bottom py-3">
-            <Row justify="space-between" align="middle" className="container">
+          <h1 className="text-sm text-white m-0 pl-20">{displayContent}</h1>
+        );
+      case 2:
+        return (
+          <footer className="text-sm text-white m-0" style={{ padding: '0' }}>
+            <Row justify="space-between" align="middle">
               <Col
                 span={12}
                 style={{
@@ -48,10 +59,14 @@ function Footer({ footer, onEdit, isEditable, footerType }) {
                   justifyContent: 'center'
                 }}
               >
-                <h4 className="mb-0">
+                <h4 className="m-0">
                   Created by{' '}
-                  <a href="https://codepen.io/MFM-347" className="link-light">
-                    @{newContent}
+                  <a
+                    href="https://codepen.io/MFM-347"
+                    className="link-light"
+                    style={{ color: 'white' }}
+                  >
+                    @{displayContent}
                   </a>
                 </h4>
               </Col>
@@ -63,14 +78,36 @@ function Footer({ footer, onEdit, isEditable, footerType }) {
                   alignItems: 'center'
                 }}
               >
-                <InstagramOutlined className="mx-2" />
-                <FacebookOutlined className="mx-2" />
+                <a
+                  href="https://www.instagram.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram"
+                >
+                  <InstagramOutlined
+                    className="mx-2"
+                    style={{ color: 'white' }}
+                  />
+                </a>
+                <a
+                  href="https://www.facebook.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Facebook"
+                >
+                  <FacebookOutlined
+                    className="mx-2"
+                    style={{ color: 'white' }}
+                  />
+                </a>
               </Col>
             </Row>
           </footer>
         );
       default:
-        return <h1 className="text-sm text-white m-0 pl-20">{footer}</h1>;
+        return (
+          <h1 className="text-sm text-white m-0 pl-20">{displayContent}</h1>
+        );
     }
   };
 
@@ -114,8 +151,8 @@ function Footer({ footer, onEdit, isEditable, footerType }) {
           onChange={(e) => setNewFooterType(e.target.value)}
           className="mb-4"
         >
-          <Radio value="type1">Type 1</Radio>
-          <Radio value="type2">Type 2</Radio>
+          <Radio value={1}>Type 1</Radio>
+          <Radio value={2}>Type 2</Radio>
         </Radio.Group>
         <Card
           bodyStyle={{ padding: '0 10px' }}
@@ -126,10 +163,10 @@ function Footer({ footer, onEdit, isEditable, footerType }) {
             padding: '15px'
           }}
         >
-          {newFooterType === 'type1' ? (
+          {newFooterType === 1 ? (
             <h1 className="text-sm text-white m-0">{newContent}</h1>
           ) : (
-            <footer className="footer bg-body-tertiary fixed-bottom py-3">
+            <footer className="text-sm text-white m-0 pl-20">
               <Row justify="space-between" align="middle" className="container">
                 <Col
                   span={12}
@@ -139,9 +176,13 @@ function Footer({ footer, onEdit, isEditable, footerType }) {
                     justifyContent: 'center'
                   }}
                 >
-                  <h4 className="mb-0">
+                  <h4 className="m-0">
                     Created by{' '}
-                    <a href="https://codepen.io/MFM-347" className="link-light">
+                    <a
+                      href="https://codepen.io/MFM-347"
+                      className="link-light"
+                      style={{ color: 'white' }}
+                    >
                       @{newContent}
                     </a>
                   </h4>
@@ -154,8 +195,28 @@ function Footer({ footer, onEdit, isEditable, footerType }) {
                     alignItems: 'center'
                   }}
                 >
-                  <InstagramOutlined className="mx-2" />
-                  <FacebookOutlined className="mx-2" />
+                  <a
+                    href="https://www.instagram.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Instagram"
+                  >
+                    <InstagramOutlined
+                      className="mx-2"
+                      style={{ color: 'white' }}
+                    />
+                  </a>
+                  <a
+                    href="https://www.facebook.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Facebook"
+                  >
+                    <FacebookOutlined
+                      className="mx-2"
+                      style={{ color: 'white' }}
+                    />
+                  </a>
                 </Col>
               </Row>
             </footer>
@@ -170,12 +231,11 @@ Footer.propTypes = {
   footer: PropTypes.string.isRequired,
   onEdit: PropTypes.func,
   isEditable: PropTypes.bool,
-  footerType: PropTypes.oneOf(['type1', 'type2'])
+  footerType: PropTypes.number.isRequired
 };
 
 Footer.defaultProps = {
-  isEditable: true,
-  footerType: 'type1'
+  isEditable: true
 };
 
 export default Footer;
