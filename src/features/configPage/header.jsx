@@ -8,6 +8,7 @@ import Popup from '../../components/Popup';
 import TokenService from '../../services/token.service';
 import { useAppDispatch } from '../../store/hooks';
 import { getTemplate } from '../dashboard/templatesSlice';
+import templateService from '../../services/template.service';
 
 const { Header: AntdHeader } = Layout;
 
@@ -21,7 +22,7 @@ function Header({ title, onEdit, headerType, isEditable, avaPath }) {
   const [show, setShow] = useState(false);
   const dispatch = useAppDispatch();
   const [sections, setSections] = useState([]);
-  
+
   useEffect(() => {
     setNewTitle(title);
   }, [title]);
@@ -47,14 +48,27 @@ function Header({ title, onEdit, headerType, isEditable, avaPath }) {
   }, [id]);
 
   const fetchSections = () => {
-    dispatch(getTemplate(id))
-      .unwrap()
-      .then((response) => {
-        setSections(response.section);
-      })
-      .catch((error) => {
-        console.error('Failed to fetch sections:', error);
-      });
+    if (id) {
+      dispatch(getTemplate(id))
+        .unwrap()
+        .then((response) => {
+          setSections(response.section);
+        })
+        .catch((error) => {
+          console.error('Failed to fetch sections:', error);
+        });
+    }
+    else {
+      templateService
+        .getTemplate()
+        .then((response) => {
+          console.log(response?.data?.section);
+          setSections(response?.data?.section);
+        })
+        .catch((error) => {
+          console.error('Failed to fetch sections:', error);
+        });
+    }
   };
 
   const handleClick = (id) => {
@@ -215,12 +229,12 @@ function Header({ title, onEdit, headerType, isEditable, avaPath }) {
               Menu
             </div>
             <div
-              className={`absolute bg-white min-w-[160px] shadow-lg z-10 ${show ? 'block' : 'hidden'}`}
+              className={`absolute bg-white min-w-[160px] shadow-lg z-10 max-h-[800px] overflow-y-auto   ${show ? 'block' : 'hidden'}`}
               role="menu"
             >
               {sections.map((section) => (
                 <a
-                  className="block text-black p-3 no-underline hover:bg-gray-200"
+                  className="block text-black p-3 no-underline hover:bg-gray-200 h-[40px] flex items-center justify-center"
                   key={section.section_id}
                   id={`menu ${section.id}`}
                   onClick={() => handleClick(section.id)}

@@ -51,6 +51,7 @@ function GuestUI() {
           logo={template.logo}
           title={template.title}
           avaPath={template.avaPath}
+          headerType={template.headerType}
           isEditable={false}
         />
       </div>
