@@ -12,7 +12,8 @@ function Section({
   content2,
   onDelete,
   onEdit,
-  isEditable = true
+  isEditable = true,
+  isDeletable = true
 }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [showContentOption, setShowContentOption] = useState(
@@ -122,7 +123,8 @@ function Section({
             type="text"
             icon={<DeleteOutlined />}
             className="text-gray-500"
-            onClick={onDelete}
+            onClick={isDeletable ? onDelete : null}
+            disabled={!isDeletable}
           />
         </div>
       )}
@@ -204,11 +206,13 @@ Section.propTypes = {
   content2: PropTypes.string,
   onDelete: PropTypes.func,
   onEdit: PropTypes.func,
-  isEditable: PropTypes.bool
+  isEditable: PropTypes.bool,
+  isDeletable: PropTypes.bool
 };
 
 Section.defaultProps = {
-  isEditable: true
+  isEditable: true,
+  isDeletable: true
 };
 
 export default Section;

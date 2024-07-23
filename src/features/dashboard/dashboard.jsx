@@ -7,8 +7,6 @@ import {
   Form,
   Input,
   Radio,
-  Checkbox,
-  Card,
   List,
   Popconfirm
 } from 'antd';
@@ -31,6 +29,7 @@ import {
 } from './templatesSlice';
 import useTemplateModals from '../../store/useTemplateModals';
 import BackUpUI from '../templates/backUpUI';
+import CardComponent from '../../components/Card';
 
 const { Header, Content } = Layout;
 
@@ -248,6 +247,7 @@ function Dashboard() {
         setIsLoading(false);
       });
   };
+
   useEffect(() => {
     fetchTemplates();
   }, []);
@@ -297,7 +297,7 @@ function Dashboard() {
                 icon={<LogoutOutlined />}
                 onClick={() => {
                   handleLogout();
-                  window.location.href = '/login';
+                  window.location.href = '/admin/login';
                 }}
                 className="w-full border-none bg-transparent text-start p-0 m-0"
               />
@@ -314,20 +314,13 @@ function Dashboard() {
                 {status === 'loading' && setIsLoading(true)}
                 {status === 'succeeded' &&
                   templates?.map((item) => (
-                    <Card
+                    <CardComponent
                       key={item.id}
-                      className="shadow-sm rounded-md border border-gray-200 mb-2"
-                    >
-                      <Radio.Group
-                        value={selectedTemplate}
-                        onChange={handleTemplateChange}
-                        className="w-full flex items-center"
-                      >
-                        <Radio className="w-full" value={item.id}>
-                          {item.name}
-                        </Radio>
-                      </Radio.Group>
-                    </Card>
+                      item={{ id: item.id, name: item.name }}
+                      value={selectedTemplate}
+                      onChange={handleTemplateChange}
+                      type={1} // 'Radio'
+                    />
                   ))}
               </div>
               <div className="w-full flex justify-end mt-4">
@@ -439,17 +432,12 @@ function Dashboard() {
                               key={item.id}
                             >
                               <div className="mx-2">
-                                <Card className="shadow-sm rounded-md border border-gray-200 p-5">
-                                  <Radio.Group
-                                    value={selectedTemplateId}
-                                    onChange={handleTemplateIdChange}
-                                    className="w-full flex items-center"
-                                  >
-                                    <Radio className="w-full" value={item.id}>
-                                      {item.name}
-                                    </Radio>
-                                  </Radio.Group>
-                                </Card>
+                                <CardComponent
+                                  item={{ id: item.id, name: item.name }}
+                                  value={selectedTemplateId}
+                                  onChange={handleTemplateIdChange}
+                                  type={1} // 'Radio'
+                                />
                               </div>
                             </div>
                           ))}
@@ -532,19 +520,14 @@ function Dashboard() {
                   {templates?.map((item) => (
                     <div className="w-full sm:w-1/2 mt-0" key={item.id}>
                       <div className="m-2">
-                        <Card className="shadow-sm rounded-md border border-gray-200">
-                          <Checkbox
-                            value={item.id}
-                            checked={selectedTemplatesToDelete.includes(
-                              item.id
-                            )}
-                            onChange={handleTemplateDelete}
-                            disabled={item.id === chosen}
-                            className="w-full flex items-center"
-                          >
-                            {item.name}
-                          </Checkbox>
-                        </Card>
+                        <CardComponent
+                          item={{ id: item.id, name: item.name }}
+                          value={item.id}
+                          onChange={handleTemplateDelete}
+                          checked={selectedTemplatesToDelete.includes(item.id)}
+                          disabled={item.id === chosen}
+                          type={2} // 'Checkbox'
+                        />
                       </div>
                     </div>
                   ))}

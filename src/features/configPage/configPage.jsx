@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button, Modal, Input } from 'antd';
@@ -172,12 +171,12 @@ function ConfigPage() {
           prevSections.map((section) =>
             section.id === sectionId
               ? {
-                ...section,
-                title: newTitle,
-                content1: newContent1,
-                content2: newContent2,
-                type: newType
-              }
+                  ...section,
+                  title: newTitle,
+                  content1: newContent1,
+                  content2: newContent2,
+                  type: newType
+                }
               : section
           )
         );
@@ -293,6 +292,7 @@ function ConfigPage() {
             title={section.title}
             content1={section.content1}
             content2={section.content2}
+            isDeletable={sections.length > 1}
             onDelete={() => {
               console.log('Deleting section with id:', section.id);
               confirmDeleteSection(section.id);
