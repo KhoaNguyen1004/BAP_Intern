@@ -52,7 +52,7 @@ function Footer({ footer, onEdit, isEditable, footerType }) {
           <footer className="text-sm text-white m-0" style={{ padding: '0' }}>
             <Row justify="space-between" align="middle">
               <Col
-                span={12}
+                span={20}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -71,7 +71,7 @@ function Footer({ footer, onEdit, isEditable, footerType }) {
                 </h4>
               </Col>
               <Col
-                span={12}
+                span={4}
                 style={{
                   display: 'flex',
                   justifyContent: 'center',
@@ -144,7 +144,9 @@ function Footer({ footer, onEdit, isEditable, footerType }) {
         <Input
           placeholder="Footer Content"
           value={newContent}
-          onChange={(e) => setNewContent(e.target.value)}
+          onChange={(e) => {
+            setNewFooterType(e.target.value);
+          }}
         />
         <Radio.Group
           value={newFooterType}

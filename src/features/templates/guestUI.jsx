@@ -72,7 +72,10 @@ function GuestUI() {
         ))}
       </div>
       <div className="footer-wrapper">
-        <Footer footer={template.footer} isEditable={false} />
+        <Footer 
+        footer={template.footer} 
+        footerType={template.footerType}
+        isEditable={false} />
       </div>
     </div>
   );
