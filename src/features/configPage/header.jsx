@@ -165,6 +165,12 @@ function Header({ title, onEdit, isEditable, avaPath }) {
         </div>
         <Input
           placeholder={t('CONFIG/PAGE.EDIT_HEADER.Header_Name')}
+          rules={[
+            {
+              required: true,
+              message: t('CONFIG/PAGE.EDIT_HEADER.Title_Required')
+            }
+          ]}
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           className="mb-4"

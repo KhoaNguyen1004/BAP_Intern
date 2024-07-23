@@ -65,6 +65,7 @@ function Footer({ footer, onEdit, isEditable }) {
       >
         <Input
           placeholder={t('CONFIG/PAGE.EDIT_FOOTER.Footer_Content')}
+          rules={[{ required: true, message: t('CONFIG/PAGE.EDIT_FOOTER.Title_Required') }]}
           value={newContent}
           onChange={(e) => setNewContent(e.target.value)}
         />

@@ -7,50 +7,50 @@
   },
   "ADD_TEMPLATE": {
     "Success": "Template added successfully!",
-    "Fail": "Failed to add template!",
+    "Error": "Failed to add template!",
     "Duplicate": "Template name already exists!"
   },
   "CLONE_TEMPLATE": {
     "Success": "Template cloned successfully!",
-    "Fail": "Please select the template to clone!",
+    "Error": "Please select the template to clone!",
     "Empty": "Please select the template to clone!",
     "Duplicate": "Template name already exists!"
   },
   "DELETE_TEMPLATE": {
     "Success": "Template deleted successfully!",
-    "Fail": "Failed to delete template!",
+    "Error": "Failed to delete template!",
     "Empty": "Please select the template to delete!"
   },
   "CHOOSE_TEMPLATE": {
     "Success": "Template selected successfully!",
-    "Fail": "Please select the template to use!",
+    "Error": "Please select the template to use!",
     "Empty": "Please select the template to use!"
   },
   "ADD_SECTION": {
     "Success": "Section added successfully!",
-    "Fail": "Failed to add section!",
+    "Error": "Failed to add section!",
     "Empty": "Please fill in all information!"
   },
     "EDIT_SECTION": {
         "Success": "Section edited successfully!",
-        "Fail": "Failed to edit section!",
+        "Error": "Failed to edit section!",
         "Empty": "Please fill in all information!",
         "Title_Error": "Title must not exceed 20 characters!"
     },
     "DELETE_SECTION": {
         "Success": "Section deleted successfully!",
-        "Fail": "Failed to delete section!",
+        "Error": "Failed to delete section!",
         "Empty": "Please select the section to delete!",
         "One_Section": "There must be at least one section. You can't delete it!"
     },
     "EDIT_HEADER": {
         "Success": "Header edited successfully!",
-        "Fail": "Failed to edit header!",
+        "Error": "Failed to edit header!",
         "Empty": "Please fill in all information!"
     },
     "EDIT_FOOTER": {
         "Success": "Footer edited successfully!",
-        "Fail": "Failed to edit footer!",
+        "Error": "Failed to edit footer!",
         "Empty": "Please fill in all information!"
     }
 }

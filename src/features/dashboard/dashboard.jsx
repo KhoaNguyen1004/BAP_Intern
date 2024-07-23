@@ -143,7 +143,7 @@ function Dashboard() {
       })
       .catch((err) => {
         console.error('Error adding template:', err);
-        let errorMessage = t('ADD_TEMPLATE.Error', {ns: 'notification'});
+        let errorMessage = t('ADD_TEMPLATE.Duplicate', {ns: 'notification'});
 
         if (err.response && err.response.data && err.response.data.message) {
           errorMessage = err.response.data.message;
@@ -187,7 +187,7 @@ function Dashboard() {
       .catch((err) => {
         console.error('Error cloning template:', err);
         openNotification({
-          message: t('CLONE_TEMPLATE.Error', {ns: 'notification'}),
+          message: t('CLONE_TEMPLATE.Duplicate', {ns: 'notification'}),
           type: 'error',
           title: t('NOTI.Error', {ns: 'notification'})
         });
@@ -390,7 +390,7 @@ function Dashboard() {
                       rules={[
                         {
                           required: true,
-                          message: 'Please enter template name!'
+                          message: t('ADMIN/DASHBOARD.CONFIG.Add_Template.Title_Required')
                         }
                       ]}
                     >
@@ -402,7 +402,7 @@ function Dashboard() {
                       label={t('ADMIN/DASHBOARD.CONFIG.Add_Template.Template_Option')}
                       name="configValue"
                       rules={[
-                        { required: true, message: 'Please choose an option!' }
+                        { required: true, message: t('ADMIN/DASHBOARD.CONFIG.Add_Template.Choose_Option_Required') }
                       ]}
                     >
                       <Radio.Group

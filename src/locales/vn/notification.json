@@ -25,7 +25,8 @@
   "CHOOSE_TEMPLATE": {
     "Success": "Bản Mẫu đã được chọn thành công!",
     "Error": "Hãy chọn Bản Mẫu cần sử dụng!",
-    "Empty": "Vui lòng chọn Bản Mẫu cần sử dụng!"
+    "Empty": "Vui lòng chọn Bản Mẫu cần sử dụng!",
+    "Duplicate": "Tên Bản Mẫu đã tồn tại!"
   },
 
   "ADD_SECTION": {

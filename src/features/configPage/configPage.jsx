@@ -122,7 +122,7 @@ function ConfigPage() {
       })
       .catch((error) => {
         openNotification({
-          message: t('DELETE_SECTION.Failed', {ns: 'notification'}),
+          message: t('DELETE_SECTION.Error', {ns: 'notification'}),
           type: 'error',
           title: t('NOTI.Error', {ns: 'notification'})
         });
@@ -188,7 +188,7 @@ function ConfigPage() {
       })
       .catch((error) => {
         openNotification({
-          message: t('EDIT_SECTION.Failed', {ns: 'notification'}),
+          message: t('EDIT_SECTION.Empty', {ns: 'notification'}),
           type: 'error',
           title: t('NOTI.Error', {ns: 'notification'})
         });
@@ -221,7 +221,7 @@ function ConfigPage() {
       })
       .catch((error) => {
         openNotification({
-          message: t('EDIT_HEADER.Failed', {ns: 'notification'}),
+          message: t('EDIT_HEADER.Empty', {ns: 'notification'}),
           type: 'error',
           title: t('NOTI.Error', {ns: 'notification'})
         });
@@ -251,11 +251,10 @@ function ConfigPage() {
           title: t('NOTI.Success', {ns: 'notification'})
         });
         setFooterContent(newContent);
-        fetchSections();
       })
       .catch((error) => {
         openNotification({
-          message: t('EDIT_FOOTER.Failed', {ns: 'notification'}),
+          message: t('EDIT_FOOTER.Empty', {ns: 'notification'}),
           type: 'error',
           title: t('NOTI.Error', {ns: 'notification'})
         });
@@ -381,7 +380,13 @@ function ConfigPage() {
               style={{ marginBottom: '10px' }}
             />
             <Input
-              placeholder="Title"
+              placeholder={t('CONFIG/PAGE.EDIT_HEADER.Title_Placeholder')}
+              rules={[
+                {
+                  required: true,
+                  message: t('CONFIG/PAGE.EDIT_HEADER.Title_Required')
+                }
+              ]}
               value={headerTitle}
               onChange={(e) => setHeaderTitle(e.target.value)}
             />
