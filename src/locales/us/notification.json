@@ -52,5 +52,11 @@
         "Success": "Footer edited successfully!",
         "Error": "Failed to edit footer!",
         "Empty": "Please fill in all information!"
-    }
+   },
+   "LOGIN": {
+        "Success": "Login successful!",
+        "Error": "Invalid username or password!",
+        "Empty": "Please fill in all information!",
+        "Title": "Login Failed!"
+   }
 }

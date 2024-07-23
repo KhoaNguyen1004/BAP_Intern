@@ -59,5 +59,11 @@
     "Success": "Tiêu đề cuối trang đã được sửa thành công!",
     "Error": "Có lỗi xảy ra khi sửa tiêu đề cuối trang!",
     "Empty": "Vui lòng điền đầy đủ thông tin!"
+  },
+  "LOGIN": {
+    "Success": "Đăng nhập thành công!",
+    "Error": "Tên đăng nhập hoặc mật khẩu không chính xác!",
+    "Empty": "Vui lòng điền đầy đủ thông tin!",
+    "Title": "Đăng nhập thất bại!"
   }
 }

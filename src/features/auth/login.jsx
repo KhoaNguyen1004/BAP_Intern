@@ -36,19 +36,23 @@ export function Login() {
       const response = await dispatch(
         loginAsync({ username, password })
       ).unwrap();
-      console.log('Login successful, response:', response.data);
+      openNotification({
+        message: t('LOGIN.Success', {ns: 'notification'}),
+        type: 'success',
+        title: t('NOTI.Success', {ns: 'notification'}),
+      });
       TokenService.setUser(response.data);
       navigate('/admin/dashboard');
     } catch (error) {
       console.error('Login error:', error);
       if (!notificationShown && error === 'Username or password incorrect') {
         openNotification({
-          message: 'Invalid username or password!',
+          message: t('LOGIN.Error', {ns: 'notification'}),
           type: 'error',
-          title: 'Login Failed'
+          title: t('NOTI.Error', {ns: 'notification'}),
         });
         setNotificationShown(true);
-      } else if (error === 'Login failed!') {
+      } else if (error === t('LOGIN.Title', {ns: 'notification'})) {
         setShowBackupUI(true);
       }
     } finally {
