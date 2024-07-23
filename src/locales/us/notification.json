@@ -56,7 +56,6 @@
    "LOGIN": {
         "Success": "Login successful!",
         "Error": "Invalid username or password!",
-        "Empty": "Please fill in all information!",
-        "Title": "Login Failed!"
+        "Empty": "Please fill in all information!"
    }
 }
