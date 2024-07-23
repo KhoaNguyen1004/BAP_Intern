@@ -70,16 +70,14 @@ function ConfigPage() {
   const handleAddSection = () => {
     const templateId = id;
     setIsLoading(true);
-    console.log('Adding new section:', templateId);
-    console.log('Template ID:', id);
     dispatch(addSection(templateId))
       .unwrap()
       .then((response) => {
         setSections((prevSections) => [...prevSections, response.section]);
         openNotification({
-          message: 'Section added successfully',
+          message: t('ADD_SECTION.Success', {ns: 'notification'}),
           type: 'success',
-          title: 'Success'
+          title: t('NOTI.Success', {ns: 'notification'})
         });
         fetchSections();
       })
@@ -92,22 +90,20 @@ function ConfigPage() {
   };
 
   const confirmDeleteSection = (sectionId) => {
-    console.log('Confirming delete for section with id:', sectionId);
     if (sections.length > 1) {
       setIsModalVisible(true);
       setSectionToDelete(sectionId);
       setModalContent('deleteSection');
     } else {
       openNotification({
-        message: 'At least one section must be present!',
+        message: t('DELETE_SECTION.One_Section', {ns: 'notification'}),
         type: 'error',
-        title: 'Error'
+        title: t('NOTI.Error', {ns: 'notification'})
       });
     }
   };
 
   const handleDeleteSection = () => {
-    console.log('Deleting section with id:', sectionToDelete);
     setIsLoading(true);
     dispatch(deleteSection(sectionToDelete))
       .unwrap()
@@ -118,17 +114,17 @@ function ConfigPage() {
           )
         );
         openNotification({
-          message: 'Section deleted successfully',
+          message: t('DELETE_SECTION.Success', {ns: 'notification'}),
           type: 'success',
-          title: 'Success'
+          title: t('NOTI.Success', {ns: 'notification'})
         });
         fetchSections();
       })
       .catch((error) => {
         openNotification({
-          message: 'Failed to delete section',
+          message: t('DELETE_SECTION.Failed', {ns: 'notification'}),
           type: 'error',
-          title: 'Error'
+          title: t('NOTI.Error', {ns: 'notification'})
         });
         console.error('Failed to delete section:', error);
       })
@@ -151,21 +147,12 @@ function ConfigPage() {
     newContent2,
     newType
   ) => {
-    console.log('handleEditSection called with:', {
-      sectionId,
-      newTitle,
-      newContent1,
-      newContent2,
-      newType
-    });
-
     const payload = {
       title: newTitle,
       content1: newContent1,
       content2: newContent2,
       type: Number(newType)
     };
-    console.log('Payload before dispatch:', payload);
 
     setIsLoading(true);
     const templateId = id;
@@ -193,17 +180,17 @@ function ConfigPage() {
           )
         );
         openNotification({
-          message: 'Section edited successfully',
+          message: t('EDIT_SECTION.Success', {ns: 'notification'}),
           type: 'success',
-          title: 'Success'
+          title: t('NOTI.Success', {ns: 'notification'})
         });
         fetchSections();
       })
       .catch((error) => {
         openNotification({
-          message: 'Failed to edit section',
+          message: t('EDIT_SECTION.Failed', {ns: 'notification'}),
           type: 'error',
-          title: 'Error'
+          title: t('NOTI.Error', {ns: 'notification'})
         });
         console.error('Failed to edit section:', error);
       })
@@ -225,18 +212,18 @@ function ConfigPage() {
       .unwrap()
       .then(() => {
         openNotification({
-          message: 'Header edited successfully',
+          message: t('EDIT_HEADER.Success', {ns: 'notification'}),
           type: 'success',
-          title: 'Success'
+          title: t('NOTI.Success', {ns: 'notification'})
         });
         setHeaderTitle(newTitle);
         fetchSections();
       })
       .catch((error) => {
         openNotification({
-          message: 'Failed to edit header',
+          message: t('EDIT_HEADER.Failed', {ns: 'notification'}),
           type: 'error',
-          title: 'Error'
+          title: t('NOTI.Error', {ns: 'notification'})
         });
         console.error('Failed to edit header:', error);
       })
@@ -259,18 +246,18 @@ function ConfigPage() {
       .unwrap()
       .then(() => {
         openNotification({
-          message: 'Footer edited successfully',
+          message: t('EDIT_FOOTER.Success', {ns: 'notification'}),
           type: 'success',
-          title: 'Success'
+          title: t('NOTI.Success', {ns: 'notification'})
         });
         setFooterContent(newContent);
         fetchSections();
       })
       .catch((error) => {
         openNotification({
-          message: 'Failed to edit footer',
+          message: t('EDIT_FOOTER.Failed', {ns: 'notification'}),
           type: 'error',
-          title: 'Error'
+          title: t('NOTI.Error', {ns: 'notification'})
         });
         console.error('Failed to edit footer:', error);
       })
@@ -353,7 +340,7 @@ function ConfigPage() {
             }
           />
         ))}
-        <div className="flex justify-end mt-20">
+        <div className="flex justify-end mt-28">
           <Button type="primary" onClick={handleAddSection}>
            {t('CONFIG/PAGE.ADD_MORE_SECTION')}
           </Button>

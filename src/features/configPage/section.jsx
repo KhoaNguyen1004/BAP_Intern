@@ -38,7 +38,7 @@ function Section({
 
   const handleOk = () => {
     if (newTitle.length > 20) {
-      setTitleError('Title cannot exceed 20 characters');
+      setTitleError(t('EDIT_SECTION.Title_Error', {ns: 'notification'}));
     } else {
       onEdit(newTitle, newContent1, newContent2, typeDraft);
       setIsModalVisible(false);
@@ -69,12 +69,12 @@ function Section({
       setNewTitle(value);
       setTitleError('');
     } else {
-      message.error('Title cannot exceed 20 characters');
+      message.error(t('EDIT_SECTION.Title_Error', {ns: 'notification'}));
     }
   };
 
   return (
-    <section className="bg-gray-100 p-2 mb-5 pb-4 relative top-16">
+    <section className="bg-gray-100 p-2 mb-5 pb-4 relative top-24">
       <div style={{ padding: '0px 30%', borderRadius: '10px' }}>
         <h2 className="text-xl font-semibold mb-4 text-center bg-white">
           {title}

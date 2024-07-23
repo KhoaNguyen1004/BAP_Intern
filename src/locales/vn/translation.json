@@ -9,7 +9,7 @@
     "Template": {
       "Title": "Bản Mẫu"
     },
-    "Config": {
+    "CONFIG": {
       "Config": "Cấu hình",
       "Add_Template": {
         "Title": "Thêm Bản Mẫu",
@@ -19,7 +19,8 @@
         "Clone_Template": "Sao chép Bản Mẫu"
       },
       "Config_Template": "Cấu hình Bản Mẫu",
-      "Delete_Template": "Xóa Bản Mẫu"
+      "Delete_Template": "Xóa Bản Mẫu",
+      "Delete_Template_Confirm": "Xác nhận xóa Biểu mẫu?"
     }
   },
   "BUTTON": {
@@ -27,7 +28,9 @@
     "Cancel": "Hủy",
     "Delete": "Xóa",
     "Edit": "Sửa",
-    "Create": "Tạo"
+    "Create": "Tạo",
+    "Yes": "Có",
+    "No": "Không"
   },
   "CONFIG/PAGE": {
     "EDIT_HEADER": {
@@ -54,4 +57,5 @@
       "Content": "Bạn có chắc chắn muốn xóa nội dung này không?"
     }
   }
+  
 }

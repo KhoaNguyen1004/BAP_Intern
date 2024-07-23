@@ -9,7 +9,7 @@
     "Template": {
       "Title": "Template"
     },
-    "Config": {
+    "CONFIG": {
       "Config": "Config",
       "Add_Template": {
         "Title": "Add Template",
@@ -19,7 +19,8 @@
         "Clone_Template": "Clone Template"
       },
       "Config_Template": "Config Template",
-      "Delete_Template": "Delete Template"
+      "Delete_Template": "Delete Template",
+      "Delete_Template_Confirm": "Confirm Delete Template?"
     }
   },
   "BUTTON": {
@@ -27,7 +28,9 @@
     "Cancel": "Cancel",
     "Delete": "Delete",
     "Edit": "Edit",
-    "Create": "Create"
+    "Create": "Create",
+    "Yes": "Yes",
+    "No": "No"
   },
 
   "CONFIG/PAGE": {

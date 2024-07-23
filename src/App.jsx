@@ -30,13 +30,13 @@ function App() {
             </PrivateRoute>
           }
         />
-        <Route path="/login" element={<Login />} />
+        <Route path="/admin/login" element={<Login />} />
         <Route
           path="*"
           element={
             <div>
               Not Found
-              <Link to="/login">Login</Link>
+              <Link to="/admin/login">Login</Link>
             </div>
           }
         />
@@ -59,7 +59,7 @@ function App() {
         <Route path="/" element={<GuestUI />} />
       </Routes>
       {/* <LanguagePicker /> */}
-<div className="fixed bottom-8 right-8 z-50 shadow-md">
+<div className="fixed bottom-6 right-20 z-50 shadow-md">
 
   <LanguagePicker />
 </div>

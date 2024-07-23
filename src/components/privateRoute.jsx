@@ -8,7 +8,7 @@ import { selectAuth } from '../features/auth/authSlice';
 function PrivateRoute({ children }) {
   const { isLoggedIn } = useAppSelector(selectAuth);
 
-  return isLoggedIn ? children : <Navigate to="/login" />;
+  return isLoggedIn ? children : <Navigate to="/admin/login" />;
 
   // if (!isLoggedIn) {
   //   return <Navigate to="/login" state={{ from: history.location }} />;
