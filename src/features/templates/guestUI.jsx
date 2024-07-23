@@ -55,13 +55,14 @@ function GuestUI() {
           avaPath={template.avaPath}
           headerType={template.headerType}
           isEditable={false}
-          sectionMenu = {sections}
+          sectionMenu={sections}
         />
       </div>
       <div className="flex-1 mb-20 px-4">
         {template.section.map((sec, index) => (
           <Section
             key={index}
+            sectionId={sec.id}
             type={sec.type}
             title={sec.title}
             content1={sec.content1}
