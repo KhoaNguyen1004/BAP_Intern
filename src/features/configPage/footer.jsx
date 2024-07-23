@@ -1,28 +1,114 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Layout, Input, Button, Card } from 'antd';
-import { SettingOutlined } from '@ant-design/icons';
+import { Layout, Input, Button, Card, Radio, Row, Col } from 'antd';
+import {
+  SettingOutlined,
+  InstagramOutlined,
+  FacebookOutlined
+} from '@ant-design/icons'; // Combined imports
 import Popup from '../../components/Popup';
 
 const { Footer: AntdFooter } = Layout;
 
-function Footer({ footer, onEdit, isEditable }) {
+function Footer({ footer, onEdit, isEditable, footerType }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newContent, setNewContent] = useState(footer);
+  const [newFooterType, setNewFooterType] = useState(footerType);
+  const [displayContent, setDisplayContent] = useState(footer);
+  const [displayFooterType, setDisplayFooterType] = useState(footerType);
+
+  useEffect(() => {
+    setDisplayContent(footer);
+    setDisplayFooterType(footerType);
+  }, [footer, footerType]);
 
   const showModal = () => {
-    setNewContent(footer);
+    setNewContent(displayContent);
+    setNewFooterType(displayFooterType);
     setIsModalVisible(true);
   };
 
   const handleOk = () => {
-    onEdit(newContent);
+    onEdit(newContent, newFooterType);
+    setDisplayContent(newContent);
+    setDisplayFooterType(newFooterType);
     setIsModalVisible(false);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
-    setNewContent(footer);
+    setNewContent(displayContent);
+    setNewFooterType(displayFooterType);
+  };
+
+  const getFooterContent = () => {
+    switch (displayFooterType) {
+      case 1:
+        return (
+          <h1 className="text-sm text-white m-0 pl-20">{displayContent}</h1>
+        );
+      case 2:
+        return (
+          <footer className="text-sm text-white m-0" style={{ padding: '0' }}>
+            <Row justify="space-between" align="middle">
+              <Col
+                span={12}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <h4 className="m-0">
+                  Created by{' '}
+                  <a
+                    href="https://codepen.io/MFM-347"
+                    className="link-light"
+                    style={{ color: 'white' }}
+                  >
+                    @{displayContent}
+                  </a>
+                </h4>
+              </Col>
+              <Col
+                span={12}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <a
+                  href="https://www.instagram.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram"
+                >
+                  <InstagramOutlined
+                    className="mx-2"
+                    style={{ color: 'white' }}
+                  />
+                </a>
+                <a
+                  href="https://www.facebook.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Facebook"
+                >
+                  <FacebookOutlined
+                    className="mx-2"
+                    style={{ color: 'white' }}
+                  />
+                </a>
+              </Col>
+            </Row>
+          </footer>
+        );
+      default:
+        return (
+          <h1 className="text-sm text-white m-0 pl-20">{displayContent}</h1>
+        );
+    }
   };
 
   return (
@@ -39,14 +125,7 @@ function Footer({ footer, onEdit, isEditable }) {
         alignItems: 'center'
       }}
     >
-      <h1
-        className="text-sm text-white m-0 pl-20"
-        style={{
-          textAlign: 'center'
-        }}
-      >
-        {footer}
-      </h1>
+      {getFooterContent()}
       {isEditable && (
         <Button
           type="text"
@@ -67,7 +146,14 @@ function Footer({ footer, onEdit, isEditable }) {
           value={newContent}
           onChange={(e) => setNewContent(e.target.value)}
         />
-
+        <Radio.Group
+          value={newFooterType}
+          onChange={(e) => setNewFooterType(e.target.value)}
+          className="mb-4"
+        >
+          <Radio value={1}>Type 1</Radio>
+          <Radio value={2}>Type 2</Radio>
+        </Radio.Group>
         <Card
           bodyStyle={{ padding: '0 10px' }}
           className="bg-slate-500"
@@ -77,7 +163,64 @@ function Footer({ footer, onEdit, isEditable }) {
             padding: '15px'
           }}
         >
-          <h1 className="text-sm text-white m-0">{newContent}</h1>
+          {newFooterType === 1 ? (
+            <h1 className="text-sm text-white m-0">{newContent}</h1>
+          ) : (
+            <footer className="text-sm text-white m-0 pl-20">
+              <Row justify="space-between" align="middle" className="container">
+                <Col
+                  span={12}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <h4 className="m-0">
+                    Created by{' '}
+                    <a
+                      href="https://codepen.io/MFM-347"
+                      className="link-light"
+                      style={{ color: 'white' }}
+                    >
+                      @{newContent}
+                    </a>
+                  </h4>
+                </Col>
+                <Col
+                  span={12}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}
+                >
+                  <a
+                    href="https://www.instagram.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Instagram"
+                  >
+                    <InstagramOutlined
+                      className="mx-2"
+                      style={{ color: 'white' }}
+                    />
+                  </a>
+                  <a
+                    href="https://www.facebook.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Facebook"
+                  >
+                    <FacebookOutlined
+                      className="mx-2"
+                      style={{ color: 'white' }}
+                    />
+                  </a>
+                </Col>
+              </Row>
+            </footer>
+          )}
         </Card>
       </Popup>
     </AntdFooter>
@@ -87,7 +230,8 @@ function Footer({ footer, onEdit, isEditable }) {
 Footer.propTypes = {
   footer: PropTypes.string.isRequired,
   onEdit: PropTypes.func,
-  isEditable: PropTypes.bool
+  isEditable: PropTypes.bool,
+  footerType: PropTypes.number.isRequired
 };
 
 Footer.defaultProps = {

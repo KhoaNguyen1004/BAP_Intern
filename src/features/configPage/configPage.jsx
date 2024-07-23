@@ -32,6 +32,7 @@ function ConfigPage() {
   const { openNotification } = useContext(NotificationContext);
   const [showBackupUI, setShowBackupUI] = useState(false);
   const [headerType, setHeaderType] = useState('');
+  const [footerType, setFooterType] = useState('');
 
   useEffect(() => {
     fetchSections();
@@ -47,6 +48,7 @@ function ConfigPage() {
         setHeaderAva(response.ava_path);
         setHeaderLogo(response.logo);
         setHeaderType(response.headerType);
+        setFooterType(response.footerType);
         setFooterContent(response.footer);
       })
       .catch((error) => {
@@ -236,13 +238,14 @@ function ConfigPage() {
     setIsModalVisible(false);
   };
 
-  const handleEditFooter = (newContent) => {
+  const handleEditFooter = (newContent, newFooterType) => {
     setIsLoading(true);
     dispatch(
       editFooter({
         id,
         footer: {
-          footer: newContent
+          footer: newContent,
+          footerType: newFooterType
         }
       })
     )
@@ -253,7 +256,7 @@ function ConfigPage() {
           type: 'success',
           title: 'Success'
         });
-        setFooterContent(newContent);
+        setFooterContent(newContent, newFooterType);
         fetchSections();
       })
       .catch((error) => {
@@ -317,6 +320,7 @@ function ConfigPage() {
       </div>
       <Footer
         footer={templateData.footer || footerContent}
+        footerType={templateData.footerType || footerType}
         onEdit={handleEditFooter}
       />
       <Modal
