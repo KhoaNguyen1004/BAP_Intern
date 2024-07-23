@@ -205,39 +205,37 @@ function Header({ title, onEdit, headerType, isEditable, avaPath }) {
         </>
       ) : headerType === 3 ? (
         <div
-          className="relative inline-block"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <div
-            type="button"
-            className="bg-slate-500 text-white p-4 text-base cursor-pointer"
-            aria-haspopup="true"
-            aria-expanded={show}
+            className="relative inline-block"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           >
-            Menu
+            <div
+              type="button"
+              className="bg-slate-500 text-white p-4 text-base cursor-pointer"
+              aria-haspopup="true"
+              aria-expanded={show}
+            >
+              Menu
+            </div>
+            <div
+              className={`absolute bg-white min-w-[160px] shadow-lg z-10 ${show ? 'block' : 'hidden'}`}
+              role="menu"
+            >
+              {sections.map((section) => (
+                <a
+                  className="block text-black p-3 no-underline hover:bg-gray-200"
+                  key={section.section_id}
+                  id={`menu ${section.id}`}
+                  onClick={() => handleClick(section.id)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleClick(section.id); }}
+                  role="menuitem"
+                  tabIndex={0}
+                >
+                  {section.title}
+                </a>
+              ))}
+            </div>
           </div>
-          <div
-            className={`absolute bg-white min-w-[160px] shadow-lg z-10 ${show ? 'block' : 'hidden'}`}
-            role="menu"
-          >
-            {sections.map((section) => (
-              <a
-                className="block text-black p-3 no-underline hover:bg-gray-200"
-                key={section.section_id}
-                id={`menu ${section.section_id}`}
-                onClick={() => handleClick(section.section_id)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleClick(section.section_id);
-                }}
-                role="menuitem"
-                tabIndex={0}
-              >
-                {section.title}
-              </a>
-            ))}
-          </div>
-        </div>
       ) : null}
 
       {isEditable && (
