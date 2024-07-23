@@ -156,7 +156,9 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
       {headerType === 2 ? (
         <>
           <div className="flex-1 text-center pl-10">
-            <h1 className="text-2xl text-black bg-white p-2 rounded">{newTitle}</h1>
+            <h1 className="text-2xl text-black bg-white p-2 rounded">
+              {newTitle}
+            </h1>
           </div>
           <div className="rounded-full mr-4 sm:mr-10 mt-6 pr-20">
             {uploadedImages && (
@@ -174,30 +176,31 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
             )}
           </div>
         </>
-      ) : (
-        headerType === 1 ? (
-          <>
-            <div className="rounded-full ml-4 sm:ml-10 mt-6">
-              {uploadedImages && (
-                <img
-                  key={uploadedImages}
-                  src={`http://127.0.0.1:8000${uploadedImages}`}
-                  alt={`Uploaded ${uploadedImages}`}
-                  style={{
-                    height: '50px',
-                    width: '50px',
-                    borderRadius: '50px',
-                    top: '5%'
-                  }}
-                />
-              )}
-            </div>
-            <div className="flex-1 text-center pr-20">
-              <h1 className="text-2xl text-black bg-white p-2 rounded">{newTitle}</h1>
-            </div>
-          </>
-        ) : (
-          <div
+      ) : headerType === 1 ? (
+        <>
+          <div className="rounded-full ml-4 sm:ml-10 mt-6">
+            {uploadedImages && (
+              <img
+                key={uploadedImages}
+                src={`http://127.0.0.1:8000${uploadedImages}`}
+                alt={`Uploaded ${uploadedImages}`}
+                style={{
+                  height: '50px',
+                  width: '50px',
+                  borderRadius: '50px',
+                  top: '5%'
+                }}
+              />
+            )}
+          </div>
+          <div className="flex-1 text-center pr-20">
+            <h1 className="text-2xl text-black bg-white p-2 rounded">
+              {newTitle}
+            </h1>
+          </div>
+        </>
+      ) : headerType === 3 ? (
+        <div
             className="relative inline-block"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
@@ -229,23 +232,23 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
               ))}
             </div>
           </div>
-        ))}
+      ) : null}
+
       {isEditable && (
-        <>
-          <Button
-            type="text"
-            icon={<SettingOutlined />}
-            className="text-white"
-            style={{
-              position: 'absolute',
-              top: '50%',
-              right: '50px',
-              transform: 'translateY(-50%)'
-            }}
-            onClick={showModal}
-          />
-        </>
+        <Button
+          type="text"
+          icon={<SettingOutlined />}
+          className="text-white"
+          style={{
+            position: 'absolute',
+            top: '50%',
+            right: '50px',
+            transform: 'translateY(-50%)'
+          }}
+          onClick={showModal}
+        />
       )}
+
       <Popup
         title="Edit Header"
         isOpen={isModalVisible}
@@ -273,8 +276,12 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
         >
           <Radio value={1}>Logo Left</Radio>
           <Radio value={2}>Logo Right</Radio>
+          <Radio value={3}>Menu</Radio>
         </Radio.Group>
-        <Card bodyStyle={{ padding: '0 10px' }} className="bg-slate-500 mt-4 rounded">
+        <Card
+          bodyStyle={{ padding: '0 10px' }}
+          className="bg-slate-500 mt-4 rounded"
+        >
           <div className="w-full flex items-center gap-4 sm:gap-20">
             {newHeaderType === 1 ? (
               <>
@@ -313,7 +320,7 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
                   </h1>
                 </div>
               </>
-            ) : (
+            ) : newHeaderType === 2 ? (
               <>
                 <div className="flex-1 text-center">
                   <h1 className="text-2xl text-black bg-white p-2 rounded">
@@ -350,7 +357,41 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
                   </div>
                 )}
               </>
-            )}
+            ) : newHeaderType === 3 ? (
+              <div className="relative inline-block">
+                <div
+                  type="button"
+                  className="bg-slate-500 text-white p-4 text-base cursor-pointer"
+                  aria-haspopup="true"
+                  aria-expanded={show}
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  Menu
+                </div>
+                <div
+                  className={`absolute bg-white min-w-[160px] shadow-lg z-10 ${show ? 'block' : 'hidden'}`}
+                  role="menu"
+                >
+                  {sections.map((section) => (
+                    <a
+                      className="block text-black p-3 no-underline hover:bg-gray-200"
+                      key={section.id}
+                      id={`menu ${section.id}`}
+                      onClick={() => handleClick(section.id)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleClick(section.id);
+                      }}
+                      role="menuitem"
+                      tabIndex={0}
+                    >
+                      {section.title}
+                      {section.title}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </div>
         </Card>
       </Popup>
