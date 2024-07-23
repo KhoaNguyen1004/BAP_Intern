@@ -9,12 +9,14 @@ function GuestUI() {
   const [template, setTemplate] = useState(null);
   const [error, setError] = useState('');
   const [showBackupUI, setShowBackupUI] = useState(false);
+  const [sections, setSections] = useState([]);
   useEffect(() => {
     templateService
       .getTemplate()
       .then((response) => {
         console.log('API data: ', response.data);
         if (response && response.data.section) {
+          setSections(response.data.section);
           const updatedSections = response.data.section.map((sec) => ({
             ...sec,
             type: Number(sec.type)
@@ -53,6 +55,7 @@ function GuestUI() {
           avaPath={template.avaPath}
           headerType={template.headerType}
           isEditable={false}
+          sectionMenu = {sections}
         />
       </div>
       <div className="flex-1 mb-20 px-4">

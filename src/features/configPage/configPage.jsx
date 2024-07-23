@@ -282,6 +282,7 @@ function ConfigPage() {
           headerType={templateData.headerType || headerType}
           onEdit={handleEditHeader}
           ava_path={templateData.ava_path || headerAva}
+          sectionMenu = {sections}
         />
       <div className="flex-1 mb-20 px-4">
         {sections.map((section) => (
