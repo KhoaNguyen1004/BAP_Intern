@@ -15,6 +15,7 @@ import {
   LogoutOutlined,
   SettingOutlined
 } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import Popup from '../../components/Popup';
 import { LoadingContext } from '../../contexts/LoadingContext';
 import { NotificationContext } from '../../contexts/NotificationContext';
@@ -43,7 +44,7 @@ function Dashboard() {
   );
   const [templateName, setTemplateName] = useState('');
   const [showBackupUI, setShowBackupUI] = useState(false);
-
+  const { t } = useTranslation();
   const fetchTemplates = () => {
     setIsLoading(true);
     dispatch(getAllTemplates())
@@ -101,9 +102,9 @@ function Dashboard() {
       .unwrap()
       .then((response) => {
         openNotification({
-          message: `Templates successfully deleted!`,
+          message: t('DELETE_TEMPLATE.Success', {ns: 'notification'}),
           type: 'success',
-          title: 'Success'
+          title: t('NOTI.Success', {ns: 'notification'})
         });
         console.log('Template deleted:', response);
         fetchTemplates();
@@ -111,9 +112,9 @@ function Dashboard() {
       .catch((err) => {
         console.error('Error deleting template:', err);
         openNotification({
-          message: 'Failed to delete template!',
+          message: t('DELETE_TEMPLATE.Error', {ns: 'notification'}),
           type: 'error',
-          title: 'Error'
+          title: t('NOTI.Error', {ns: 'notification'})
         });
         fetchTemplates();
       })
@@ -131,12 +132,10 @@ function Dashboard() {
       .unwrap()
       .then((response) => {
         openNotification({
-          message: 'Template added successfully!',
+          message: t('ADD_TEMPLATE.Success', {ns: 'notification'}),
           type: 'success',
           title: 'Success'
         });
-        console.log('Template added:', response);
-        console.log('response.template.id', response.id);
         fetchTemplates();
         setIsAddTemplateModalOpen(false);
         form.resetFields();
@@ -144,7 +143,7 @@ function Dashboard() {
       })
       .catch((err) => {
         console.error('Error adding template:', err);
-        let errorMessage = 'Failed to add template!';
+        let errorMessage = t('ADD_TEMPLATE.Duplicate', {ns: 'notification'});
 
         if (err.response && err.response.data && err.response.data.message) {
           errorMessage = err.response.data.message;
@@ -153,7 +152,7 @@ function Dashboard() {
         openNotification({
           message: errorMessage,
           type: 'error',
-          title: 'Error'
+          title: t('NOTI.Error', {ns: 'notification'})
         });
       })
       .finally(() => {
@@ -165,7 +164,7 @@ function Dashboard() {
   const handleCloneTemplate = (id, name) => {
     if (!selectedTemplateId) {
       openNotification({
-        message: 'Please select a template to clone!',
+        message: t('CLONE_TEMPLATE.Error', {ns: 'notification'}),
         type: 'error',
         title: 'Error'
       });
@@ -176,23 +175,21 @@ function Dashboard() {
       .unwrap()
       .then((response) => {
         openNotification({
-          message: 'Template cloned successfully!',
+          message: t('CLONE_TEMPLATE.Success', {ns: 'notification'}),
           type: 'success',
-          title: 'Success'
+          title: t('NOTI.Success', {ns: 'notification'})
         });
         fetchTemplates();
         setIsAddTemplateModalOpen(false);
         form.resetFields();
         onFinishComplete(response.template.data.id);
-        console.log('Template cloned:', response);
-        console.log('response.template.original.id', response.template.data.id);
       })
       .catch((err) => {
         console.error('Error cloning template:', err);
         openNotification({
-          message: 'Duplicated template name',
+          message: t('CLONE_TEMPLATE.Duplicate', {ns: 'notification'}),
           type: 'error',
-          title: 'Error'
+          title: t('NOTI.Error', {ns: 'notification'})
         });
         setIsAddTemplateModalOpen(false);
         fetchTemplates();
@@ -208,8 +205,6 @@ function Dashboard() {
     setIsAddTemplateModalOpen(false);
     if (isCloneTemplate) {
       handleCloneTemplate(selectedTemplateId, values.name);
-      console.log('Clone template:', selectedTemplateId);
-      console.log('Name:', values.name);
     } else {
       handleAddTemplate(values);
     }
@@ -258,9 +253,9 @@ function Dashboard() {
       .unwrap()
       .then((response) => {
         openNotification({
-          message: 'Template chosen successfully!',
+          message: t('CHOOSE_TEMPLATE.Success', {ns: 'notification'}),
           type: 'success',
-          title: 'Success'
+          title: t('NOTI.Success', {ns: 'notification'})
         });
         console.log('Template chosen:', response);
         fetchTemplates();
@@ -287,7 +282,8 @@ function Dashboard() {
                 <Avatar shape="square" size="large" icon={<UserOutlined />} />
                 <div className="ml-2">
                   <p className="text-lg text-start m-0 mb-2 leading-none font-semibold">
-                    {user?.username}
+                              {user?.username}
+
                   </p>
                   <p className="m-0 leading-none text-start">{user?.role}</p>
                 </div>
@@ -309,7 +305,7 @@ function Dashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
             {/* Template */}
             <div className="bg-white rounded-lg p-4 shadow-md">
-              <h2 className="text-lg font-semibold mb-4">Template</h2>
+              <h2 className="text-lg font-semibold mb-4">{t('ADMIN/DASHBOARD.Template.Title')}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {status === 'loading' && setIsLoading(true)}
                 {status === 'succeeded' &&
@@ -329,14 +325,14 @@ function Dashboard() {
                   type="primary"
                   onClick={handlChooseTemplate}
                 >
-                  Save
+                  {t('BUTTON.Save')}
                 </Button>
               </div>
             </div>
             {/* Config */}
             <div className="bg-white rounded-lg p-4 ml-4 shadow-md flex-1 h-[280px]">
               <h2 className="text-lg font-semibold items-start m-[4]">
-                Config
+                {t('ADMIN/DASHBOARD.CONFIG.Config')}
               </h2>
               <div className="flex flex-col space-y-4 justify-between items-center w-2/4 mx-auto">
                 <Button
@@ -345,10 +341,10 @@ function Dashboard() {
                   className="!bg-primary-dominant hover:!bg-primary-dominant-dark focus:!bg-primary-dominant-light"
                   onClick={showAddTemplateModal}
                 >
-                  Add Template
+                  {t('ADMIN/DASHBOARD.CONFIG.Add_Template.Title')}
                 </Button>
                 <Popup
-                  title="Add Template"
+                  title={t('ADMIN/DASHBOARD.CONFIG.Add_Template.Title')}
                   isOpen={isAddTemplateModalOpen}
                   onOk={onFinish}
                   onCancel={() => {
@@ -363,7 +359,7 @@ function Dashboard() {
                         handleCancel();
                       }}
                     >
-                      Cancel
+                      {t('BUTTON.Cancel')}
                     </Button>,
                     <Button
                       form="addConfigForm"
@@ -375,7 +371,7 @@ function Dashboard() {
                         (templateName.trim() === '' && !isCloneTemplate)
                       }
                     >
-                      Create
+                      {t('BUTTON.Create')}
                     </Button>
                   ]}
                 >
@@ -390,12 +386,12 @@ function Dashboard() {
                     layout="vertical"
                   >
                     <Form.Item
-                      label="Template Name"
+                      label={t('ADMIN/DASHBOARD.CONFIG.Add_Template.Template_Name')}
                       name="name"
                       rules={[
                         {
                           required: true,
-                          message: 'Please enter template name!'
+                          message: t('ADMIN/DASHBOARD.CONFIG.Add_Template.Title_Required')
                         }
                       ]}
                     >
@@ -404,10 +400,10 @@ function Dashboard() {
                       />
                     </Form.Item>
                     <Form.Item
-                      label="Template Options"
+                      label={t('ADMIN/DASHBOARD.CONFIG.Add_Template.Template_Option')}
                       name="configValue"
                       rules={[
-                        { required: true, message: 'Please choose an option!' }
+                        { required: true, message: t('ADMIN/DASHBOARD.CONFIG.Add_Template.Choose_Option_Required') }
                       ]}
                     >
                       <Radio.Group
@@ -416,8 +412,8 @@ function Dashboard() {
                           isCloneTemplate ? 'Clone Template' : 'New Template'
                         }
                       >
-                        <Radio value="New Template">New Template</Radio>
-                        <Radio value="Clone Template">Clone Template</Radio>
+                        <Radio value="New Template">{t('ADMIN/DASHBOARD.CONFIG.Add_Template.New_Template')}</Radio>  
+                        <Radio value="Clone Template">{t('ADMIN/DASHBOARD.CONFIG.Add_Template.Clone_Template')}</Radio>
                       </Radio.Group>
                     </Form.Item>
 
@@ -447,10 +443,10 @@ function Dashboard() {
                 </Popup>
 
                 <Button type="primary" block onClick={showConfigTemplateModal}>
-                  Config Template
+                  {t('ADMIN/DASHBOARD.CONFIG.Config_Template')}
                 </Button>
                 <Popup
-                  title="Config Template"
+                  title={t('ADMIN/DASHBOARD.CONFIG.Config')}
                   isOpen={isConfigTemplateModalOpen}
                   onConfirm={handleOk}
                   onCancel={handleCancel}
@@ -487,31 +483,31 @@ function Dashboard() {
                 </Popup>
 
                 <Button type="primary" block onClick={showDeleteTemplateModal}>
-                  Delete Template
+                  {t('ADMIN/DASHBOARD.CONFIG.Delete_Template')}
                 </Button>
               </div>
               <Popup
-                title="Delete Template"
+                title={t('ADMIN/DASHBOARD.CONFIG.Delete_Template')}
                 isOpen={isDeleteTemplateModalOpen}
                 onOk={handleConfirmDelete}
                 onCancel={handleCancel}
                 footer={[
                   <Button key="back" onClick={handleCancel}>
-                    Cancel
+                    {t('BUTTON.Cancel')}
                   </Button>,
                   <Popconfirm
-                    title="Delete selected templates?"
+                    title={t('ADMIN/DASHBOARD.CONFIG.Delete_Template_Confirm')}
                     onConfirm={handlePopconfirmConfirm}
                     onCancel={() => setShowPopconfirm(false)}
-                    okText="Yes"
-                    cancelText="No"
+                    okText={t('BUTTON.Yes')}
+                    cancelText={t('BUTTON.No')}
                     key="confirm"
                   >
                     <Button
                       type="primary"
                       disabled={selectedTemplatesToDelete.length === 0}
                     >
-                      Delete
+                     {t('BUTTON.Delete')}
                     </Button>
                   </Popconfirm>
                 ]}
@@ -535,6 +531,7 @@ function Dashboard() {
               </Popup>
             </div>
           </div>
+
         </Content>
       </Layout>
     </div>

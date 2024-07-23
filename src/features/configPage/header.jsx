@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Layout, Button, Input, Card, message, Radio } from 'antd';
+import { useTranslation } from 'react-i18next';
+
 import { SettingOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -9,8 +11,16 @@ import TokenService from '../../services/token.service';
 
 const { Header: AntdHeader } = Layout;
 
-function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu }) {
+function Header({
+  title,
+  onEdit,
+  headerType,
+  isEditable,
+  avaPath,
+  sectionMenu
+}) {
   const { id } = useParams();
+  const { t } = useTranslation();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
   const [uploadedImages, setUploadedImages] = useState('');
@@ -46,7 +56,8 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
   const handleClick = (id) => {
     const element = document.getElementById(id);
     if (element) {
-      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      const elementPosition =
+        element.getBoundingClientRect().top + window.scrollY;
       const offsetPosition = elementPosition - 50;
       window.scrollTo({
         top: offsetPosition,
@@ -201,37 +212,39 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
         </>
       ) : headerType === 3 ? (
         <div
-            className="relative inline-block"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
+          className="relative inline-block"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          <div
+            type="button"
+            className="bg-slate-500 text-white p-4 text-base cursor-pointer"
+            aria-haspopup="true"
+            aria-expanded={show}
           >
-            <div
-              type="button"
-              className="bg-slate-500 text-white p-4 text-base cursor-pointer"
-              aria-haspopup="true"
-              aria-expanded={show}
-            >
-              Menu
-            </div>
-            <div
-              className={`absolute bg-white min-w-[160px] shadow-lg z-10 max-h-[800px] overflow-y-auto   ${show ? 'block' : 'hidden'}`}
-              role="menu"
-            >
-              {sections.map((section) => (
-                <a
-                  className="block text-black p-3 no-underline hover:bg-gray-200 h-[40px] flex items-center justify-center"
-                  key={section.id}
-                  id={`menu ${section.id}`}
-                  onClick={() => handleClick(section.id)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') handleClick(section.id); }}
-                  role="menuitem"
-                  tabIndex={0}
-                >
-                  {section.title}
-                </a>
-              ))}
-            </div>
+            Menu
           </div>
+          <div
+            className={`absolute bg-white min-w-[160px] shadow-lg z-10 max-h-[800px] overflow-y-auto   ${show ? 'block' : 'hidden'}`}
+            role="menu"
+          >
+            {sections.map((section) => (
+              <a
+                className="block text-black p-3 no-underline hover:bg-gray-200 h-[40px] flex items-center justify-center"
+                key={section.id}
+                id={`menu ${section.id}`}
+                onClick={() => handleClick(section.id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleClick(section.id);
+                }}
+                role="menuitem"
+                tabIndex={0}
+              >
+                {section.title}
+              </a>
+            ))}
+          </div>
+        </div>
       ) : null}
 
       {isEditable && (
@@ -250,11 +263,11 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
       )}
 
       <Popup
-        title="Edit Header"
+        title={t('CONFIG/PAGE.EDIT_HEADER.Title')}
         isOpen={isModalVisible}
         onConfirm={handleOk}
         onCancel={handleCancel}
-        text="Save"
+        text={t('BUTTON.Save')}
       >
         <div className="pb-3">
           <input
@@ -264,7 +277,13 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
           />
         </div>
         <Input
-          placeholder="Title"
+          placeholder={t('CONFIG/PAGE.EDIT_HEADER.Header_Name')}
+          rules={[
+            {
+              required: true,
+              message: t('CONFIG/PAGE.EDIT_HEADER.Title_Required')
+            }
+          ]}
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           className="mb-4"
@@ -283,115 +302,40 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
           className="bg-slate-500 mt-4 rounded"
         >
           <div className="w-full flex items-center gap-4 sm:gap-20">
-            {newHeaderType === 1 ? (
-              <>
-                {selectedFile ? (
-                  <div>
-                    <img
-                      src={URL.createObjectURL(selectedFile)}
-                      alt={`Selected ${selectedFile.name}`}
-                      style={{
-                        height: '50px',
-                        width: '50px',
-                        borderRadius: '50px'
-                      }}
-                    />
-                  </div>
-                ) : uploadedImages ? (
-                  <div>
-                    <img
-                      src={`http://127.0.0.1:8000${uploadedImages}`}
-                      alt={`Uploaded ${uploadedImages}`}
-                      style={{
-                        height: '50px',
-                        width: '50px',
-                        borderRadius: '50px'
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <div>
-                    <p>No image selected or uploaded.</p>
-                  </div>
-                )}
-                <div className="flex-1 text-center">
-                  <h1 className="text-2xl text-black bg-white p-2 rounded">
-                    {newTitle}
-                  </h1>
-                </div>
-              </>
-            ) : newHeaderType === 2 ? (
-              <>
-                <div className="flex-1 text-center">
-                  <h1 className="text-2xl text-black bg-white p-2 rounded">
-                    {newTitle}
-                  </h1>
-                </div>
-                {selectedFile ? (
-                  <div>
-                    <img
-                      src={URL.createObjectURL(selectedFile)}
-                      alt={`Selected ${selectedFile.name}`}
-                      style={{
-                        height: '50px',
-                        width: '50px',
-                        borderRadius: '50px'
-                      }}
-                    />
-                  </div>
-                ) : uploadedImages ? (
-                  <div>
-                    <img
-                      src={`http://127.0.0.1:8000${uploadedImages}`}
-                      alt={`Uploaded ${uploadedImages}`}
-                      style={{
-                        height: '50px',
-                        width: '50px',
-                        borderRadius: '50px'
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <div>
-                    <p>No image selected or uploaded.</p>
-                  </div>
-                )}
-              </>
-            ) : newHeaderType === 3 ? (
-              <div className="relative inline-block">
-                <div
-                  type="button"
-                  className="bg-slate-500 text-white p-4 text-base cursor-pointer"
-                  aria-haspopup="true"
-                  aria-expanded={show}
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  Menu
-                </div>
-                <div
-                  className={`absolute bg-white min-w-[160px] shadow-lg z-10 ${show ? 'block' : 'hidden'}`}
-                  role="menu"
-                >
-                  {sections.map((section) => (
-                    <a
-                      className="block text-black p-3 no-underline hover:bg-gray-200"
-                      key={section.id}
-                      id={`menu ${section.id}`}
-                      onClick={() => handleClick(section.id)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') handleClick(section.id);
-                      }}
-                      role="menuitem"
-                      tabIndex={0}
-                    >
-                      {section.title}
-                      {section.title}
-                    </a>
-                  ))}
-                </div>
+            {selectedFile ? (
+              <div>
+                <img
+                  src={URL.createObjectURL(selectedFile)}
+                  alt={`Selected ${selectedFile.name}`}
+                  style={{
+                    height: '50px',
+                    width: '50px',
+                    borderRadius: '50px'
+                  }}
+                />
               </div>
-            ) : null}
+            ) : uploadedImages ? (
+              <div>
+                <img
+                  src={`http://127.0.0.1:8000${uploadedImages}`}
+                  alt={`Uploaded ${uploadedImages}`}
+                  style={{
+                    height: '50px',
+                    width: '50px',
+                    borderRadius: '50px'
+                  }}
+                />
+              </div>
+            ) : (
+              <div>
+                <p>{t('CONFIG/PAGE.EDIT_HEADER.No_Image')}</p>
+              </div>
+            )}
+            <div className="flex-1 text-center">
+              <h1 className="text-2xl text-black bg-white p-2 rounded">
+                {newTitle}
+              </h1>
+            </div>
           </div>
         </Card>
       </Popup>

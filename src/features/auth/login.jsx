@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Form, Input, Button } from 'antd';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loginAsync, selectAuth } from './authSlice';
@@ -11,6 +12,7 @@ import BackUpUI from '../templates/backUpUI';
 export function Login() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { isLoggedIn } = useAppSelector(selectAuth);
   const { setIsLoading } = useContext(LoadingContext);
   const { openNotification } = useContext(NotificationContext);
@@ -34,19 +36,23 @@ export function Login() {
       const response = await dispatch(
         loginAsync({ username, password })
       ).unwrap();
-      console.log('Login successful, response:', response.data);
+      openNotification({
+        message: t('LOGIN.Success', {ns: 'notification'}),
+        type: 'success',
+        title: t('NOTI.Success', {ns: 'notification'}),
+      });
       TokenService.setUser(response.data);
       navigate('/admin/dashboard');
     } catch (error) {
       console.error('Login error:', error);
       if (!notificationShown && error === 'Username or password incorrect') {
         openNotification({
-          message: 'Invalid username or password!',
+          message: t('LOGIN.Error', {ns: 'notification'}),
           type: 'error',
-          title: 'Login Failed'
+          title: t('NOTI.Error', {ns: 'notification'}),
         });
         setNotificationShown(true);
-      } else if (error === 'Login failed!') {
+      } else if (error === t('LOGIN.Title', {ns: 'notification'})) {
         setShowBackupUI(true);
       }
     } finally {
@@ -54,28 +60,15 @@ export function Login() {
       setIsSubmitting(false);
     }
   };
+
   if (showBackupUI) {
     return <BackUpUI />;
   }
 
   return (
-    <main>
-      <div
-        style={{
-          border: '1px solid #ccc',
-          borderRadius: '5px',
-          width: 'fit-content',
-          marginTop: '10%',
-          margin: 'auto',
-          padding: '30px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          textAlign: 'center'
-        }}
-      >
-        <h2>Login</h2>
+    <main className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+        <h2 className="text-3xl font-semibold mb-6 text-center">{t('ADMIN/LOGIN.Title')}</h2>
         <Form
           name="loginForm"
           initialValues={{ remember: true }}
@@ -85,29 +78,34 @@ export function Login() {
           }}
         >
           <Form.Item
-            label="Username"
+            label={t('ADMIN/LOGIN.Username')}
             name="username"
-            rules={[{ required: true, message: 'Please input your username!' }]}
+            rules={[{ required: true, message: t('ADMIN/LOGIN.Username_Required') }]}
             labelCol={{ span: 24 }}
             wrapperCol={{ span: 24 }}
-            style={{ marginBottom: '10px' }}
+            className="mt-2"
           >
-            <Input placeholder="Enter your username" />
+            <Input placeholder={t('ADMIN/LOGIN.Username_Placeholder')} />
           </Form.Item>
           <Form.Item
-            label="Password"
+            label={t('ADMIN/LOGIN.Password')}
             name="password"
-            rules={[{ required: true, message: 'Please input your password!' }]}
+            rules={[{ required: true, message: t('ADMIN/LOGIN.Password_Required') }]}
             labelCol={{ span: 24 }}
             wrapperCol={{ span: 24 }}
-            style={{ marginBottom: '10px' }}
+            className='mt-2'
           >
-            <Input.Password placeholder="Enter your password" />
+            <Input.Password placeholder={t('ADMIN/LOGIN.Password_Placeholder')} />
           </Form.Item>
 
-          <Form.Item>
-            <Button type="primary" htmlType="submit" disabled={isSubmitting}>
-              Log in
+          <Form.Item className="flex justify-center ">
+            <Button
+              type="primary"
+              htmlType="submit"
+              disabled={isSubmitting}
+              className="w-full"
+            >
+              {t('ADMIN/LOGIN.Submit')}
             </Button>
           </Form.Item>
         </Form>

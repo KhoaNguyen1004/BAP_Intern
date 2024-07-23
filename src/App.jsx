@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
 import { PrivateRoute } from './components/privateRoute';
 import { Login } from './features/auth/login';
-
+import LanguagePicker from './components/Language';
 import Dashboard from './features/dashboard/dashboard';
 import ConfigPage from './features/configPage/configPage';
 import { useAppDispatch } from './store/hooks';
@@ -58,6 +58,12 @@ function App() {
         />
         <Route path="/" element={<GuestUI />} />
       </Routes>
+      {/* <LanguagePicker /> */}
+<div className="fixed bottom-6 right-20 z-50 shadow-md">
+
+  <LanguagePicker />
+</div>
+
     </div>
   );
 }

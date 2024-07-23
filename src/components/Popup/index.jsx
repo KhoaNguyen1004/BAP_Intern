@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 function Popup({ title, children, isOpen, onCancel, onConfirm, text, footer }) {
+  const { t } = useTranslation();
   return (
     <Modal
       title={title}
@@ -10,7 +12,7 @@ function Popup({ title, children, isOpen, onCancel, onConfirm, text, footer }) {
       onOk={onConfirm}
       onCancel={onCancel}
       okText={text}
-      cancelText="Cancel"
+      cancelText={t('BUTTON.Cancel')}
       footer={footer}
     >
       {children}
