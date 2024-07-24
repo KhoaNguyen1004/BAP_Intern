@@ -1,34 +1,24 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { Button, Input, Modal } from 'antd';
+import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Modal, Input } from 'antd';
-import Header from './header';
-import Footer from './footer';
-import Section from './section';
-import {
-  getTemplate,
-  editHeader,
-  editFooter
-} from '../dashboard/templatesSlice';
-import { addSection, deleteSection, editSection } from './sectionSlice';
-import { useAppDispatch } from '../../store/hooks';
+import { useParams } from 'react-router-dom';
 import { LoadingContext } from '../../contexts/LoadingContext';
 import { NotificationContext } from '../../contexts/NotificationContext';
+import { useAppDispatch } from '../../store/hooks';
+import {
+  editFooter,
+  editHeader,
+  getTemplate
+} from '../dashboard/templatesSlice';
 import BackUpUI from '../templates/backUpUI';
+import Footer from './footer';
+import Header from './header';
+import Section from './section';
+import { addSection, deleteSection, editSection } from './sectionSlice';
+import ColorPickerComponent from '../../components/ColorPicker';
 
 function ConfigPage() {
   const { t } = useTranslation();
-  const handleClick = (id) => {
-    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-  };
-  const handleMouseEnter = () => {
-    setShow(true);
-  };
-
-  const handleMouseLeave = () => {
-    setShow(false);
-  };
-
   const { id } = useParams();
   const dispatch = useAppDispatch();
   const [templateData, setTemplateData] = useState({});
@@ -40,7 +30,11 @@ function ConfigPage() {
   const [headerTitle, setHeaderTitle] = useState('');
   const [headerAva, setHeaderAva] = useState('');
   const [headerLogo, setHeaderLogo] = useState('');
+  const [headerBgColor, setHeaderBgColor] = useState('#64748B');
+  const [headerTextColor, setHeaderTextColor] = useState('#000000');
   const [footerContent, setFooterContent] = useState('');
+  const [footerBgColor, setFooterBgColor] = useState('#64748B');
+  const [footerTextColor, setFooterTextColor] = useState('#000000');
   const { openNotification } = useContext(NotificationContext);
   const [showBackupUI, setShowBackupUI] = useState(false);
   const [headerType, setHeaderType] = useState('');
@@ -49,6 +43,13 @@ function ConfigPage() {
   useEffect(() => {
     fetchSections();
   }, [id]);
+
+  useEffect(() => {
+    console.log('Header background: ', headerBgColor);
+    console.log('Header text: ', headerTextColor);
+    console.log('Footer background: ', footerBgColor);
+    console.log('Footer text: ', footerTextColor);
+  }, [headerBgColor, headerTextColor, footerBgColor, footerTextColor]);
 
   const fetchSections = () => {
     dispatch(getTemplate(id))
@@ -62,6 +63,11 @@ function ConfigPage() {
         setHeaderType(response.headerType);
         setFooterType(response.footerType);
         setFooterContent(response.footer);
+        setHeaderBgColor(response.headerBgColor);
+        setHeaderTextColor(response.headerTextColor);
+        setFooterBgColor(response.footerBgColor);
+        setFooterTextColor(response.footerTextColor);
+        console.log('Response: ', response);
       })
       .catch((error) => {
         console.error('Failed to fetch sections:', error);
@@ -147,13 +153,17 @@ function ConfigPage() {
     newTitle,
     newContent1,
     newContent2,
-    newType
+    newType,
+    newBgColor,
+    newTextColor
   ) => {
     const payload = {
       title: newTitle,
       content1: newContent1,
       content2: newContent2,
-      type: Number(newType)
+      type: Number(newType),
+      bgColor: newBgColor,
+      textColor: newTextColor
     };
 
     setIsLoading(true);
@@ -176,7 +186,9 @@ function ConfigPage() {
                   title: newTitle,
                   content1: newContent1,
                   content2: newContent2,
-                  type: newType
+                  type: newType,
+                  bgColor: newBgColor,
+                  textColor: newTextColor
                 }
               : section
           )
@@ -186,6 +198,8 @@ function ConfigPage() {
           type: 'success',
           title: t('NOTI.Success', { ns: 'notification' })
         });
+        console.log('New section text color: ', newTextColor);
+        console.log('New section bg color: ', newBgColor);
         fetchSections();
       })
       .catch((error) => {
@@ -201,14 +215,21 @@ function ConfigPage() {
       });
   };
 
-  const handleEditHeader = (newTitle, newHeaderType) => {
+  const handleEditHeader = (
+    newTitle,
+    newHeaderType,
+    newBgColor,
+    newTextColor
+  ) => {
     setIsLoading(true);
     dispatch(
       editHeader({
         id,
         header: {
           title: newTitle,
-          headerType: newHeaderType
+          headerType: newHeaderType,
+          headerBgColor: newBgColor,
+          headerTextColor: newTextColor
         }
       })
     )
@@ -221,6 +242,8 @@ function ConfigPage() {
         });
         setHeaderTitle(newTitle);
         setHeaderType(newHeaderType);
+        setHeaderBgColor(newBgColor);
+        setHeaderTextColor(newTextColor);
         fetchSections();
       })
       .catch((error) => {
@@ -237,14 +260,21 @@ function ConfigPage() {
     setIsModalVisible(false);
   };
 
-  const handleEditFooter = (newContent, newFooterType) => {
+  const handleEditFooter = (
+    newContent,
+    newFooterType,
+    newBgColor,
+    newTextColor
+  ) => {
     setIsLoading(true);
     dispatch(
       editFooter({
         id,
         footer: {
           footer: newContent,
-          footerType: newFooterType
+          footerType: newFooterType,
+          footerBgColor: newBgColor,
+          footerTextColor: newTextColor
         }
       })
     )
@@ -256,6 +286,8 @@ function ConfigPage() {
           title: t('NOTI.Success', { ns: 'notification' })
         });
         setFooterContent(newContent, newFooterType);
+        setFooterBgColor(newBgColor);
+        setFooterTextColor(newTextColor);
         fetchSections();
       })
       .catch((error) => {
@@ -279,12 +311,13 @@ function ConfigPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header
-        logo={templateData.logo || headerLogo}
         title={templateData.title || headerTitle}
         headerType={templateData.headerType || headerType}
         onEdit={handleEditHeader}
         ava_path={templateData.ava_path || headerAva}
         sectionMenu={sections}
+        headerBgColor={templateData.headerBgColor || headerBgColor}
+        headerTextColor={templateData.headerTextColor || headerTextColor}
       />
       <div className="flex-1 mb-20 px-4">
         {sections.map((section) => (
@@ -295,18 +328,29 @@ function ConfigPage() {
             title={section.title}
             content1={section.content1}
             content2={section.content2}
+            bgColor={section.bgColor || '#F3F4F6'}
+            textColor={section.textColor || '#000000'}
             isDeletable={sections.length > 1}
             onDelete={() => {
               console.log('Deleting section with id:', section.id);
               confirmDeleteSection(section.id);
             }}
-            onEdit={(newTitle, newContent1, newContent2, newType) =>
+            onEdit={(
+              newTitle,
+              newContent1,
+              newContent2,
+              newType,
+              newBgColor,
+              newTextColor
+            ) =>
               handleEditSection(
                 section.id,
                 newTitle,
                 newContent1,
                 newContent2,
-                newType
+                newType,
+                newBgColor,
+                newTextColor
               )
             }
           />
@@ -320,6 +364,8 @@ function ConfigPage() {
       <Footer
         footer={templateData.footer || footerContent}
         footerType={templateData.footerType || footerType}
+        footerBgColor={templateData.footerBgColor || footerBgColor}
+        footerTextColor={templateData.footerTextColor || footerTextColor}
         onEdit={handleEditFooter}
       />
       <Modal
@@ -335,8 +381,20 @@ function ConfigPage() {
           modalContent === 'deleteSection'
             ? handleDeleteSection
             : modalContent === 'editHeader'
-              ? () => handleEditHeader(headerLogo, headerTitle)
-              : () => handleEditFooter(footerContent)
+              ? () =>
+                  handleEditHeader(
+                    headerType,
+                    headerTitle,
+                    headerBgColor,
+                    headerTextColor
+                  )
+              : () =>
+                  handleEditFooter(
+                    footerContent,
+                    footerType,
+                    footerBgColor,
+                    footerTextColor
+                  )
         }
         onCancel={handleCancel}
         okText={modalContent === 'deleteSection' ? 'Delete' : 'Save'}
@@ -363,13 +421,39 @@ function ConfigPage() {
               value={headerTitle}
               onChange={(e) => setHeaderTitle(e.target.value)}
             />
+            <div className="flex gap-4">
+              <ColorPickerComponent
+                label="Background color"
+                initialColor={headerBgColor}
+                onColorChange={(color) => setHeaderBgColor(color)}
+              />
+              <ColorPickerComponent
+                label="Text color"
+                initialColor={headerTextColor}
+                onColorChange={(color) => setHeaderTextColor(color)}
+              />
+            </div>
           </div>
         ) : (
-          <Input
-            placeholder="Footer Content"
-            value={footerContent}
-            onChange={(e) => setFooterContent(e.target.value)}
-          />
+          <div>
+            <Input
+              placeholder="Footer Content"
+              value={footerContent}
+              onChange={(e) => setFooterContent(e.target.value)}
+            />
+            <div className="flex gap-4">
+              <ColorPickerComponent
+                label="Background color"
+                initialColor={footerBgColor}
+                onColorChange={(color) => setFooterBgColor(color)}
+              />
+              <ColorPickerComponent
+                label="Text color"
+                initialColor={footerTextColor}
+                onColorChange={(color) => setFooterTextColor(color)}
+              />
+            </div>
+          </div>
         )}
       </Modal>
     </div>

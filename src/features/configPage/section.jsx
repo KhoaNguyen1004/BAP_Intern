@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, Input, Radio, message, Card } from 'antd';
 import { SettingOutlined, DeleteOutlined } from '@ant-design/icons';
 import Popup from '../../components/Popup';
+import ColorPickerComponent from '../../components/ColorPicker';
 
 function Section({
   sectionId,
@@ -14,7 +15,9 @@ function Section({
   onDelete,
   onEdit,
   isEditable = true,
-  isDeletable = true
+  isDeletable = true,
+  bgColor,
+  textColor
 }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [showContentOption, setShowContentOption] = useState(
@@ -26,11 +29,15 @@ function Section({
   const [newContent2, setNewContent2] = useState(content2);
   const [titleError, setTitleError] = useState('');
   const [typeDraft, setTypeDraft] = useState(type);
+  const [contentColor, setContentColor] = useState(textColor || '#000000');
+  const [backgroundColor, setBackgroundColor] = useState(bgColor || '#ecf1f6');
 
   useEffect(() => {
     setTypeDraft(type);
     setShowContentOption(type === 2 ? 'show' : 'hide');
-  }, [type]);
+    setContentColor(textColor);
+    setBackgroundColor(bgColor);
+  }, [type, textColor, bgColor]);
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -42,7 +49,14 @@ function Section({
     if (newTitle.length > 20) {
       setTitleError(t('EDIT_SECTION.Title_Error', { ns: 'notification' }));
     } else {
-      onEdit(newTitle, newContent1, newContent2, typeDraft);
+      onEdit(
+        newTitle,
+        newContent1,
+        newContent2,
+        typeDraft,
+        contentColor,
+        backgroundColor
+      );
       setIsModalVisible(false);
     }
   };
@@ -54,6 +68,8 @@ function Section({
     setNewContent2(content2);
     setTitleError('');
     setShowContentOption(type === 2 ? 'show' : 'hide');
+    setContentColor(textColor);
+    setBackgroundColor(bgColor);
   };
 
   const handleOptionChange = (e) => {
@@ -78,17 +94,26 @@ function Section({
   return (
     <section
       id={sectionId}
-      className="bg-gray-100 p-2 mb-5 pb-4 relative top-24"
+      className="p-2 mb-5 pb-4 relative top-24"
+      style={{ backgroundColor }}
     >
       <div style={{ padding: '0px 30%', borderRadius: '10px' }}>
-        <h2 className="text-xl font-semibold mb-4 text-center bg-white">
+        <h2
+          className="text-xl font-semibold mb-4 text-center bg-white"
+          style={{ color: contentColor }}
+        >
           {title}
         </h2>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         {type === 1 ? (
-          <Card style={{ flex: 1 }}>
-            <p style={{ overflowWrap: 'break-word' }}>{content1}</p>
+          <Card style={{ flex: 1, backgroundColor }}>
+            <p
+              className="bg-white"
+              style={{ overflowWrap: 'break-word', color: contentColor }}
+            >
+              {content1}
+            </p>
           </Card>
         ) : (
           <>
@@ -97,20 +122,32 @@ function Section({
                 flex: 1,
                 marginRight: showContentOption === 'show' ? '10px' : '0px',
                 maxWidth:
-                  showContentOption === 'show' ? 'calc(50% - 10px)' : '100%'
+                  showContentOption === 'show' ? 'calc(50% - 10px)' : '100%',
+                backgroundColor
               }}
             >
-              <p style={{ overflowWrap: 'break-word' }}>{content1}</p>
+              <p
+                className="bg-white"
+                style={{ overflowWrap: 'break-word', color: contentColor }}
+              >
+                {content1}
+              </p>
             </Card>
             {showContentOption === 'show' && (
               <Card
                 style={{
                   flex: 1,
                   marginLeft: '10px',
-                  maxWidth: 'calc(50% - 10px)'
+                  maxWidth: 'calc(50% - 10px)',
+                  backgroundColor
                 }}
               >
-                <p style={{ overflowWrap: 'break-word' }}>{content2}</p>
+                <p
+                  className="bg-white"
+                  style={{ overflowWrap: 'break-word', color: contentColor }}
+                >
+                  {content2}
+                </p>
               </Card>
             )}
           </>
@@ -169,9 +206,23 @@ function Section({
           <Radio value={1}>{t('CONFIG/PAGE.EDIT_SECTION.Type_1')}</Radio>
           <Radio value={2}>{t('CONFIG/PAGE.EDIT_SECTION.Type_2')}</Radio>
         </Radio.Group>
-        <Card className="mt-5 bg-gray-100 relative">
+        {/* Change color */}
+        <ColorPickerComponent
+          label="Content Color"
+          initialColor={contentColor}
+          onColorChange={setContentColor}
+        />
+        <ColorPickerComponent
+          label="Background Color"
+          initialColor={backgroundColor}
+          onColorChange={setBackgroundColor}
+        />
+        <Card className="mt-5 relative" style={{ backgroundColor }}>
           <div style={{ padding: '0px 30%', borderRadius: '10px' }}>
-            <h2 className="text-xl font-semibold mb-4 text-center bg-white">
+            <h2
+              className="text-xl font-semibold mb-4 text-center bg-white"
+              style={{ color: contentColor }}
+            >
               {newTitle}
             </h2>
           </div>
@@ -181,20 +232,32 @@ function Section({
                 flex: 1,
                 marginRight: showContentOption === 'show' ? '10px' : '0px',
                 maxWidth:
-                  showContentOption === 'show' ? 'calc(50% - 10px)' : '100%'
+                  showContentOption === 'show' ? 'calc(50% - 10px)' : '100%',
+                backgroundColor
               }}
             >
-              <p style={{ overflowWrap: 'break-word' }}>{newContent1}</p>
+              <p
+                className="bg-white"
+                style={{ overflowWrap: 'break-word', color: contentColor }}
+              >
+                {newContent1}
+              </p>
             </Card>
             {showContentOption === 'show' && (
               <Card
                 style={{
                   flex: 1,
                   marginLeft: '10px',
-                  maxWidth: 'calc(50% - 10px)'
+                  maxWidth: 'calc(50% - 10px)',
+                  backgroundColor
                 }}
               >
-                <p style={{ overflowWrap: 'break-word' }}>{newContent2}</p>
+                <p
+                  className="bg-white"
+                  style={{ overflowWrap: 'break-word', color: contentColor }}
+                >
+                  {newContent2}
+                </p>
               </Card>
             )}
           </div>
@@ -212,12 +275,16 @@ Section.propTypes = {
   onDelete: PropTypes.func,
   onEdit: PropTypes.func,
   isEditable: PropTypes.bool,
-  isDeletable: PropTypes.bool
+  isDeletable: PropTypes.bool,
+  bgColor: PropTypes.string,
+  textColor: PropTypes.string
 };
 
 Section.defaultProps = {
   isEditable: true,
-  isDeletable: true
+  isDeletable: true,
+  bgColor: '#F3F4F6',
+  textColor: '#000000'
 };
 
 export default Section;
