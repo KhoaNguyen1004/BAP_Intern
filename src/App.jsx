@@ -8,6 +8,7 @@ import ConfigPage from './features/configPage/configPage';
 import { useAppDispatch } from './store/hooks';
 import TokenService from './services/token.service';
 import GuestUI from './features/templates/guestUI';
+import Chatbox from './components/Chatbox';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -58,12 +59,10 @@ function App() {
         />
         <Route path="/" element={<GuestUI />} />
       </Routes>
-      {/* <LanguagePicker /> */}
-<div className="fixed bottom-6 right-20 z-50 shadow-md">
-
-  <LanguagePicker />
-</div>
-
+      <div className="fixed bottom-7 right-20 z-50 shadow-lg hover:shadow-3xl rounded-full ">
+    <LanguagePicker />
+  </div>
+  <Chatbox />
     </div>
   );
 }

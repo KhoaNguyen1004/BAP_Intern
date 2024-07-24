@@ -18,16 +18,16 @@ import BackUpUI from '../templates/backUpUI';
 
 function ConfigPage() {
   const { t } = useTranslation();
-  const handleClick = (id) => {
-    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-  };
-  const handleMouseEnter = () => {
-    setShow(true);
-  };
+  // const handleClick = (id) => {
+  //   document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  // };
+  // const handleMouseEnter = () => {
+  //   setShow(true);
+  // };
 
-  const handleMouseLeave = () => {
-    setShow(false);
-  };
+  // const handleMouseLeave = () => {
+  //   setShow(false);
+  // };
 
   const { id } = useParams();
   const dispatch = useAppDispatch();

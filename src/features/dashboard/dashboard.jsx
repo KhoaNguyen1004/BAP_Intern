@@ -304,7 +304,7 @@ function Dashboard() {
         <Content className="bg-transparent rounded-lg mb-4 mx-4 md:mx-10 mt-[92px]">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
             {/* Template */}
-            <div className="bg-white rounded-lg p-4 shadow-md">
+            <div className="bg-white rounded-lg p-4 shadow-md order-last sm:order-first">
               <h2 className="text-lg font-semibold mb-4">{t('ADMIN/DASHBOARD.Template.Title')}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {status === 'loading' && setIsLoading(true)}
@@ -442,7 +442,7 @@ function Dashboard() {
                   </Form>
                 </Popup>
 
-                <Button type="primary" block onClick={showConfigTemplateModal}>
+                <Button type="primary" className="!bg-primary-dominant hover:!bg-primary-dominant-dark focus:!bg-primary-dominant-light" block onClick={showConfigTemplateModal}>
                   {t('ADMIN/DASHBOARD.CONFIG.Config_Template')}
                 </Button>
                 <Popup
@@ -482,7 +482,7 @@ function Dashboard() {
                   </div>
                 </Popup>
 
-                <Button type="primary" block onClick={showDeleteTemplateModal}>
+                <Button type="primary" className="!bg-primary-dominant hover:!bg-primary-dominant-dark focus:!bg-primary-dominant-light" block onClick={showDeleteTemplateModal}>
                   {t('ADMIN/DASHBOARD.CONFIG.Delete_Template')}
                 </Button>
               </div>
@@ -492,7 +492,7 @@ function Dashboard() {
                 onOk={handleConfirmDelete}
                 onCancel={handleCancel}
                 footer={[
-                  <Button key="back" onClick={handleCancel}>
+                  <Button key="back"  onClick={handleCancel}>
                     {t('BUTTON.Cancel')}
                   </Button>,
                   <Popconfirm

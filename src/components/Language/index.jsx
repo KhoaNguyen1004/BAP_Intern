@@ -40,18 +40,21 @@ function LanguagePicker() {
   ];
 
   return (
-    <div className="Language-picker">
+    // <div className="shadow-2xl rounded-full ">
       <Dropdown
         menu={{ items: menuItems }} // Use `menu` prop with `items`
-        className="w-14 h-14 border flex items-center justify-center"
+        className="shadow-2xl"
         placement="topRight"
         arrow
       >
-        <Button>
+             <Button className=""           size="large"
+      shape="circle"
+>
+
           <Flag name={flag} />
         </Button>
       </Dropdown>
-    </div>
+    // </div>
   );
 }
 
