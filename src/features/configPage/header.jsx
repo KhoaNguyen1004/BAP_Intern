@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Layout, Button, Input, Card, message, Radio } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import Popup from '../../components/Popup';
 import TokenService from '../../services/token.service';
@@ -11,6 +12,7 @@ const { Header: AntdHeader } = Layout;
 
 function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu }) {
   const { id } = useParams();
+  const { t } = useTranslation();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
   const [uploadedImages, setUploadedImages] = useState('');
@@ -257,11 +259,11 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
       )}
 
       <Popup
-        title="Edit Header"
+        title={t('CONFIG/PAGE.EDIT_HEADER.Title')}        
         isOpen={isModalVisible}
         onConfirm={handleOk}
         onCancel={handleCancel}
-        text="Save"
+        text={t('BUTTON.Save')}
       >
         <div className="pb-3">
           <input
@@ -271,7 +273,7 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
           />
         </div>
         <Input
-          placeholder="Title"
+          placeholder={t('CONFIG/PAGE.EDIT_HEADER.Header_Name')}          
           value={newTitle}
           onChange={(e) => {
             setNewTitle(e.target.value);

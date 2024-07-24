@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
 import { Layout, Input, Button, Card, Radio, Row, Col, Form } from 'antd';
 import {
   SettingOutlined,
@@ -17,6 +18,7 @@ function Footer({ footer, onEdit, isEditable, footerType }) {
   const [displayContent, setDisplayContent] = useState(footer);
   const [displayFooterType, setDisplayFooterType] = useState(footerType);
   const [errorMessage, setErrorMessage] = useState('');
+  const { t } = useTranslation();
 
   useEffect(() => {
     setDisplayContent(footer);
@@ -147,11 +149,11 @@ function Footer({ footer, onEdit, isEditable, footerType }) {
         />
       )}
       <Popup
-        title="Edit Footer"
+        title={t('CONFIG/PAGE.EDIT_FOOTER.Title')}
         isOpen={isModalVisible}
         onConfirm={handleOk}
         onCancel={handleCancel}
-        text="Save"
+        text={t('BUTTON.Save')}
       >
         <Form>
           <Form.Item
@@ -159,7 +161,7 @@ function Footer({ footer, onEdit, isEditable, footerType }) {
             help={errorMessage}
           >
             <Input
-              placeholder="Footer Content"
+              placeholder={t('CONFIG/PAGE.EDIT_FOOTER.Footer_Content')}              
               value={newContent}
               onChange={(e) => {
                 setNewContent(e.target.value);

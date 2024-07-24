@@ -45,7 +45,7 @@ function Section({
     let valid = true;
 
     if (newTitle.length > 20) {
-      setTitleError('Title must not exceed 20 characters');
+      setTitleError(t('EDIT_SECTION.Title_Error', { ns: 'notification' }));      
       valid = false;
     } else if (!newTitle.trim()) {
       setTitleError('Title cannot be empty');
@@ -98,7 +98,7 @@ function Section({
     const { value } = e.target;
     setNewTitle(value);
     if (value.length <= 20) {
-      setTitleError('');
+      message.error(t('EDIT_SECTION.Title_Error', { ns: 'notification' }));    
     }
     else if (value.trim()) {
       setTitleError('');
