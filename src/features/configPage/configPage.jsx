@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button, Modal, Input } from 'antd';
 import Header from './header';
 import Footer from './footer';
@@ -16,6 +17,17 @@ import { NotificationContext } from '../../contexts/NotificationContext';
 import BackUpUI from '../templates/backUpUI';
 
 function ConfigPage() {
+  const { t } = useTranslation();
+  const handleClick = (id) => {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  };
+  const handleMouseEnter = () => {
+    setShow(true);
+  };
+
+  const handleMouseLeave = () => {
+    setShow(false);
+  };
 
   const { id } = useParams();
   const dispatch = useAppDispatch();
@@ -60,16 +72,14 @@ function ConfigPage() {
   const handleAddSection = () => {
     const templateId = id;
     setIsLoading(true);
-    console.log('Adding new section:', templateId);
-    console.log('Template ID:', id);
     dispatch(addSection(templateId))
       .unwrap()
       .then((response) => {
         setSections((prevSections) => [...prevSections, response.section]);
         openNotification({
-          message: 'Section added successfully',
+          message: t('ADD_SECTION.Success', { ns: 'notification' }),
           type: 'success',
-          title: 'Success'
+          title: t('NOTI.Success', { ns: 'notification' })
         });
         fetchSections();
       })
@@ -82,22 +92,20 @@ function ConfigPage() {
   };
 
   const confirmDeleteSection = (sectionId) => {
-    console.log('Confirming delete for section with id:', sectionId);
     if (sections.length > 1) {
       setIsModalVisible(true);
       setSectionToDelete(sectionId);
       setModalContent('deleteSection');
     } else {
       openNotification({
-        message: 'At least one section must be present!',
+        message: t('DELETE_SECTION.One_Section', { ns: 'notification' }),
         type: 'error',
-        title: 'Error'
+        title: t('NOTI.Error', { ns: 'notification' })
       });
     }
   };
 
   const handleDeleteSection = () => {
-    console.log('Deleting section with id:', sectionToDelete);
     setIsLoading(true);
     dispatch(deleteSection(sectionToDelete))
       .unwrap()
@@ -108,17 +116,17 @@ function ConfigPage() {
           )
         );
         openNotification({
-          message: 'Section deleted successfully',
+          message: t('DELETE_SECTION.Success', { ns: 'notification' }),
           type: 'success',
-          title: 'Success'
+          title: t('NOTI.Success', { ns: 'notification' })
         });
         fetchSections();
       })
       .catch((error) => {
         openNotification({
-          message: 'Failed to delete section',
+          message: t('DELETE_SECTION.Error', { ns: 'notification' }),
           type: 'error',
-          title: 'Error'
+          title: t('NOTI.Error', { ns: 'notification' })
         });
         console.error('Failed to delete section:', error);
       })
@@ -141,21 +149,12 @@ function ConfigPage() {
     newContent2,
     newType
   ) => {
-    console.log('handleEditSection called with:', {
-      sectionId,
-      newTitle,
-      newContent1,
-      newContent2,
-      newType
-    });
-
     const payload = {
       title: newTitle,
       content1: newContent1,
       content2: newContent2,
       type: Number(newType)
     };
-    console.log('Payload before dispatch:', payload);
 
     setIsLoading(true);
     const templateId = id;
@@ -183,17 +182,17 @@ function ConfigPage() {
           )
         );
         openNotification({
-          message: 'Section edited successfully',
+          message: t('EDIT_SECTION.Success', { ns: 'notification' }),
           type: 'success',
-          title: 'Success'
+          title: t('NOTI.Success', { ns: 'notification' })
         });
         fetchSections();
       })
       .catch((error) => {
         openNotification({
-          message: 'Failed to edit section',
+          message: t('EDIT_SECTION.Empty', { ns: 'notification' }),
           type: 'error',
-          title: 'Error'
+          title: t('NOTI.Error', { ns: 'notification' })
         });
         console.error('Failed to edit section:', error);
       })
@@ -209,16 +208,16 @@ function ConfigPage() {
         id,
         header: {
           title: newTitle,
-          headerType: newHeaderType,
+          headerType: newHeaderType
         }
       })
     )
       .unwrap()
       .then(() => {
         openNotification({
-          message: 'Header edited successfully',
+          message: t('EDIT_HEADER.Success', { ns: 'notification' }),
           type: 'success',
-          title: 'Success'
+          title: t('NOTI.Success', { ns: 'notification' })
         });
         setHeaderTitle(newTitle);
         setHeaderType(newHeaderType);
@@ -226,9 +225,9 @@ function ConfigPage() {
       })
       .catch((error) => {
         openNotification({
-          message: 'Failed to edit header',
+          message: t('EDIT_HEADER.Empty', { ns: 'notification' }),
           type: 'error',
-          title: 'Error'
+          title: t('NOTI.Error', { ns: 'notification' })
         });
         console.error('Failed to edit header:', error);
       })
@@ -252,18 +251,18 @@ function ConfigPage() {
       .unwrap()
       .then(() => {
         openNotification({
-          message: 'Footer edited successfully',
+          message: t('EDIT_FOOTER.Success', { ns: 'notification' }),
           type: 'success',
-          title: 'Success'
+          title: t('NOTI.Success', { ns: 'notification' })
         });
         setFooterContent(newContent, newFooterType);
         fetchSections();
       })
       .catch((error) => {
         openNotification({
-          message: 'Failed to edit footer',
+          message: t('EDIT_FOOTER.Empty', { ns: 'notification' }),
           type: 'error',
-          title: 'Error'
+          title: t('NOTI.Error', { ns: 'notification' })
         });
         console.error('Failed to edit footer:', error);
       })
@@ -279,14 +278,14 @@ function ConfigPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-        <Header
-          logo={templateData.logo || headerLogo}
-          title={templateData.title || headerTitle}
-          headerType={templateData.headerType || headerType}
-          onEdit={handleEditHeader}
-          ava_path={templateData.ava_path || headerAva}
-          sectionMenu = {sections}
-        />
+      <Header
+        logo={templateData.logo || headerLogo}
+        title={templateData.title || headerTitle}
+        headerType={templateData.headerType || headerType}
+        onEdit={handleEditHeader}
+        ava_path={templateData.ava_path || headerAva}
+        sectionMenu={sections}
+      />
       <div className="flex-1 mb-20 px-4">
         {sections.map((section) => (
           <Section
@@ -312,9 +311,9 @@ function ConfigPage() {
             }
           />
         ))}
-        <div className="flex justify-end mt-20">
+        <div className="flex justify-end mt-28">
           <Button type="primary" onClick={handleAddSection}>
-            Add more Section
+            {t('CONFIG/PAGE.ADD_MORE_SECTION')}
           </Button>
         </div>
       </div>
@@ -326,7 +325,7 @@ function ConfigPage() {
       <Modal
         title={
           modalContent === 'deleteSection'
-            ? 'Confirm Delete'
+            ? t('CONFIG/PAGE.DELETE_SECTION.Confirm')
             : modalContent === 'editHeader'
               ? 'Edit Header'
               : 'Edit Footer'
@@ -341,10 +340,10 @@ function ConfigPage() {
         }
         onCancel={handleCancel}
         okText={modalContent === 'deleteSection' ? 'Delete' : 'Save'}
-        cancelText="Cancel"
+        cancelText={t('BUTTON.Cancel')}
       >
         {modalContent === 'deleteSection' ? (
-          <p>Are you sure you want to delete this section?</p>
+          <p>{t('CONFIG/PAGE.DELETE_SECTION.Content')}</p>
         ) : modalContent === 'editHeader' ? (
           <div>
             <Input
@@ -354,7 +353,13 @@ function ConfigPage() {
               style={{ marginBottom: '10px' }}
             />
             <Input
-              placeholder="Title"
+              placeholder={t('CONFIG/PAGE.EDIT_HEADER.Title_Placeholder')}
+              rules={[
+                {
+                  required: true,
+                  message: t('CONFIG/PAGE.EDIT_HEADER.Title_Required')
+                }
+              ]}
               value={headerTitle}
               onChange={(e) => setHeaderTitle(e.target.value)}
             />

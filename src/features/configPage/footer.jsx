@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
+
 import { Layout, Input, Button, Card, Radio, Row, Col } from 'antd';
 import {
   SettingOutlined,
   InstagramOutlined,
   FacebookOutlined
-} from '@ant-design/icons'; // Combined imports
+} from '@ant-design/icons';
 import Popup from '../../components/Popup';
 
 const { Footer: AntdFooter } = Layout;
@@ -13,6 +15,7 @@ const { Footer: AntdFooter } = Layout;
 function Footer({ footer, onEdit, isEditable, footerType }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newContent, setNewContent] = useState(footer);
+  const { t } = useTranslation();
   const [newFooterType, setNewFooterType] = useState(footerType);
   const [displayContent, setDisplayContent] = useState(footer);
   const [displayFooterType, setDisplayFooterType] = useState(footerType);
@@ -21,7 +24,6 @@ function Footer({ footer, onEdit, isEditable, footerType }) {
     setDisplayContent(footer);
     setDisplayFooterType(footerType);
   }, [footer, footerType]);
-
   const showModal = () => {
     setNewContent(displayContent);
     setNewFooterType(displayFooterType);
@@ -135,14 +137,20 @@ function Footer({ footer, onEdit, isEditable, footerType }) {
         />
       )}
       <Popup
-        title="Edit Footer"
+        title={t('CONFIG/PAGE.EDIT_FOOTER.Title')}
         isOpen={isModalVisible}
         onConfirm={handleOk}
         onCancel={handleCancel}
-        text="Save"
+        text={t('BUTTON.Save')}
       >
         <Input
-          placeholder="Footer Content"
+          placeholder={t('CONFIG/PAGE.EDIT_FOOTER.Footer_Content')}
+          rules={[
+            {
+              required: true,
+              message: t('CONFIG/PAGE.EDIT_FOOTER.Title_Required')
+            }
+          ]}
           value={newContent}
           onChange={(e) => {
             setNewFooterType(e.target.value);
