@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Layout, Button, Input, Card, message, Radio } from 'antd';
-import { useTranslation } from 'react-i18next';
-
 import { SettingOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -11,16 +9,8 @@ import TokenService from '../../services/token.service';
 
 const { Header: AntdHeader } = Layout;
 
-function Header({
-  title,
-  onEdit,
-  headerType,
-  isEditable,
-  avaPath,
-  sectionMenu
-}) {
+function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu }) {
   const { id } = useParams();
-  const { t } = useTranslation();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
   const [uploadedImages, setUploadedImages] = useState('');
@@ -28,6 +18,7 @@ function Header({
   const [newHeaderType, setNewHeaderType] = useState(headerType);
   const [show, setShow] = useState(false);
   const [sections, setSections] = useState(sectionMenu);
+  const [isInputValid, setIsInputValid] = useState(true);
 
   useEffect(() => {
     setNewTitle(title);
@@ -56,8 +47,7 @@ function Header({
   const handleClick = (id) => {
     const element = document.getElementById(id);
     if (element) {
-      const elementPosition =
-        element.getBoundingClientRect().top + window.scrollY;
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
       const offsetPosition = elementPosition - 50;
       window.scrollTo({
         top: offsetPosition,
@@ -74,6 +64,10 @@ function Header({
   };
 
   const handleOk = async () => {
+    if (!newTitle.trim()) {
+      setIsInputValid(false);
+      return;
+    }
     try {
       if (selectedFile) {
         await onFileUpload();
@@ -86,11 +80,13 @@ function Header({
     }
   };
 
+
   const handleCancel = () => {
     setIsModalVisible(false);
     setNewTitle(title);
     setSelectedFile(null);
     setNewHeaderType(headerType);
+    setIsInputValid(true);
   };
 
   const onFileChange = (event) => {
@@ -212,39 +208,37 @@ function Header({
         </>
       ) : headerType === 3 ? (
         <div
-          className="relative inline-block"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <div
-            type="button"
-            className="bg-slate-500 text-white p-4 text-base cursor-pointer"
-            aria-haspopup="true"
-            aria-expanded={show}
+            className="relative inline-block"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           >
-            Menu
+            <div
+              type="button"
+              className="bg-slate-500 text-white p-4 text-base cursor-pointer"
+              aria-haspopup="true"
+              aria-expanded={show}
+            >
+              Menu
+            </div>
+            <div
+              className={`absolute bg-white min-w-[160px] shadow-lg z-10 max-h-[800px] overflow-y-auto   ${show ? 'block' : 'hidden'}`}
+              role="menu"
+            >
+              {sections.map((section) => (
+                <a
+                  className="block text-black p-3 no-underline hover:bg-gray-200 h-[40px] flex items-center justify-center"
+                  key={section.id}
+                  id={`menu ${section.id}`}
+                  onClick={() => handleClick(section.id)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleClick(section.id); }}
+                  role="menuitem"
+                  tabIndex={0}
+                >
+                  {section.title}
+                </a>
+              ))}
+            </div>
           </div>
-          <div
-            className={`absolute bg-white min-w-[160px] shadow-lg z-10 max-h-[800px] overflow-y-auto   ${show ? 'block' : 'hidden'}`}
-            role="menu"
-          >
-            {sections.map((section) => (
-              <a
-                className="block text-black p-3 no-underline hover:bg-gray-200 h-[40px] flex items-center justify-center"
-                key={section.id}
-                id={`menu ${section.id}`}
-                onClick={() => handleClick(section.id)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleClick(section.id);
-                }}
-                role="menuitem"
-                tabIndex={0}
-              >
-                {section.title}
-              </a>
-            ))}
-          </div>
-        </div>
       ) : null}
 
       {isEditable && (
@@ -263,11 +257,11 @@ function Header({
       )}
 
       <Popup
-        title={t('CONFIG/PAGE.EDIT_HEADER.Title')}
+        title="Edit Header"
         isOpen={isModalVisible}
         onConfirm={handleOk}
         onCancel={handleCancel}
-        text={t('BUTTON.Save')}
+        text="Save"
       >
         <div className="pb-3">
           <input
@@ -277,17 +271,17 @@ function Header({
           />
         </div>
         <Input
-          placeholder={t('CONFIG/PAGE.EDIT_HEADER.Header_Name')}
-          rules={[
-            {
-              required: true,
-              message: t('CONFIG/PAGE.EDIT_HEADER.Title_Required')
-            }
-          ]}
+          placeholder="Title"
           value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-          className="mb-4"
+          onChange={(e) => {
+            setNewTitle(e.target.value);
+            setIsInputValid(true);
+          }}
+          className={`mb-4 ${!isInputValid ? 'border-red-500' : ''}`}
         />
+        {!isInputValid && (
+          <p className="text-red-500">Title cannot be empty</p>
+        )}
         <Radio.Group
           value={newHeaderType}
           onChange={(e) => setNewHeaderType(e.target.value)}
@@ -302,40 +296,115 @@ function Header({
           className="bg-slate-500 mt-4 rounded"
         >
           <div className="w-full flex items-center gap-4 sm:gap-20">
-            {selectedFile ? (
-              <div>
-                <img
-                  src={URL.createObjectURL(selectedFile)}
-                  alt={`Selected ${selectedFile.name}`}
-                  style={{
-                    height: '50px',
-                    width: '50px',
-                    borderRadius: '50px'
-                  }}
-                />
+            {newHeaderType === 1 ? (
+              <>
+                {selectedFile ? (
+                  <div>
+                    <img
+                      src={URL.createObjectURL(selectedFile)}
+                      alt={`Selected ${selectedFile.name}`}
+                      style={{
+                        height: '50px',
+                        width: '50px',
+                        borderRadius: '50px'
+                      }}
+                    />
+                  </div>
+                ) : uploadedImages ? (
+                  <div>
+                    <img
+                      src={`http://127.0.0.1:8000${uploadedImages}`}
+                      alt={`Uploaded ${uploadedImages}`}
+                      style={{
+                        height: '50px',
+                        width: '50px',
+                        borderRadius: '50px'
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <p>No image selected or uploaded.</p>
+                  </div>
+                )}
+                <div className="flex-1 text-center">
+                  <h1 className="text-2xl text-black bg-white p-2 rounded">
+                    {newTitle}
+                  </h1>
+                </div>
+              </>
+            ) : newHeaderType === 2 ? (
+              <>
+                <div className="flex-1 text-center">
+                  <h1 className="text-2xl text-black bg-white p-2 rounded">
+                    {newTitle}
+                  </h1>
+                </div>
+                {selectedFile ? (
+                  <div>
+                    <img
+                      src={URL.createObjectURL(selectedFile)}
+                      alt={`Selected ${selectedFile.name}`}
+                      style={{
+                        height: '50px',
+                        width: '50px',
+                        borderRadius: '50px'
+                      }}
+                    />
+                  </div>
+                ) : uploadedImages ? (
+                  <div>
+                    <img
+                      src={`http://127.0.0.1:8000${uploadedImages}`}
+                      alt={`Uploaded ${uploadedImages}`}
+                      style={{
+                        height: '50px',
+                        width: '50px',
+                        borderRadius: '50px'
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <p>No image selected or uploaded.</p>
+                  </div>
+                )}
+              </>
+            ) : newHeaderType === 3 ? (
+              <div className="relative inline-block">
+                <div
+                  type="button"
+                  className="bg-slate-500 text-white p-4 text-base cursor-pointer"
+                  aria-haspopup="true"
+                  aria-expanded={show}
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  Menu
+                </div>
+                <div
+                  className={`absolute bg-white min-w-[160px] shadow-lg z-10 ${show ? 'block' : 'hidden'}`}
+                  role="menu"
+                >
+                  {sections.map((section) => (
+                    <a
+                      className="block text-black p-3 no-underline hover:bg-gray-200"
+                      key={section.id}
+                      id={`menu ${section.id}`}
+                      onClick={() => handleClick(section.id)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleClick(section.id);
+                      }}
+                      role="menuitem"
+                      tabIndex={0}
+                    >
+                      {section.title}
+                      {section.title}
+                    </a>
+                  ))}
+                </div>
               </div>
-            ) : uploadedImages ? (
-              <div>
-                <img
-                  src={`http://127.0.0.1:8000${uploadedImages}`}
-                  alt={`Uploaded ${uploadedImages}`}
-                  style={{
-                    height: '50px',
-                    width: '50px',
-                    borderRadius: '50px'
-                  }}
-                />
-              </div>
-            ) : (
-              <div>
-                <p>{t('CONFIG/PAGE.EDIT_HEADER.No_Image')}</p>
-              </div>
-            )}
-            <div className="flex-1 text-center">
-              <h1 className="text-2xl text-black bg-white p-2 rounded">
-                {newTitle}
-              </h1>
-            </div>
+            ) : null}
           </div>
         </Card>
       </Popup>
