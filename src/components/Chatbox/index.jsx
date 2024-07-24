@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, Input, Layout } from 'antd';
-import { MessageOutlined, SendOutlined, CloseOutlined } from '@ant-design/icons';
+import { Button, Input, Layout, Dropdown, Menu } from 'antd';
+import {
+  MessageOutlined,
+  SendOutlined,
+  CloseOutlined,
+  MoreOutlined
+} from '@ant-design/icons';
 import './Chatbox.css';
 
 const { Header, Content, Footer } = Layout;
@@ -17,6 +22,11 @@ function Chatbox() {
 
   const closeChatbox = () => {
     setVisible(false);
+  };
+
+  const handleDelete = (index) => {
+    const newMessages = messages.filter((_, i) => i !== index);
+    setMessages(newMessages);
   };
 
   const handleSend = () => {
@@ -40,6 +50,20 @@ function Chatbox() {
     scrollToBottom();
   }, [messages]);
 
+  const handleMenuClick = (index, e) => {
+    if (e.key === 'delete') {
+      handleDelete(index);
+    }
+    // Handle reply option here if needed
+  };
+
+  const messageMenu = (index) => (
+    <Menu onClick={(e) => handleMenuClick(index, e)}>
+      <Menu.Item key="reply">Reply</Menu.Item>
+      <Menu.Item key="delete">Delete</Menu.Item>
+    </Menu>
+  );
+
   return (
     <div className="chatbox-container">
       <Button
@@ -56,7 +80,11 @@ function Chatbox() {
           <Header className="chatbox-header">
             <span>Chatbox</span>
             <div>
-              <Button type="text" icon={<CloseOutlined />} onClick={closeChatbox} />
+              <Button
+                type="text"
+                icon={<CloseOutlined />}
+                onClick={closeChatbox}
+              />
             </div>
           </Header>
           <Content className="chatbox-messages">
@@ -64,9 +92,24 @@ function Chatbox() {
               <div key={index} className="chatbox-message">
                 <div className="message-content">
                   <span>{item.text}</span>
+                  
                 </div>
                 <div className="message-timestamp">
-                  <span>{item.sentAt}</span>
+                <Dropdown
+                    placement="topCenter"
+                    arrow
+                    overlay={messageMenu(index)}
+                    trigger={['click']}
+                  >
+                    <Button
+                      type="text"
+                      icon={<MoreOutlined />}
+                      className="message-more-button"
+                    />
+                  </Dropdown>
+                  <span
+                  className="message-time"
+                  >{item.sentAt}</span>
                 </div>
               </div>
             ))}
