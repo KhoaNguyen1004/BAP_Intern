@@ -74,7 +74,7 @@
     opacity: 0; /* Hidden by default */
     transition: opacity 0.3s ease-in-out;
     position: absolute;
-    left: 200px; /* Position this value to avoid overlap */
+    left: 220px; /* Position this value to avoid overlap */
     top: 50%;
     transform: translateY(-50%);
     background-color: black;
