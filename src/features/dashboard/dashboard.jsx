@@ -31,6 +31,7 @@ import {
 import useTemplateModals from '../../store/useTemplateModals';
 import BackUpUI from '../templates/backUpUI';
 import CardComponent from '../../components/Card';
+import ChatBox from '../../components/Chatbox';
 
 const { Header, Content } = Layout;
 
@@ -533,6 +534,7 @@ function Dashboard() {
           </div>
 
         </Content>
+        <ChatBox/>
       </Layout>
     </div>
   );
