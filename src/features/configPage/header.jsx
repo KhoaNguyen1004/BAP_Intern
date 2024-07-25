@@ -7,10 +7,20 @@ import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import Popup from '../../components/Popup';
 import TokenService from '../../services/token.service';
+import ColorPickerComponent from '../../components/ColorPicker';
 
 const { Header: AntdHeader } = Layout;
 
-function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu }) {
+function Header({
+  title,
+  onEdit,
+  headerType,
+  isEditable,
+  avaPath,
+  sectionMenu,
+  headerBgColor,
+  headerTextColor
+}) {
   const { id } = useParams();
   const { t } = useTranslation();
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -20,7 +30,17 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
   const [newHeaderType, setNewHeaderType] = useState(headerType);
   const [show, setShow] = useState(false);
   const [sections, setSections] = useState(sectionMenu);
+  const [textColor, setTextColor] = useState(headerTextColor || '#000000');
+  const [backgroundColor, setBackgroundColor] = useState(headerBgColor || '#64758E');
   const [isInputValid, setIsInputValid] = useState(true);
+  
+  useEffect(() => {
+    setBackgroundColor(headerBgColor);
+  }, [headerBgColor]);
+
+  useEffect(() => {
+    setTextColor(headerTextColor);
+  }, [headerTextColor]);
 
   useEffect(() => {
     setNewTitle(title);
@@ -74,7 +94,7 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
       if (selectedFile) {
         await onFileUpload();
       }
-      await onEdit(newTitle, newHeaderType);
+      await onEdit(newTitle, newHeaderType, backgroundColor, textColor);
       setIsModalVisible(false);
     } catch (error) {
       message.error('There was an error updating the header!');
@@ -88,7 +108,9 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
     setNewTitle(title);
     setSelectedFile(null);
     setNewHeaderType(headerType);
-    setIsInputValid(true);
+    setTextColor(headerTextColor);
+    setBackgroundColor(headerBgColor);
+    setIsInputValid(true);  
   };
 
   const onFileChange = (event) => {
@@ -148,7 +170,6 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
 
   return (
     <AntdHeader
-      className="bg-slate-500"
       style={{
         position: 'fixed',
         top: 0,
@@ -159,13 +180,17 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
         alignItems: 'center',
         padding: '0px 20px',
         gap: '20%',
-        height: '64px'
+        height: '64px',
+        background: backgroundColor
       }}
     >
       {headerType === 2 ? (
         <>
           <div className="flex-1 text-center pl-10">
-            <h1 className="text-2xl text-black bg-white p-2 rounded">
+            <h1
+              className="text-2xl bg-white p-2 rounded"
+              style={{ color: textColor }}
+            >
               {newTitle}
             </h1>
           </div>
@@ -203,7 +228,10 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
             )}
           </div>
           <div className="flex-1 text-center pr-20">
-            <h1 className="text-2xl text-black bg-white p-2 rounded">
+            <h1
+              className="text-2xl bg-white p-2 rounded"
+              style={{ color: textColor }}
+            >
               {newTitle}
             </h1>
           </div>
@@ -271,6 +299,18 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
             onChange={onFileChange}
             accept=".jpg,.jpeg,.png,.gif"
           />
+
+          {/* Change color */}
+          <ColorPickerComponent
+            label="Text color"
+            initialColor={textColor}
+            onColorChange={setTextColor}
+          />
+          <ColorPickerComponent
+            label="Background color"
+            initialColor={backgroundColor}
+            onColorChange={setBackgroundColor}
+          />
         </div>
         <Input
           placeholder={t('CONFIG/PAGE.EDIT_HEADER.Header_Name')}          
@@ -295,7 +335,8 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
         </Radio.Group>
         <Card
           bodyStyle={{ padding: '0 10px' }}
-          className="bg-slate-500 mt-4 rounded"
+          className="mt-4 rounded"
+          style={{ backgroundColor }}
         >
           <div className="w-full flex items-center gap-4 sm:gap-20">
             {newHeaderType === 1 ? (
@@ -326,7 +367,7 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
                   </div>
                 ) : (
                   <div>
-                    <p>No image selected or uploaded.</p>
+                    <p>{t('CONFIG/PAGE.EDIT_HEADER.No_Image')}</p>
                   </div>
                 )}
                 <div className="flex-1 text-center">
@@ -338,7 +379,10 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
             ) : newHeaderType === 2 ? (
               <>
                 <div className="flex-1 text-center">
-                  <h1 className="text-2xl text-black bg-white p-2 rounded">
+                  <h1
+                    className="text-2xl bg-white p-2 rounded"
+                    style={{ color: textColor }}
+                  >
                     {newTitle}
                   </h1>
                 </div>
@@ -406,7 +450,7 @@ function Header({ title, onEdit, headerType, isEditable, avaPath, sectionMenu })
                   ))}
                 </div>
               </div>
-            ) : null}
+             ) : null}
           </div>
         </Card>
       </Popup>
@@ -419,11 +463,15 @@ Header.propTypes = {
   headerType: PropTypes.number.isRequired,
   onEdit: PropTypes.func,
   isEditable: PropTypes.bool,
-  avaPath: PropTypes.string
+  avaPath: PropTypes.string,
+  headerBgColor: PropTypes.string,
+  headerTextColor: PropTypes.string
 };
 
 Header.defaultProps = {
-  isEditable: true
+  isEditable: true,
+  headerBgColor: '#64758E',
+  headerTextColor: '#000000'
 };
 
 export default Header;

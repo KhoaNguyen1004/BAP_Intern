@@ -10,6 +10,7 @@ function GuestUI() {
   const [error, setError] = useState('');
   const [showBackupUI, setShowBackupUI] = useState(false);
   const [sections, setSections] = useState([]);
+
   useEffect(() => {
     templateService
       .getTemplate()
@@ -56,6 +57,8 @@ function GuestUI() {
           headerType={template.headerType}
           isEditable={false}
           sectionMenu={sections}
+          headerBgColor={template.headerBgColor || '#64748B'}
+          headerTextColor={template.headerTextColor || '#000000'}
         />
       </div>
       <div className="flex-1 mb-20 px-4">
@@ -68,14 +71,19 @@ function GuestUI() {
             content1={sec.content1}
             content2={sec.content2}
             isEditable={false}
+            bgColor={sec.bgColor || '#F3F4F6'}
+            textColor={sec.textColor || '#000000'}
           />
         ))}
       </div>
       <div className="footer-wrapper">
-        <Footer 
-        footer={template.footer} 
-        footerType={template.footerType}
-        isEditable={false} />
+        <Footer
+          footer={template.footer}
+          footerType={template.footerType}
+          isEditable={false}
+          footerBgColor={template.footerBgColor || '#64748B'}
+          footerTextColor={template.footerTextColor || '#000000'}
+        />
       </div>
     </div>
   );
