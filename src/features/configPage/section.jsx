@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import { Button, Input, Radio, Card } from 'antd';
+import { Button, Input, Radio, Card, message } from 'antd';
 import { SettingOutlined, DeleteOutlined } from '@ant-design/icons';
 import Popup from '../../components/Popup';
 import ColorPickerComponent from '../../components/ColorPicker';
@@ -53,7 +53,7 @@ function Section({
     let valid = true;
 
     if (newTitle.length > 20) {
-      setTitleError(t('EDIT_SECTION.Title_Error', { ns: 'notification' }));      
+      setTitleError(t('EDIT_SECTION.Title_Error', { ns: 'notification' }));
       valid = false;
     } else if (!newTitle.trim()) {
       setTitleError('Title cannot be empty');
@@ -115,9 +115,8 @@ function Section({
     const { value } = e.target;
     setNewTitle(value);
     if (value.length <= 20) {
-      message.error(t('EDIT_SECTION.Title_Error', { ns: 'notification' }));    
-    }
-    else if (value.trim()) {
+      message.error(t('EDIT_SECTION.Title_Error', { ns: 'notification' }));
+    } else if (value.trim()) {
       setTitleError('');
     }
   };
@@ -324,7 +323,7 @@ Section.defaultProps = {
   isDeletable: true,
   bgColor: '#F3F4F6',
   textColor: '#000000',
-  isLastSection: false 
+  isLastSection: false
 };
 
 export default Section;
