@@ -18,7 +18,6 @@ import BackUpUI from '../templates/backUpUI';
 
 function ConfigPage() {
   const { t } = useTranslation();
-
   const { id } = useParams();
   const dispatch = useAppDispatch();
   const [templateData, setTemplateData] = useState({});
