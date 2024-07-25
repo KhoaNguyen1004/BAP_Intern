@@ -208,17 +208,6 @@ function ConfigPage() {
           type: 'success',
           title: t('NOTI.Success', { ns: 'notification' })
         });
-        console.log('New section text color: ', newTextColor);
-        console.log('New section bg color: ', newBgColor);
-        console.log('Saving Section with:', {
-          sectionId,
-          title: newTitle,
-          content1: newContent1,
-          content2: newContent2,
-          type: newType,
-          bgColor: newBgColor,
-          textColor: newTextColor
-        });
         fetchSections();
       })
       .catch((error) => {
