@@ -36,6 +36,8 @@ function ChatRoom() {
   const [messages] = useCollectionData(messagesQuery, { idField: 'id' });
   const [formValue, setFormValue] = useState('');
   const messagesEndRef = useRef(null);
+  const [sending, setsending] = useState('');
+
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -45,21 +47,41 @@ function ChatRoom() {
     scrollToBottom();
   }, [messages]);
 
+  useEffect(() => {
+    const sendMessageAsync = async () => {
+      if (sending) {
+        try {
+          setFormValue('');
+          const userJson = localStorage.getItem('user');
+          const user = JSON.parse(userJson);
+          const username = user.username;
+          const messageId = Date.now().toString();
+          const messageRef = doc(messagesRef, messageId);
+          
+          await setDoc(messageRef, {
+            id: messageId,
+            text: sending,
+            createdAt: serverTimestamp(),
+            username,
+          });
+
+          setsending(null);
+        } catch (error) {
+          console.error("Error sending message:", error);
+        }
+      }
+    };
+
+    sendMessageAsync();
+  }, [sending]);
+
   const sendMessage = async (e) => {
     e.preventDefault();
-    const userJson = localStorage.getItem('user');
-    const user = JSON.parse(userJson);
-    const username = user.username;
-    const messageId = Date.now().toString();
-    const messageRef = doc(messagesRef, messageId);
-    await setDoc(messageRef, {
-      id: messageId,
-      text: formValue,
-      createdAt: serverTimestamp(),
-      username,
-    });
-    setFormValue('');
-  }
+    if (formValue.trim() === '') {
+      return;
+    }
+    setsending(formValue);
+  };
 
   const reversedMessages = messages?.slice().reverse();
 
@@ -77,7 +99,7 @@ function ChatRoom() {
       <div className='chat-form'>
         <form onSubmit={sendMessage} ref={messagesEndRef} >
           <input value={formValue} onChange={(e) => setFormValue(e.target.value)} placeholder="Say something nice" />
-          <button type="submit">Send</button>
+          <button type="submit" disabled={formValue.trim() === ''}>Send</button>
         </form>
       </div>
     </div>
