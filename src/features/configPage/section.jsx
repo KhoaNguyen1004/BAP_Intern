@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import { Button, Input, Radio, message, Card } from 'antd';
+import { Button, Input, Radio, Card } from 'antd';
 import { SettingOutlined, DeleteOutlined } from '@ant-design/icons';
 import Popup from '../../components/Popup';
 import ColorPickerComponent from '../../components/ColorPicker';
@@ -17,7 +17,8 @@ function Section({
   isEditable = true,
   isDeletable = true,
   bgColor,
-  textColor
+  textColor,
+  isLastSection = false
 }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [showContentOption, setShowContentOption] = useState(
@@ -28,6 +29,8 @@ function Section({
   const [newContent1, setNewContent1] = useState(content1);
   const [newContent2, setNewContent2] = useState(content2);
   const [titleError, setTitleError] = useState('');
+  const [content1Error, setContent1Error] = useState('');
+  const [content2Error, setContent2Error] = useState('');
   const [typeDraft, setTypeDraft] = useState(type);
   const [contentColor, setContentColor] = useState(textColor || '#000000');
   const [backgroundColor, setBackgroundColor] = useState(bgColor || '#ecf1f6');
@@ -47,9 +50,33 @@ function Section({
   };
 
   const handleOk = () => {
+    let valid = true;
+
     if (newTitle.length > 20) {
-      setTitleError(t('EDIT_SECTION.Title_Error', { ns: 'notification' }));
+      setTitleError(t('EDIT_SECTION.Title_Error', { ns: 'notification' }));      
+      valid = false;
+    } else if (!newTitle.trim()) {
+      setTitleError('Title cannot be empty');
+      valid = false;
     } else {
+      setTitleError('');
+    }
+
+    if (!newContent1.trim()) {
+      setContent1Error('Content 1 cannot be empty');
+      valid = false;
+    } else {
+      setContent1Error('');
+    }
+
+    if (showContentOption === 'show' && !newContent2.trim()) {
+      setContent2Error('Content 2 cannot be empty');
+      valid = false;
+    } else {
+      setContent2Error('');
+    }
+
+    if (valid) {
       onEdit(
         newTitle,
         newContent1,
@@ -68,6 +95,8 @@ function Section({
     setNewContent1(content1);
     setNewContent2(content2);
     setTitleError('');
+    setContent1Error('');
+    setContent2Error('');
     setShowContentOption(type === 2 ? 'show' : 'hide');
     setContentColor(textColor);
     setBackgroundColor(bgColor);
@@ -84,11 +113,12 @@ function Section({
 
   const handleTitleChange = (e) => {
     const { value } = e.target;
+    setNewTitle(value);
     if (value.length <= 20) {
-      setNewTitle(value);
+      message.error(t('EDIT_SECTION.Title_Error', { ns: 'notification' }));    
+    }
+    else if (value.trim()) {
       setTitleError('');
-    } else {
-      message.error(t('EDIT_SECTION.Title_Error', { ns: 'notification' }));
     }
   };
 
@@ -162,13 +192,15 @@ function Section({
             className="text-gray-500"
             onClick={showModal}
           />
-          <Button
-            type="text"
-            icon={<DeleteOutlined />}
-            className="text-gray-500"
-            onClick={isDeletable ? onDelete : null}
-            disabled={!isDeletable}
-          />
+          {!isLastSection && (
+            <Button
+              type="text"
+              icon={<DeleteOutlined />}
+              className="text-gray-500"
+              onClick={isDeletable ? onDelete : null}
+              disabled={!isDeletable}
+            />
+          )}
         </div>
       )}
       <Popup
@@ -184,13 +216,14 @@ function Section({
           onChange={handleTitleChange}
           style={{ marginBottom: '10px' }}
         />
-        {titleError && <p style={{ color: 'red' }}>{titleError}</p>}
+        {titleError && <p className="text-red-500">{titleError}</p>}
         <Input
           placeholder={t('CONFIG/PAGE.EDIT_SECTION.Section_Content_1')}
           value={newContent1}
           onChange={(e) => setNewContent1(e.target.value)}
           style={{ marginBottom: '10px' }}
         />
+        {content1Error && <p className="text-red-500">{content1Error}</p>}
         {showContentOption === 'show' && (
           <Input
             placeholder={t('CONFIG/PAGE.EDIT_SECTION.Section_Content_2')}
@@ -198,6 +231,9 @@ function Section({
             onChange={(e) => setNewContent2(e.target.value)}
             style={{ marginBottom: '10px' }}
           />
+        )}
+        {showContentOption === 'show' && content2Error && (
+          <p className="text-red-500">{content2Error}</p>
         )}
         <Radio.Group
           onChange={handleOptionChange}
@@ -227,7 +263,7 @@ function Section({
               {newTitle}
             </h2>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'pace-between' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Card
               style={{
                 flex: 1,
@@ -269,6 +305,7 @@ function Section({
 }
 
 Section.propTypes = {
+  sectionId: PropTypes.string.isRequired,
   type: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   content1: PropTypes.string,
@@ -278,14 +315,16 @@ Section.propTypes = {
   isEditable: PropTypes.bool,
   isDeletable: PropTypes.bool,
   bgColor: PropTypes.string,
-  textColor: PropTypes.string
+  textColor: PropTypes.string,
+  isLastSection: PropTypes.bool
 };
 
 Section.defaultProps = {
   isEditable: true,
   isDeletable: true,
   bgColor: '#F3F4F6',
-  textColor: '#000000'
+  textColor: '#000000',
+  isLastSection: false 
 };
 
 export default Section;
