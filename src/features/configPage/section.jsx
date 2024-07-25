@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import { Button, Input, Radio, Card } from 'antd';
+import { Button, Input, Radio, Card, message } from 'antd';
 import { SettingOutlined, DeleteOutlined } from '@ant-design/icons';
 import Popup from '../../components/Popup';
 import ColorPickerComponent from '../../components/ColorPicker';
