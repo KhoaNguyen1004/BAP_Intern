@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import { Button, Input, Radio, Card, message } from 'antd';
+import { Button, Input, Radio, Card } from 'antd';
 import { SettingOutlined, DeleteOutlined } from '@ant-design/icons';
 import Popup from '../../components/Popup';
 import ColorPickerComponent from '../../components/ColorPicker';
@@ -32,14 +32,20 @@ function Section({
   const [content1Error, setContent1Error] = useState('');
   const [content2Error, setContent2Error] = useState('');
   const [typeDraft, setTypeDraft] = useState(type);
-  const [contentColor, setContentColor] = useState(textColor || '#000000');
-  const [backgroundColor, setBackgroundColor] = useState(bgColor || '#ecf1f6');
+  // const [contentColor, setContentColor] = useState(textColor || '#000000');
+  // const [backgroundColor, setBackgroundColor] = useState(bgColor || '#ecf1f6');
+  const [modalContentColor, setModalContentColor] = useState(
+    textColor || '#000000'
+  );
+  const [modalBackgroundColor, setModalBackgroundColor] = useState(
+    bgColor || '#ecf1f6'
+  );
 
   useEffect(() => {
     setTypeDraft(type);
     setShowContentOption(type === 2 ? 'show' : 'hide');
-    setContentColor(textColor);
-    setBackgroundColor(bgColor);
+    setModalContentColor(textColor);
+    setModalBackgroundColor(bgColor);
     console.log('Section props updated:', { type, textColor, bgColor });
   }, [type, textColor, bgColor]);
 
@@ -47,6 +53,8 @@ function Section({
     setIsModalVisible(true);
     setTypeDraft(type);
     setShowContentOption(type === 2 ? 'show' : 'hide');
+    setModalContentColor(textColor);
+    setModalBackgroundColor(bgColor);
   };
 
   const handleOk = () => {
@@ -82,8 +90,8 @@ function Section({
         newContent1,
         newContent2,
         typeDraft,
-        backgroundColor,
-        contentColor
+        modalBackgroundColor,
+        modalContentColor
       );
       setIsModalVisible(false);
     }
@@ -98,8 +106,8 @@ function Section({
     setContent1Error('');
     setContent2Error('');
     setShowContentOption(type === 2 ? 'show' : 'hide');
-    setContentColor(textColor);
-    setBackgroundColor(bgColor);
+    setModalBackgroundColor(bgColor);
+    setModalContentColor(textColor);
   };
 
   const handleOptionChange = (e) => {
@@ -114,33 +122,36 @@ function Section({
   const handleTitleChange = (e) => {
     const { value } = e.target;
     setNewTitle(value);
-    if (value.length <= 20) {
-      message.error(t('EDIT_SECTION.Title_Error', { ns: 'notification' }));
-    } else if (value.trim()) {
-      setTitleError('');
-    }
+    // if (value.length <= 20) {
+    //   message.error(t('EDIT_SECTION.Title_Error', { ns: 'notification' }));
+    // } else if (value.trim()) {
+    //   setTitleError('');
+    // }
   };
 
   return (
     <section
       id={sectionId}
       className="p-2 mb-5 pb-4 relative top-24"
-      style={{ backgroundColor }}
+      style={{ background: bgColor }}
     >
-      <div style={{ padding: '0px 30%', borderRadius: '10px' }}>
+      <div
+        className="mb-2"
+        style={{ padding: '0px 30%', borderRadius: '10px' }}
+      >
         <h2
           className="text-xl font-semibold mb-4 text-center bg-white"
-          style={{ color: contentColor }}
+          style={{ color: textColor }}
         >
           {title}
         </h2>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         {type === 1 ? (
-          <Card style={{ flex: 1, backgroundColor }}>
+          <Card style={{ flex: 1, background: bgColor }}>
             <p
-              className="bg-white"
-              style={{ overflowWrap: 'break-word', color: contentColor }}
+              className="bg-white p-2"
+              style={{ overflowWrap: 'break-word', color: textColor }}
             >
               {content1}
             </p>
@@ -153,12 +164,12 @@ function Section({
                 marginRight: showContentOption === 'show' ? '10px' : '0px',
                 maxWidth:
                   showContentOption === 'show' ? 'calc(50% - 10px)' : '100%',
-                backgroundColor
+                background: bgColor
               }}
             >
               <p
-                className="bg-white"
-                style={{ overflowWrap: 'break-word', color: contentColor }}
+                className="bg-white p-2"
+                style={{ overflowWrap: 'break-word', color: textColor }}
               >
                 {content1}
               </p>
@@ -169,12 +180,12 @@ function Section({
                   flex: 1,
                   marginLeft: '10px',
                   maxWidth: 'calc(50% - 10px)',
-                  backgroundColor
+                  background: bgColor
                 }}
               >
                 <p
-                  className="bg-white"
-                  style={{ overflowWrap: 'break-word', color: contentColor }}
+                  className="bg-white p-2"
+                  style={{ overflowWrap: 'break-word', color: textColor }}
                 >
                   {content2}
                 </p>
@@ -245,19 +256,25 @@ function Section({
         {/* Change color */}
         <ColorPickerComponent
           label="Content Color"
-          initialColor={contentColor}
-          onColorChange={setContentColor}
+          initialColor={modalContentColor}
+          onColorChange={setModalContentColor}
         />
         <ColorPickerComponent
           label="Background Color"
-          initialColor={backgroundColor}
-          onColorChange={setBackgroundColor}
+          initialColor={modalBackgroundColor}
+          onColorChange={setModalBackgroundColor}
         />
-        <Card className="mt-5 relative" style={{ backgroundColor }}>
-          <div style={{ padding: '0px 30%', borderRadius: '10px' }}>
+        <Card
+          className="mt-5 relative"
+          style={{ background: modalBackgroundColor }}
+        >
+          <div
+            className="mb-2"
+            style={{ padding: '0px 30%', borderRadius: '10px' }}
+          >
             <h2
               className="text-xl font-semibold mb-4 text-center bg-white"
-              style={{ color: contentColor }}
+              style={{ color: modalContentColor }}
             >
               {newTitle}
             </h2>
@@ -269,12 +286,12 @@ function Section({
                 marginRight: showContentOption === 'show' ? '10px' : '0px',
                 maxWidth:
                   showContentOption === 'show' ? 'calc(50% - 10px)' : '100%',
-                backgroundColor
+                background: modalBackgroundColor
               }}
             >
               <p
-                className="bg-white"
-                style={{ overflowWrap: 'break-word', color: contentColor }}
+                className="bg-white p-2"
+                style={{ overflowWrap: 'break-word', color: modalContentColor }}
               >
                 {newContent1}
               </p>
@@ -285,12 +302,15 @@ function Section({
                   flex: 1,
                   marginLeft: '10px',
                   maxWidth: 'calc(50% - 10px)',
-                  backgroundColor
+                  background: modalBackgroundColor
                 }}
               >
                 <p
-                  className="bg-white"
-                  style={{ overflowWrap: 'break-word', color: contentColor }}
+                  className="bg-white p-2"
+                  style={{
+                    overflowWrap: 'break-word',
+                    color: modalContentColor
+                  }}
                 >
                   {newContent2}
                 </p>

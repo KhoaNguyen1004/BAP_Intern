@@ -27,6 +27,8 @@ function Footer({
   const [displayFooterType, setDisplayFooterType] = useState(footerType);
   const [textColor, setTextColor] = useState(footerTextColor);
   const [backgroundColor, setBackgroundColor] = useState(footerBgColor);
+  const [tempTextColor, setTempTextColor] = useState(footerTextColor);
+  const [tempBackgroundColor, setTempBackgroundColor] = useState(footerBgColor);
   const [errorMessage, setErrorMessage] = useState('');
   const { t } = useTranslation();
 
@@ -40,13 +42,17 @@ function Footer({
   const showModal = () => {
     setNewContent(displayContent);
     setNewFooterType(displayFooterType);
+    setTempTextColor(textColor);
+    setTempBackgroundColor(backgroundColor);
     setErrorMessage('');
     setIsModalVisible(true);
   };
 
   const handleOk = () => {
     if (validateContent()) {
-      onEdit(newContent, newFooterType, backgroundColor, textColor);
+      onEdit(newContent, newFooterType, tempBackgroundColor, tempTextColor);
+      setTextColor(tempTextColor);
+      setBackgroundColor(tempBackgroundColor);
       setDisplayContent(newContent);
       setDisplayFooterType(newFooterType);
       setIsModalVisible(false);
@@ -58,6 +64,8 @@ function Footer({
     setNewContent(displayContent);
     setNewFooterType(displayFooterType);
     setErrorMessage('');
+    setTempBackgroundColor(footerBgColor);
+    setTempTextColor(footerTextColor);
   };
 
   const validateContent = () => {
@@ -175,7 +183,7 @@ function Footer({
         onCancel={handleCancel}
         text={t('BUTTON.Save')}
       >
-<Form>
+        <Form>
           <Form.Item
             validateStatus={errorMessage ? 'error' : ''}
             help={errorMessage}
@@ -193,13 +201,13 @@ function Footer({
           </Form.Item>
           <ColorPickerComponent
             label="Text color"
-            initialColor={textColor}
-            onColorChange={setTextColor}
+            initialColor={tempTextColor}
+            onColorChange={setTempTextColor}
           />
           <ColorPickerComponent
             label="Background color"
-            initialColor={backgroundColor}
-            onColorChange={setBackgroundColor}
+            initialColor={tempBackgroundColor}
+            onColorChange={setTempBackgroundColor}
           />
           <Radio.Group
             value={newFooterType}
@@ -215,16 +223,23 @@ function Footer({
               marginTop: '20px',
               textAlign: 'center',
               padding: '15px',
-              background: backgroundColor
+              background: tempBackgroundColor
             }}
           >
             {newFooterType === 1 ? (
-              <h1 className="text-sm" style={{ color: textColor }}>
+              <h1 className="text-sm" style={{ color: tempTextColor }}>
                 {newContent}
               </h1>
             ) : (
-              <footer className="text-sm pl-20" style={{ color: textColor }}>
-                <Row justify="space-between" align="middle" className="container">
+              <footer
+                className="text-sm pl-20"
+                style={{ color: tempTextColor }}
+              >
+                <Row
+                  justify="space-between"
+                  align="middle"
+                  className="container"
+                >
                   <Col
                     span={12}
                     style={{
@@ -238,7 +253,7 @@ function Footer({
                       <a
                         href="https://codepen.io/MFM-347"
                         className="link-light"
-                        style={{ color: textColor }}
+                        style={{ color: tempTextColor }}
                       >
                         @{newContent}
                       </a>
@@ -260,7 +275,7 @@ function Footer({
                     >
                       <InstagramOutlined
                         className="mx-2"
-                        style={{ color: 'white' }}
+                        style={{ color: tempTextColor }}
                       />
                     </a>
                     <a
@@ -271,7 +286,7 @@ function Footer({
                     >
                       <FacebookOutlined
                         className="mx-2"
-                        style={{ color: textColor }}
+                        style={{ color: tempTextColor }}
                       />
                     </a>
                   </Col>

@@ -31,15 +31,22 @@ function Header({
   const [show, setShow] = useState(false);
   const [sections, setSections] = useState(sectionMenu);
   const [textColor, setTextColor] = useState(headerTextColor || '#000000');
-  const [backgroundColor, setBackgroundColor] = useState(headerBgColor || '#64758E');
+  const [backgroundColor, setBackgroundColor] = useState(
+    headerBgColor || '#64758E'
+  );
+  const [modalTextColor, setModalTextColor] = useState(textColor);
+  const [modalBackgroundColor, setModalBackgroundColor] =
+    useState(backgroundColor);
   const [isInputValid, setIsInputValid] = useState(true);
-  
+
   useEffect(() => {
     setBackgroundColor(headerBgColor);
+    setModalBackgroundColor(headerBgColor);
   }, [headerBgColor]);
 
   useEffect(() => {
     setTextColor(headerTextColor);
+    setModalTextColor(headerTextColor);
   }, [headerTextColor]);
 
   useEffect(() => {
@@ -69,7 +76,8 @@ function Header({
   const handleClick = (id) => {
     const element = document.getElementById(id);
     if (element) {
-      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      const elementPosition =
+        element.getBoundingClientRect().top + window.scrollY;
       const offsetPosition = elementPosition - 50;
       window.scrollTo({
         top: offsetPosition,
@@ -94,7 +102,14 @@ function Header({
       if (selectedFile) {
         await onFileUpload();
       }
-      await onEdit(newTitle, newHeaderType, backgroundColor, textColor);
+      await onEdit(
+        newTitle,
+        newHeaderType,
+        modalBackgroundColor,
+        modalTextColor
+      );
+      setBackgroundColor(modalBackgroundColor);
+      setTextColor(modalTextColor);
       setIsModalVisible(false);
     } catch (error) {
       message.error('There was an error updating the header!');
@@ -102,15 +117,14 @@ function Header({
     }
   };
 
-
   const handleCancel = () => {
     setIsModalVisible(false);
     setNewTitle(title);
     setSelectedFile(null);
     setNewHeaderType(headerType);
-    setTextColor(headerTextColor);
-    setBackgroundColor(headerBgColor);
-    setIsInputValid(true);  
+    setModalTextColor(headerTextColor);
+    setModalBackgroundColor(headerBgColor);
+    setIsInputValid(true);
   };
 
   const onFileChange = (event) => {
@@ -191,7 +205,7 @@ function Header({
               className="text-2xl bg-white p-2 rounded"
               style={{ color: textColor }}
             >
-              {newTitle}
+              {title}
             </h1>
           </div>
           <div className="rounded-full mr-4 sm:mr-10 mt-6 pr-20">
@@ -232,43 +246,46 @@ function Header({
               className="text-2xl bg-white p-2 rounded"
               style={{ color: textColor }}
             >
-              {newTitle}
+              {title}
             </h1>
           </div>
         </>
       ) : headerType === 3 ? (
         <div
-            className="relative inline-block"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
+          className="relative inline-block"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          <div
+            type="button"
+            className="p-4 text-base cursor-pointer bg-white"
+            aria-haspopup="true"
+            aria-expanded={show}
+            style={{ backgroundColor, color: textColor }}
           >
-            <div
-              type="button"
-              className="bg-slate-500 text-white p-4 text-base cursor-pointer"
-              aria-haspopup="true"
-              aria-expanded={show}
-            >
-              Menu
-            </div>
-            <div
-              className={`absolute bg-white min-w-[160px] shadow-lg z-10 max-h-[800px] overflow-y-auto   ${show ? 'block' : 'hidden'}`}
-              role="menu"
-            >
-              {sections.map((section) => (
-                <a
-                  className="block text-black p-3 no-underline hover:bg-gray-200 h-[40px] flex items-center justify-center"
-                  key={section.id}
-                  id={`menu ${section.id}`}
-                  onClick={() => handleClick(section.id)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') handleClick(section.id); }}
-                  role="menuitem"
-                  tabIndex={0}
-                >
-                  {section.title}
-                </a>
-              ))}
-            </div>
+            Menu
           </div>
+          <div
+            className={`absolute bg-white min-w-[160px] shadow-lg z-10 max-h-[800px] overflow-y-auto   ${show ? 'block' : 'hidden'}`}
+            role="menu"
+          >
+            {sections.map((section) => (
+              <a
+                className="block text-black p-3 no-underline hover:bg-gray-200 h-[40px] flex items-center justify-center"
+                key={section.id}
+                id={`menu ${section.id}`}
+                onClick={() => handleClick(section.id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleClick(section.id);
+                }}
+                role="menuitem"
+                tabIndex={0}
+              >
+                {section.title}
+              </a>
+            ))}
+          </div>
+        </div>
       ) : null}
 
       {isEditable && (
@@ -287,7 +304,7 @@ function Header({
       )}
 
       <Popup
-        title={t('CONFIG/PAGE.EDIT_HEADER.Title')}        
+        title={t('CONFIG/PAGE.EDIT_HEADER.Title')}
         isOpen={isModalVisible}
         onConfirm={handleOk}
         onCancel={handleCancel}
@@ -303,17 +320,17 @@ function Header({
           {/* Change color */}
           <ColorPickerComponent
             label="Text color"
-            initialColor={textColor}
-            onColorChange={setTextColor}
+            initialColor={modalTextColor}
+            onColorChange={setModalTextColor}
           />
           <ColorPickerComponent
             label="Background color"
-            initialColor={backgroundColor}
-            onColorChange={setBackgroundColor}
+            initialColor={modalBackgroundColor}
+            onColorChange={setModalBackgroundColor}
           />
         </div>
         <Input
-          placeholder={t('CONFIG/PAGE.EDIT_HEADER.Header_Name')}          
+          placeholder={t('CONFIG/PAGE.EDIT_HEADER.Header_Name')}
           value={newTitle}
           onChange={(e) => {
             setNewTitle(e.target.value);
@@ -321,9 +338,7 @@ function Header({
           }}
           className={`mb-4 ${!isInputValid ? 'border-red-500' : ''}`}
         />
-        {!isInputValid && (
-          <p className="text-red-500">Title cannot be empty</p>
-        )}
+        {!isInputValid && <p className="text-red-500">Title cannot be empty</p>}
         <Radio.Group
           value={newHeaderType}
           onChange={(e) => setNewHeaderType(e.target.value)}
@@ -336,7 +351,7 @@ function Header({
         <Card
           bodyStyle={{ padding: '0 10px' }}
           className="mt-4 rounded"
-          style={{ backgroundColor }}
+          style={{ background: modalBackgroundColor }}
         >
           <div className="w-full flex items-center gap-4 sm:gap-20">
             {newHeaderType === 1 ? (
@@ -371,7 +386,10 @@ function Header({
                   </div>
                 )}
                 <div className="flex-1 text-center">
-                  <h1 className="text-2xl text-black bg-white p-2 rounded">
+                  <h1
+                    className="text-2xl bg-white p-2 rounded"
+                    style={{ color: modalTextColor }}
+                  >
                     {newTitle}
                   </h1>
                 </div>
@@ -381,7 +399,7 @@ function Header({
                 <div className="flex-1 text-center">
                   <h1
                     className="text-2xl bg-white p-2 rounded"
-                    style={{ color: textColor }}
+                    style={{ color: modalTextColor }}
                   >
                     {newTitle}
                   </h1>
@@ -420,11 +438,15 @@ function Header({
               <div className="relative inline-block">
                 <div
                   type="button"
-                  className="bg-slate-500 text-white p-4 text-base cursor-pointer"
+                  className="p-4 text-base cursor-pointer bg-white"
                   aria-haspopup="true"
                   aria-expanded={show}
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
+                  style={{
+                    background: modalBackgroundColor,
+                    color: modalTextColor
+                  }}
                 >
                   Menu
                 </div>
@@ -450,7 +472,7 @@ function Header({
                   ))}
                 </div>
               </div>
-             ) : null}
+            ) : null}
           </div>
         </Card>
       </Popup>
