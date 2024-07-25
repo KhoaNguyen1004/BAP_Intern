@@ -37,6 +37,7 @@ function Section({
     setShowContentOption(type === 2 ? 'show' : 'hide');
     setContentColor(textColor);
     setBackgroundColor(bgColor);
+    console.log('Section props updated:', { type, textColor, bgColor });
   }, [type, textColor, bgColor]);
 
   const showModal = () => {
@@ -54,8 +55,8 @@ function Section({
         newContent1,
         newContent2,
         typeDraft,
-        contentColor,
-        backgroundColor
+        backgroundColor,
+        contentColor
       );
       setIsModalVisible(false);
     }

@@ -11,6 +11,7 @@ function ColorPickerComponent({ label, initialColor, onColorChange }) {
       const hex = `#${Math.round(r).toString(16).padStart(2, '0')}${Math.round(g).toString(16).padStart(2, '0')}${Math.round(b).toString(16).padStart(2, '0')}`;
       setColor(hex);
       onColorChange(hex);
+      console.log(`${label} selected color: ${hex}`);
     } else {
       console.error('Color value is not available.');
     }

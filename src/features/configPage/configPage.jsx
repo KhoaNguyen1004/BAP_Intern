@@ -157,6 +157,16 @@ function ConfigPage() {
     newBgColor,
     newTextColor
   ) => {
+    console.log('Editing section:', {
+      sectionId,
+      newTitle,
+      newContent1,
+      newContent2,
+      newType,
+      newBgColor,
+      newTextColor
+    });
+
     const payload = {
       title: newTitle,
       content1: newContent1,
@@ -200,6 +210,15 @@ function ConfigPage() {
         });
         console.log('New section text color: ', newTextColor);
         console.log('New section bg color: ', newBgColor);
+        console.log('Saving Section with:', {
+          sectionId,
+          title: newTitle,
+          content1: newContent1,
+          content2: newContent2,
+          type: newType,
+          bgColor: newBgColor,
+          textColor: newTextColor
+        });
         fetchSections();
       })
       .catch((error) => {
