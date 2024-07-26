@@ -4,15 +4,6 @@ import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { getFirestore, collection, query, orderBy, limit, setDoc, serverTimestamp, doc, deleteDoc } from 'firebase/firestore';
 import { useState, useEffect, useRef } from 'react';
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBoydp1xb0ANGxzEvKcKFGtfvKrJCb1Y_U",
-  authDomain: "test-df021.firebaseapp.com",
-  projectId: "test-df021",
-  storageBucket: "test-df021.appspot.com",
-  messagingSenderId: "158215257419",
-  appId: "1:158215257419:web:db2249ea0e25accf68bcce",
-  measurementId: "G-43XHKG142E"
-};
 
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
