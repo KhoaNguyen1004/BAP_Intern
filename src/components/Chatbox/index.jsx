@@ -3,6 +3,15 @@ import { initializeApp } from 'firebase/app';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { getFirestore, collection, query, orderBy, limit, setDoc, serverTimestamp, doc, deleteDoc } from 'firebase/firestore';
 import { useState, useEffect, useRef } from 'react';
+import { Button, Input, Layout } from 'antd';
+import {
+  MessageOutlined,
+  SendOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+} from '@ant-design/icons';
+
+const { Header, Content, Footer } = Layout;
 
 const firebaseConfig = {
   apiKey: "AIzaSyBoydp1xb0ANGxzEvKcKFGtfvKrJCb1Y_U",
@@ -18,26 +27,21 @@ const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
 
 function ChatBox() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Chat</h1>
-      </header>
-      <section>
-        <ChatRoom />
-      </section>
-    </div>
-  );
-}
-
-function ChatRoom() {
+  const [visible, setVisible] = useState(false);
   const messagesRef = collection(firestore, 'messages');
   const messagesQuery = query(messagesRef, orderBy('createdAt', 'desc'), limit(25));
   const [messages] = useCollectionData(messagesQuery, { idField: 'id' });
   const [formValue, setFormValue] = useState('');
   const messagesEndRef = useRef(null);
-  const [sending, setsending] = useState('');
+  const [sending, setSending] = useState('');
 
+  const toggleChatbox = () => {
+    setVisible(!visible);
+  };
+
+  const closeChatbox = () => {
+    setVisible(false);
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -57,7 +61,7 @@ function ChatRoom() {
           const username = user.username;
           const messageId = Date.now().toString();
           const messageRef = doc(messagesRef, messageId);
-          
+
           await setDoc(messageRef, {
             id: messageId,
             text: sending,
@@ -65,7 +69,7 @@ function ChatRoom() {
             username,
           });
 
-          setsending(null);
+          setSending('');
         } catch (error) {
           console.error("Error sending message:", error);
         }
@@ -80,33 +84,64 @@ function ChatRoom() {
     if (formValue.trim() === '') {
       return;
     }
-    setsending(formValue);
+    setSending(formValue);
   };
 
   const reversedMessages = messages?.slice().reverse();
 
   return (
-    <div>
-      <div>
-        {reversedMessages && reversedMessages.map(msg =>
-          <ChatMessage
-            key={msg.id}
-            text={msg.text}
-            username={msg.username}
-            id={msg.id}
-          />)}
-      </div>
-      <div className='chat-form'>
-        <form onSubmit={sendMessage} ref={messagesEndRef} >
-          <input value={formValue} onChange={(e) => setFormValue(e.target.value)} placeholder="Say something nice" />
-          <button type="submit" disabled={formValue.trim() === ''}>Send</button>
-        </form>
-      </div>
+    <div className="chatbox-container">
+      <Button
+        type="primary"
+        shape="circle"
+        icon={<MessageOutlined />}
+        size="large"
+        onClick={toggleChatbox}
+        className="fixed bottom-7 right-7 z-50 shadow-lg hover:shadow-2xl !bg-primary-dominant hover:!bg-primary-dominant-dark focus:!bg-primary-dominant-light"
+      />
+      {visible && (
+        <Layout className={`chatbox ${visible ? 'chatbox-visible' : ''}`}>
+          <Header className="chatbox-header">
+            <div className="chatbox-title">Chat</div>
+            <Button
+              type="text"
+              icon={<CloseOutlined />}
+              onClick={closeChatbox}
+            />
+          </Header>
+          <Content className="chatbox-messages">
+            {reversedMessages && reversedMessages.map(msg =>
+              <ChatMessage
+                key={msg.id}
+                text={msg.text}
+                username={msg.username}
+                createdAt={msg.createdAt}
+                id={msg.id}
+              />)}
+            <div ref={messagesEndRef} />
+          </Content>
+          <Footer className="chatbox-input-container">
+            <div className='chat-form'>
+              <form onSubmit={sendMessage}>
+                <Input
+                  className="chatbox-input"
+                  value={formValue}
+                  onChange={(e) => setFormValue(e.target.value)}
+                  placeholder="Type a message"
+                  suffix={
+                    <SendOutlined onClick={sendMessage} style={{ cursor: 'pointer' }} />
+                  }
+                />
+              </form>
+            </div>
+          </Footer>
+        </Layout>
+      )}
     </div>
   );
 }
 
-function ChatMessage({ text, username, id }) {
+function ChatMessage({ text, username, createdAt, id }) {
   const deleteMessage = async (id) => {
     const messageDoc = doc(firestore, 'messages', id.toString());
     try {
@@ -121,16 +156,28 @@ function ChatMessage({ text, username, id }) {
   const user = JSON.parse(userJson);
   const messageClass = username === user?.username ? 'sent' : 'received';
 
+  const formattedTime = createdAt ? createdAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : '';
+
   return (
-    <>
-      <div className={`message ${messageClass}`}>
-        <div className={`message ${messageClass}`}>{username}</div>
-        <p className={`chat ${messageClass}`}>{text}</p>
+    <div className={`message ${messageClass}`}>
+    <div className="message-info">
+    <div className="message-username">{username}</div>
+
+    {user?.role === 'super-admin' && (
+        <DeleteOutlined onClick={() => deleteMessage(id)} style={{ cursor: 'pointer' }} />
+      )}
+       <div className="message-content">
+          {messageClass === 'sent' && <div className="message-timestamp">{formattedTime}</div>}
+          <span>{text}</span>
+          {messageClass === 'received' && <div className="message-timestamp">{formattedTime}</div>}
+        </div>
         {user?.role === 'super-admin' && (
-          <button type="button" onClick={() => deleteMessage(id)}>Delete</button>
+          <DeleteOutlined
+          className="delete-icon"
+          onClick={() => deleteMessage(id)} style={{ cursor: 'pointer' }} />
         )}
       </div>
-    </>
+    </div>
   );
 }
 
