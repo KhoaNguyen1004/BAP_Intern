@@ -1,26 +1,36 @@
 import './Chatbox.css';
 import { initializeApp } from 'firebase/app';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
-import { getFirestore, collection, query, orderBy, limit, setDoc, serverTimestamp, doc, deleteDoc } from 'firebase/firestore';
+import {
+  getFirestore,
+  collection,
+  query,
+  orderBy,
+  limit,
+  setDoc,
+  serverTimestamp,
+  doc,
+  deleteDoc
+} from 'firebase/firestore';
 import { useState, useEffect, useRef } from 'react';
 import { Button, Input, Layout } from 'antd';
 import {
   MessageOutlined,
   SendOutlined,
   CloseOutlined,
-  DeleteOutlined,
+  DeleteOutlined
 } from '@ant-design/icons';
 
 const { Header, Content, Footer } = Layout;
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBoydp1xb0ANGxzEvKcKFGtfvKrJCb1Y_U",
-  authDomain: "test-df021.firebaseapp.com",
-  projectId: "test-df021",
-  storageBucket: "test-df021.appspot.com",
-  messagingSenderId: "158215257419",
-  appId: "1:158215257419:web:db2249ea0e25accf68bcce",
-  measurementId: "G-43XHKG142E"
+  apiKey: 'AIzaSyBoydp1xb0ANGxzEvKcKFGtfvKrJCb1Y_U',
+  authDomain: 'test-df021.firebaseapp.com',
+  projectId: 'test-df021',
+  storageBucket: 'test-df021.appspot.com',
+  messagingSenderId: '158215257419',
+  appId: '1:158215257419:web:db2249ea0e25accf68bcce',
+  measurementId: 'G-43XHKG142E'
 };
 
 const app = initializeApp(firebaseConfig);
@@ -29,7 +39,11 @@ const firestore = getFirestore(app);
 function ChatBox() {
   const [visible, setVisible] = useState(false);
   const messagesRef = collection(firestore, 'messages');
-  const messagesQuery = query(messagesRef, orderBy('createdAt', 'desc'), limit(25));
+  const messagesQuery = query(
+    messagesRef,
+    orderBy('createdAt', 'desc'),
+    limit(25)
+  );
   const [messages] = useCollectionData(messagesQuery, { idField: 'id' });
   const [formValue, setFormValue] = useState('');
   const messagesEndRef = useRef(null);
@@ -50,13 +64,17 @@ function ChatBox() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
+  useEffect(() => {
+    if (visible) {
+      scrollToBottom();
+    }
+  }, [visible]);
   useEffect(() => {
     const sendMessageAsync = async () => {
       if (sending) {
         try {
           setFormValue('');
-          const userJson = localStorage.getItem('user');
+          const userJson = sessionStorage.getItem('user');
           const user = JSON.parse(userJson);
           const username = user.username;
           const messageId = Date.now().toString();
@@ -66,12 +84,13 @@ function ChatBox() {
             id: messageId,
             text: sending,
             createdAt: serverTimestamp(),
-            username,
+            username
           });
 
           setSending('');
+          scrollToBottom();
         } catch (error) {
-          console.error("Error sending message:", error);
+          console.error('Error sending message:', error);
         }
       }
     };
@@ -88,7 +107,21 @@ function ChatBox() {
   };
 
   const reversedMessages = messages?.slice().reverse();
+  useEffect(() => {
+    scrollToBottom();
+    const handleStorageChange = (event) => {
+      if (event.storageArea === sessionStorage) {
+        // Handle changes in sessionStorage if needed
+        console.log('SessionStorage changed:', event);
+      }
+    };
 
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
   return (
     <div className="chatbox-container">
       <Button
@@ -110,18 +143,20 @@ function ChatBox() {
             />
           </Header>
           <Content className="chatbox-messages">
-            {reversedMessages && reversedMessages.map(msg =>
-              <ChatMessage
-                key={msg.id}
-                text={msg.text}
-                username={msg.username}
-                createdAt={msg.createdAt}
-                id={msg.id}
-              />)}
+            {reversedMessages &&
+              reversedMessages.map((msg) => (
+                <ChatMessage
+                  key={msg.id}
+                  text={msg.text}
+                  username={msg.username}
+                  createdAt={msg.createdAt}
+                  id={msg.id}
+                />
+              ))}
             <div ref={messagesEndRef} />
           </Content>
           <Footer className="chatbox-input-container">
-            <div className='chat-form'>
+            <div className="chat-form">
               <form onSubmit={sendMessage}>
                 <Input
                   className="chatbox-input"
@@ -129,7 +164,10 @@ function ChatBox() {
                   onChange={(e) => setFormValue(e.target.value)}
                   placeholder="Type a message"
                   suffix={
-                    <SendOutlined onClick={sendMessage} style={{ cursor: 'pointer' }} />
+                    <SendOutlined
+                      onClick={sendMessage}
+                      style={{ cursor: 'pointer' }}
+                    />
                   }
                 />
               </form>
@@ -152,29 +190,49 @@ function ChatMessage({ text, username, createdAt, id }) {
     }
   };
 
-  const userJson = localStorage.getItem('user');
+  const userJson = sessionStorage.getItem('user');
   const user = JSON.parse(userJson);
   const messageClass = username === user?.username ? 'sent' : 'received';
 
-  const formattedTime = createdAt ? createdAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : '';
+  const formattedTime = createdAt
+    ? createdAt.toDate().toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      })
+    : '';
 
   return (
     <div className={`message ${messageClass}`}>
-    <div className="message-info">
-    <div className="message-username">{username}</div>
+      <div
+        className={`text-xs font-medium ${messageClass === 'sent' ? 'text-right' : 'text-left'}`}
+      >
+        {username}
+      </div>
 
-    {user?.role === 'super-admin' && (
-        <DeleteOutlined onClick={() => deleteMessage(id)} style={{ cursor: 'pointer' }} />
-      )}
-       <div className="message-content">
-          {messageClass === 'sent' && <div className="message-timestamp">{formattedTime}</div>}
+      <div
+        className={`flex ${messageClass === 'sent' ? 'flex-row-reverse' : 'flex-row'} items-center mt-1`}
+      >
+        <div className="message-content bg-gray-200 p-2 rounded-lg relative ">
           <span>{text}</span>
-          {messageClass === 'received' && <div className="message-timestamp">{formattedTime}</div>}
+
+          {messageClass === 'sent' && (
+            <div className="absolute text-xs text-white bg-black rounded px-2 py-1 top-0 right-0 -translate-y-full opacity-0 hover:opacity-70">
+              {formattedTime}
+            </div>
+          )}
+          {messageClass === 'received' && (
+            <div className="absolute text-xs text-white bg-black rounded px-2 py-1 opacity-0 top-0 left-0 -translate-y-full  hover:opacity-70">
+              {formattedTime}
+            </div>
+          )}
         </div>
         {user?.role === 'super-admin' && (
           <DeleteOutlined
-          className="delete-icon"
-          onClick={() => deleteMessage(id)} style={{ cursor: 'pointer' }} />
+            className="text-red-500 hover:text-red-700 m-2"
+            onClick={() => deleteMessage(id)}
+            style={{ cursor: 'pointer' }}
+          />
         )}
       </div>
     </div>
