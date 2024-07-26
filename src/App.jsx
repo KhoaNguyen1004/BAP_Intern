@@ -58,8 +58,7 @@ function App() {
         />
         <Route path="/" element={<GuestUI />} />
       </Routes>
-      {/* <LanguagePicker /> */}
-      <div className="fixed bottom-6 right-20 z-50 shadow-md">
+      <div className="fixed bottom-7 right-20 z-50 shadow-lg hover:shadow-3xl rounded-full ">
         <LanguagePicker />
       </div>
     </div>
