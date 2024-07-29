@@ -87,10 +87,7 @@ function ChatBox() {
           const userJson = sessionStorage.getItem('user');
           const user = JSON.parse(userJson);
           const username = user.username;
-          const reaction = {
-            test01: 'like',
-            test02: 'like'
-          };
+          const reaction = {};
           const messageId = Date.now().toString();
           const messageRef = doc(messagesRef, messageId);
 
@@ -212,10 +209,10 @@ function ChatMessage({ text, username, createdAt, id, reaction }) {
 
   const formattedTime = createdAt
     ? createdAt.toDate().toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    })
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      })
     : '';
   const [reactions, setReactions] = useState({
     like: 0,
@@ -272,7 +269,7 @@ function ChatMessage({ text, username, createdAt, id, reaction }) {
       key: 'like',
       label: (
         <button
-          type='button'
+          type="button"
           onClick={() => handleReaction('like')}
           onKeyDown={(e) => e.key === 'Enter' && handleReaction('like')}
           aria-label="Like"
@@ -280,13 +277,13 @@ function ChatMessage({ text, username, createdAt, id, reaction }) {
         >
           <img src={likeIcon} alt="Like" className="w-6 h-6" />
         </button>
-      ),
+      )
     },
     {
       key: 'love',
       label: (
         <button
-          type='button'
+          type="button"
           onClick={() => handleReaction('love')}
           onKeyDown={(e) => e.key === 'Enter' && handleReaction('love')}
           aria-label="Love"
@@ -294,13 +291,13 @@ function ChatMessage({ text, username, createdAt, id, reaction }) {
         >
           <img src={loveIcon} alt="Love" className="w-6 h-6" />
         </button>
-      ),
+      )
     },
     {
       key: 'haha',
       label: (
         <button
-          type='button'
+          type="button"
           onClick={() => handleReaction('haha')}
           onKeyDown={(e) => e.key === 'Enter' && handleReaction('haha')}
           aria-label="Haha"
@@ -308,13 +305,13 @@ function ChatMessage({ text, username, createdAt, id, reaction }) {
         >
           <img src={hahaIcon} alt="Haha" className="w-6 h-6" />
         </button>
-      ),
+      )
     },
     {
       key: 'wow',
       label: (
         <button
-          type='button'
+          type="button"
           onClick={() => handleReaction('wow')}
           onKeyDown={(e) => e.key === 'Enter' && handleReaction('wow')}
           aria-label="Wow"
@@ -322,13 +319,13 @@ function ChatMessage({ text, username, createdAt, id, reaction }) {
         >
           <img src={wowIcon} alt="Wow" className="w-6 h-6" />
         </button>
-      ),
+      )
     },
     {
       key: 'sad',
       label: (
         <button
-          type='button'
+          type="button"
           onClick={() => handleReaction('sad')}
           onKeyDown={(e) => e.key === 'Enter' && handleReaction('sad')}
           aria-label="Sad"
@@ -336,13 +333,13 @@ function ChatMessage({ text, username, createdAt, id, reaction }) {
         >
           <img src={sadIcon} alt="Sad" className="w-6 h-6" />
         </button>
-      ),
+      )
     },
     {
       key: 'angry',
       label: (
         <button
-          type='button'
+          type="button"
           onClick={() => handleReaction('angry')}
           onKeyDown={(e) => e.key === 'Enter' && handleReaction('angry')}
           aria-label="Angry"
@@ -350,13 +347,13 @@ function ChatMessage({ text, username, createdAt, id, reaction }) {
         >
           <img src={angryIcon} alt="Angry" className="w-6 h-6" />
         </button>
-      ),
+      )
     },
     {
       key: 'care',
       label: (
         <button
-          type='button'
+          type="button"
           onClick={() => handleReaction('care')}
           onKeyDown={(e) => e.key === 'Enter' && handleReaction('care')}
           aria-label="Care"
@@ -364,7 +361,7 @@ function ChatMessage({ text, username, createdAt, id, reaction }) {
         >
           <img src={careIcon} alt="Care" className="w-6 h-6" />
         </button>
-      ),
+      )
     },
     {
       type: 'divider'
@@ -397,14 +394,16 @@ function ChatMessage({ text, username, createdAt, id, reaction }) {
           </span>
         )}
         {messageClass === 'sent' && (
-          <span className="text-xs font-thin ml-2">
-            {formattedTime}
-          </span>
+          <span className="text-xs font-thin ml-2">{formattedTime}</span>
         )}
       </div>
 
-      <div className={`flex ${messageClass === 'sent' ? 'flex-row-reverse' : 'flex-row'} items-center mt-1`}>
-        <div className={`group relative max-w-[70%] rounded-lg break-words ${messageClass === 'sent' ? 'bg-[#D84152] text-white' : 'bg-[#EEEDEB] text-black'}`}>
+      <div
+        className={`flex ${messageClass === 'sent' ? 'flex-row-reverse' : 'flex-row'} items-center mt-1`}
+      >
+        <div
+          className={`group relative max-w-[70%] rounded-lg break-words ${messageClass === 'sent' ? 'bg-[#D84152] text-white' : 'bg-[#EEEDEB] text-black'}`}
+        >
           <Dropdown
             menu={{ items }}
             trigger={['hover']}
@@ -418,16 +417,17 @@ function ChatMessage({ text, username, createdAt, id, reaction }) {
             </div>
           </Dropdown>
         </div>
-        {Object.entries(reactions).map(([key, value]) => (
-          value > 0 && (
-            <img
-              key={key}
-              src={`http://127.0.0.1:8000/images/${key}.png`}
-              alt={key}
-              style={{ margin: '5px', width: '20px', height: '20px' }}
-            />
-          )
-        ))}
+        {Object.entries(reactions).map(
+          ([key, value]) =>
+            value > 0 && (
+              <img
+                key={key}
+                src={`http://127.0.0.1:8000/images/${key}.png`}
+                alt={key}
+                style={{ margin: '5px', width: '20px', height: '20px' }}
+              />
+            )
+        )}
         {totalReaction > 0 && <p className="ml-2">{totalReaction}</p>}
       </div>
     </div>
