@@ -10,16 +10,26 @@ import {
   setDoc,
   serverTimestamp,
   doc,
-  deleteDoc
+  deleteDoc,
+  updateDoc
 } from 'firebase/firestore';
 import { useState, useEffect, useRef } from 'react';
-import { Button, Input, Layout } from 'antd';
+import { Button, Input, Layout, Dropdown } from 'antd';
 import {
   MessageOutlined,
   SendOutlined,
   CloseOutlined,
   DeleteOutlined
 } from '@ant-design/icons';
+import {
+  angryIcon,
+  careIcon,
+  hahaIcon,
+  likeIcon,
+  loveIcon,
+  sadIcon,
+  wowIcon
+} from '../../assets/reactions/reactions';
 
 const { Header, Content, Footer } = Layout;
 
@@ -77,6 +87,7 @@ function ChatBox() {
           const userJson = sessionStorage.getItem('user');
           const user = JSON.parse(userJson);
           const username = user.username;
+          const reaction = {};
           const messageId = Date.now().toString();
           const messageRef = doc(messagesRef, messageId);
 
@@ -84,7 +95,8 @@ function ChatBox() {
             id: messageId,
             text: sending,
             createdAt: serverTimestamp(),
-            username
+            username,
+            reaction
           });
 
           setSending('');
@@ -151,6 +163,7 @@ function ChatBox() {
                   username={msg.username}
                   createdAt={msg.createdAt}
                   id={msg.id}
+                  reaction={msg.reaction}
                 />
               ))}
             <div ref={messagesEndRef} />
@@ -179,7 +192,7 @@ function ChatBox() {
   );
 }
 
-function ChatMessage({ text, username, createdAt, id }) {
+function ChatMessage({ text, username, createdAt, id, reaction }) {
   const deleteMessage = async (id) => {
     const messageDoc = doc(firestore, 'messages', id.toString());
     try {
@@ -201,6 +214,173 @@ function ChatMessage({ text, username, createdAt, id }) {
         hour12: false
       })
     : '';
+  const [reactions, setReactions] = useState({
+    like: 0,
+    love: 0,
+    haha: 0,
+    angry: 0,
+    care: 0,
+    sad: 0,
+    wow: 0
+  });
+  const [totalReaction, setTotalReaction] = useState(0);
+  useEffect(() => {
+    const countReactions = () => {
+      const counts = {
+        like: 0,
+        love: 0,
+        haha: 0,
+        angry: 0,
+        care: 0,
+        sad: 0,
+        wow: 0
+      };
+      let total = 0;
+      if (reaction) {
+        Object.values(reaction).forEach((reactionType) => {
+          if (reactionType in counts) {
+            counts[reactionType] += 1;
+            total += 1;
+          }
+        });
+      }
+      setReactions(counts);
+      setTotalReaction(total);
+    };
+    countReactions();
+  }, [reaction]);
+
+  const handleReaction = async (value) => {
+    const messageDoc = doc(firestore, 'messages', id.toString());
+    const userJson = sessionStorage.getItem('user');
+    const user = JSON.parse(userJson);
+    const key = user.username;
+    try {
+      await updateDoc(messageDoc, {
+        [`reaction.${key}`]: value
+      });
+    } catch (error) {
+      console.error('Error adding reaction:', error);
+    }
+  };
+
+  const items = [
+    {
+      key: 'like',
+      label: (
+        <button
+          type="button"
+          onClick={() => handleReaction('like')}
+          onKeyDown={(e) => e.key === 'Enter' && handleReaction('like')}
+          aria-label="Like"
+          style={{ background: 'none', border: 'none', padding: 0 }}
+        >
+          <img src={likeIcon} alt="Like" className="w-6 h-6" />
+        </button>
+      )
+    },
+    {
+      key: 'love',
+      label: (
+        <button
+          type="button"
+          onClick={() => handleReaction('love')}
+          onKeyDown={(e) => e.key === 'Enter' && handleReaction('love')}
+          aria-label="Love"
+          style={{ background: 'none', border: 'none', padding: 0 }}
+        >
+          <img src={loveIcon} alt="Love" className="w-6 h-6" />
+        </button>
+      )
+    },
+    {
+      key: 'haha',
+      label: (
+        <button
+          type="button"
+          onClick={() => handleReaction('haha')}
+          onKeyDown={(e) => e.key === 'Enter' && handleReaction('haha')}
+          aria-label="Haha"
+          style={{ background: 'none', border: 'none', padding: 0 }}
+        >
+          <img src={hahaIcon} alt="Haha" className="w-6 h-6" />
+        </button>
+      )
+    },
+    {
+      key: 'wow',
+      label: (
+        <button
+          type="button"
+          onClick={() => handleReaction('wow')}
+          onKeyDown={(e) => e.key === 'Enter' && handleReaction('wow')}
+          aria-label="Wow"
+          style={{ background: 'none', border: 'none', padding: 0 }}
+        >
+          <img src={wowIcon} alt="Wow" className="w-6 h-6" />
+        </button>
+      )
+    },
+    {
+      key: 'sad',
+      label: (
+        <button
+          type="button"
+          onClick={() => handleReaction('sad')}
+          onKeyDown={(e) => e.key === 'Enter' && handleReaction('sad')}
+          aria-label="Sad"
+          style={{ background: 'none', border: 'none', padding: 0 }}
+        >
+          <img src={sadIcon} alt="Sad" className="w-6 h-6" />
+        </button>
+      )
+    },
+    {
+      key: 'angry',
+      label: (
+        <button
+          type="button"
+          onClick={() => handleReaction('angry')}
+          onKeyDown={(e) => e.key === 'Enter' && handleReaction('angry')}
+          aria-label="Angry"
+          style={{ background: 'none', border: 'none', padding: 0 }}
+        >
+          <img src={angryIcon} alt="Angry" className="w-6 h-6" />
+        </button>
+      )
+    },
+    {
+      key: 'care',
+      label: (
+        <button
+          type="button"
+          onClick={() => handleReaction('care')}
+          onKeyDown={(e) => e.key === 'Enter' && handleReaction('care')}
+          aria-label="Care"
+          style={{ background: 'none', border: 'none', padding: 0 }}
+        >
+          <img src={careIcon} alt="Care" className="w-6 h-6" />
+        </button>
+      )
+    },
+    {
+      type: 'divider'
+    },
+    {
+      key: 'more',
+      label: (
+        <>
+          {user?.role === 'super-admin' && (
+            <DeleteOutlined
+              className="text-red-500 hover:text-red-700 m-2"
+              onClick={() => deleteMessage(id)}
+              style={{ cursor: 'pointer' }}
+            />
+          )}
+        </>
+      )
+    }
+  ].filter(Boolean);
 
   return (
     <div className={`message ${messageClass}`}>
@@ -208,32 +388,47 @@ function ChatMessage({ text, username, createdAt, id }) {
         className={`text-xs font-medium ${messageClass === 'sent' ? 'text-right' : 'text-left'}`}
       >
         {username}
+        {messageClass === 'received' && (
+          <span className="text-xs italic font-normal ml-2">
+            {formattedTime}
+          </span>
+        )}
+        {messageClass === 'sent' && (
+          <span className="text-xs font-thin ml-2">{formattedTime}</span>
+        )}
       </div>
 
       <div
         className={`flex ${messageClass === 'sent' ? 'flex-row-reverse' : 'flex-row'} items-center mt-1`}
       >
-        <div className="message-content bg-gray-200 p-2 rounded-lg relative ">
-          <span>{text}</span>
-
-          {messageClass === 'sent' && (
-            <div className="absolute text-xs text-white bg-black rounded px-2 py-1 top-0 right-0 -translate-y-full opacity-0 hover:opacity-70">
-              {formattedTime}
+        <div
+          className={`group relative max-w-[70%] rounded-lg break-words ${messageClass === 'sent' ? 'bg-[#D84152] text-white' : 'bg-[#EEEDEB] text-black'}`}
+        >
+          <Dropdown
+            menu={{ items }}
+            trigger={['hover']}
+            className="relative group"
+            placement="topRight"
+            overlayClassName="horizontal-dropdown"
+            arrow={false}
+          >
+            <div className=" p-2 rounded-lg">
+              <span>{text}</span>
             </div>
-          )}
-          {messageClass === 'received' && (
-            <div className="absolute text-xs text-white bg-black rounded px-2 py-1 opacity-0 top-0 left-0 -translate-y-full  hover:opacity-70">
-              {formattedTime}
-            </div>
-          )}
+          </Dropdown>
         </div>
-        {user?.role === 'super-admin' && (
-          <DeleteOutlined
-            className="text-red-500 hover:text-red-700 m-2"
-            onClick={() => deleteMessage(id)}
-            style={{ cursor: 'pointer' }}
-          />
+        {Object.entries(reactions).map(
+          ([key, value]) =>
+            value > 0 && (
+              <img
+                key={key}
+                src={`http://127.0.0.1:8000/images/${key}.png`}
+                alt={key}
+                style={{ margin: '5px', width: '20px', height: '20px' }}
+              />
+            )
         )}
+        {totalReaction > 0 && <p className="ml-2">{totalReaction}</p>}
       </div>
     </div>
   );
