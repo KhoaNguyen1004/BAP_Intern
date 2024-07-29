@@ -387,14 +387,17 @@ function ChatMessage({ text, username, createdAt, id, reaction }) {
       <div
         className={`text-xs font-medium ${messageClass === 'sent' ? 'text-right' : 'text-left'}`}
       >
-        {username}
-        {messageClass === 'received' && (
-          <span className="text-xs italic font-normal ml-2">
-            {formattedTime}
-          </span>
-        )}
-        {messageClass === 'sent' && (
-          <span className="text-xs font-thin ml-2">{formattedTime}</span>
+          {messageClass === 'received' ? (
+          <>
+            {username}{' '}
+            <span className="text-xs italic font-normal 	 ">
+              {formattedTime}
+            </span>
+          </>
+        ) : (
+          <>
+            <span className="text-xs font-thin">{formattedTime}</span>
+          </>
         )}
       </div>
 
