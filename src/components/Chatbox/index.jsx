@@ -207,6 +207,41 @@ function ChatMessage({ text, username, createdAt, id, reaction }) {
       hour12: false
     })
     : '';
+  const [reactions, setReactions] = useState({
+    like: 0,
+    love: 0,
+    haha: 0,
+    angry: 0,
+    care: 0,
+    sad: 0,
+    wow: 0,
+  });
+  const [totalReaction, setTotalReaction] = useState(0);
+  useEffect(() => {
+    const countReactions = () => {
+      const counts = {
+        like: 0,
+        love: 0,
+        haha: 0,
+        angry: 0,
+        care: 0,
+        sad: 0,
+        wow: 0,
+      };
+      let total = 0;
+      if (reaction) {
+        Object.values(reaction).forEach(reactionType => {
+          if (reactionType in counts) {
+            counts[reactionType] += 1;
+            total += 1;
+          }
+        });
+      }
+      setReactions(counts);
+      setTotalReaction(total);
+    };
+    countReactions();
+  }, [reaction]);
 
   return (
     <div className={`message ${messageClass}`}>
@@ -222,9 +257,6 @@ function ChatMessage({ text, username, createdAt, id, reaction }) {
         <div className="message-content bg-gray-200 p-2 rounded-lg relative ">
           <span>
             {text}
-            {Object.entries(reaction).map(([key, value]) => (
-              <img key={key} src={`../../public/images/${value}.png`} alt={key} style={{ margin: '5px', width: '50px', height: '50px' }} />
-            ))}
           </span>
 
           {messageClass === 'sent' && (
@@ -245,6 +277,17 @@ function ChatMessage({ text, username, createdAt, id, reaction }) {
             style={{ cursor: 'pointer' }}
           />
         )}
+        {Object.entries(reactions).map(([key, value]) => (
+          value > 0 && (
+            <img
+              key={key}
+              src={`http://127.0.0.1:8000/images/${key}.png`}
+              alt={key}
+              style={{ margin: '5px', width: '20px', height: '20px' }}
+            />
+          )
+        ))}
+        {totalReaction > 0 && <p>{totalReaction}</p>}
       </div>
     </div>
   );
