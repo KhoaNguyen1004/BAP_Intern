@@ -26,7 +26,7 @@ function LanguagePicker() {
       key: 'vn',
       label: (
         <div className='flex items-center'>
-          <img src={VnImage} alt="Vietnamese" className="w-6 h-4 mr-2" />{' '}
+          <img src={VnImage} alt="Vietnamese" className="w-6 h-4 mr-2 rounded-sm" />
           Vietnamese
         </div>
       ),
@@ -36,7 +36,7 @@ function LanguagePicker() {
       key: 'us',
       label: (
         <div className='flex items-center'>
-          <img src={UsImage} alt="English" className="w-6 h-4 mr-2" /> English
+          <img src={UsImage} alt="English" className="w-6 h-4 mr-2 rounded-sm " /> English
         </div>
       ),
       onClick: () => handleLanguageChange('us')
@@ -54,7 +54,7 @@ function LanguagePicker() {
         <img
           src={flag === 'vn' ? VnImage : UsImage}
           alt="Language"
-          className="w-6 h-4 "
+          className="w-6 h-4 rounded-sm"
         />
       </Button>
     </Dropdown>
