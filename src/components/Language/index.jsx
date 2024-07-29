@@ -42,9 +42,8 @@ function LanguagePicker() {
   ];
 
   return (
-    // <div className="shadow-2xl rounded-full ">
     <Dropdown
-      menu={{ items: menuItems }} // Use `menu` prop with `items`
+      menu={{ items: menuItems }}
       className="shadow-2xl"
       placement="topRight"
       arrow
@@ -53,7 +52,6 @@ function LanguagePicker() {
         <Flag name={flag} />
       </Button>
     </Dropdown>
-    // </div>
   );
 }
 
