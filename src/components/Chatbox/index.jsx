@@ -223,7 +223,7 @@ function ChatMessage({ text, username, createdAt, id, reaction }) {
           <span>
             {text}
             {Object.entries(reaction).map(([key, value]) => (
-              <img key={key} src={`../../public/images/${value}`} alt={key} style={{ margin: '5px', width: '50px', height: '50px' }} />
+              <img key={key} src={`../../public/images/${value}.png`} alt={key} style={{ margin: '5px', width: '50px', height: '50px' }} />
             ))}
           </span>
 
