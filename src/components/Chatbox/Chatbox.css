@@ -89,7 +89,7 @@
 }
 
 /* styles.css or a similar stylesheet */
-.custom-dropdown .ant-dropdown-menu {
+/* .custom-dropdown .ant-dropdown-menu {
   display: flex;
   flex-direction: column;
   padding: 0;
@@ -116,6 +116,6 @@
 
 .custom-dropdown .ant-dropdown-menu-submenu {
   position: absolute;
-  left: 100%; /* Position submenu to the right */
+  left: 100%; 
   top: 0;
-}
+} */

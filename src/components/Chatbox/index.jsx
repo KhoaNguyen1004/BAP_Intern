@@ -18,7 +18,7 @@ import {
   MessageOutlined,
   SendOutlined,
   CloseOutlined,
-  DeleteOutlined,
+  DeleteOutlined
 } from '@ant-design/icons';
 import {
   angryIcon,
@@ -86,6 +86,10 @@ function ChatBox() {
           const userJson = sessionStorage.getItem('user');
           const user = JSON.parse(userJson);
           const username = user.username;
+          const reaction = {
+            test01: 'like',
+            test02: 'like'
+          };
           const messageId = Date.now().toString();
           const messageRef = doc(messagesRef, messageId);
 
@@ -93,7 +97,8 @@ function ChatBox() {
             id: messageId,
             text: sending,
             createdAt: serverTimestamp(),
-            username
+            username,
+            reaction
           });
 
           setSending('');
@@ -160,6 +165,7 @@ function ChatBox() {
                   username={msg.username}
                   createdAt={msg.createdAt}
                   id={msg.id}
+                  reaction={msg.reaction}
                 />
               ))}
             <div ref={messagesEndRef} />
@@ -188,7 +194,7 @@ function ChatBox() {
   );
 }
 
-function ChatMessage({ text, username, createdAt, id }) {
+function ChatMessage({ text, username, createdAt, id, reaction }) {
   const deleteMessage = async (id) => {
     const messageDoc = doc(firestore, 'messages', id.toString());
     try {
@@ -210,9 +216,41 @@ function ChatMessage({ text, username, createdAt, id }) {
         hour12: false
       })
     : '';
-
-
-
+  const [reactions, setReactions] = useState({
+    like: 0,
+    love: 0,
+    haha: 0,
+    angry: 0,
+    care: 0,
+    sad: 0,
+    wow: 0
+  });
+  const [totalReaction, setTotalReaction] = useState(0);
+  useEffect(() => {
+    const countReactions = () => {
+      const counts = {
+        like: 0,
+        love: 0,
+        haha: 0,
+        angry: 0,
+        care: 0,
+        sad: 0,
+        wow: 0
+      };
+      let total = 0;
+      if (reaction) {
+        Object.values(reaction).forEach((reactionType) => {
+          if (reactionType in counts) {
+            counts[reactionType] += 1;
+            total += 1;
+          }
+        });
+      }
+      setReactions(counts);
+      setTotalReaction(total);
+    };
+    countReactions();
+  }, [reaction]);
   const items = [
     {
       key: 'like',
@@ -250,12 +288,12 @@ function ChatMessage({ text, username, createdAt, id }) {
       label: (
         <>
           {user?.role === 'super-admin' && (
-          <DeleteOutlined
-            className="text-red-500 hover:text-red-700 m-2"
-            onClick={() => deleteMessage(id)}
-            style={{ cursor: 'pointer' }}
-          />
-        )}
+            <DeleteOutlined
+              className="text-red-500 hover:text-red-700 m-2"
+              onClick={() => deleteMessage(id)}
+              style={{ cursor: 'pointer' }}
+            />
+          )}
         </>
       )
     }
@@ -266,34 +304,45 @@ function ChatMessage({ text, username, createdAt, id }) {
       <div
         className={`text-xs font-medium ${messageClass === 'sent' ? 'text-right' : 'text-left'}`}
       >
-        {messageClass === 'received' ? (
-          <>
-            {username}{' '}
-            <span className="text-xs italic font-normal 	 ">
-              {formattedTime}
-            </span>
-          </>
-        ) : (
-          <>
-            <span className="text-xs font-thin">{formattedTime}</span>
-          </>
+        {username}
+        {messageClass === 'received' && (
+          <span className="text-xs italic font-normal ml-2">
+            {formattedTime}
+          </span>
+        )}
+        {messageClass === 'sent' && (
+          <span className="text-xs font-thin ml-2">
+            {formattedTime}
+          </span>
         )}
       </div>
 
       <div className={`flex ${messageClass === 'sent' ? 'flex-row-reverse' : 'flex-row'} items-center mt-1`}>
-      <div className="group relative max-w-[70%] break-words">
+      <div className={`group relative max-w-[70%] rounded-lg break-words ${messageClass === 'sent' ? 'bg-[#D84152] text-white' : 'bg-[#EEEDEB] text-black'}`}>
       <Dropdown
-        menu={{ items }}
-        trigger={['hover']}
-        className="relative group"
-        placement="topRight"
-        overlayClassName="horizontal-dropdown"
-      >
-        <div className="bg-gray-200 p-2 rounded-lg">
-          <span>{text}</span>
+            menu={{ items }}
+            trigger={['hover']}
+            className="relative group"
+            placement="topRight"
+            overlayClassName="horizontal-dropdown"
+            arrow={false}
+          >
+            <div className=" p-2 rounded-lg">
+              <span>{text}</span>
+            </div>
+          </Dropdown>
         </div>
-      </Dropdown>
-      </div>
+        {Object.entries(reactions).map(([key, value]) => (
+          value > 0 && (
+            <img
+              key={key}
+              src={`http://127.0.0.1:8000/images/${key}.png`}
+              alt={key}
+              style={{ margin: '5px', width: '20px', height: '20px' }}
+            />
+          )
+        ))}
+        {totalReaction > 0 && <p className="ml-2">{totalReaction}</p>}
       </div>
     </div>
   );
