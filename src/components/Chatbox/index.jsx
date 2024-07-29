@@ -77,6 +77,10 @@ function ChatBox() {
           const userJson = sessionStorage.getItem('user');
           const user = JSON.parse(userJson);
           const username = user.username;
+          const reaction = {
+            "test01": "like",
+            "test02": "like",
+          };
           const messageId = Date.now().toString();
           const messageRef = doc(messagesRef, messageId);
 
@@ -84,7 +88,8 @@ function ChatBox() {
             id: messageId,
             text: sending,
             createdAt: serverTimestamp(),
-            username
+            username,
+            reaction
           });
 
           setSending('');
@@ -151,6 +156,7 @@ function ChatBox() {
                   username={msg.username}
                   createdAt={msg.createdAt}
                   id={msg.id}
+                  reaction={msg.reaction}
                 />
               ))}
             <div ref={messagesEndRef} />
@@ -179,7 +185,7 @@ function ChatBox() {
   );
 }
 
-function ChatMessage({ text, username, createdAt, id }) {
+function ChatMessage({ text, username, createdAt, id, reaction }) {
   const deleteMessage = async (id) => {
     const messageDoc = doc(firestore, 'messages', id.toString());
     try {
@@ -196,10 +202,10 @@ function ChatMessage({ text, username, createdAt, id }) {
 
   const formattedTime = createdAt
     ? createdAt.toDate().toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      })
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    })
     : '';
 
   return (
@@ -214,7 +220,12 @@ function ChatMessage({ text, username, createdAt, id }) {
         className={`flex ${messageClass === 'sent' ? 'flex-row-reverse' : 'flex-row'} items-center mt-1`}
       >
         <div className="message-content bg-gray-200 p-2 rounded-lg relative ">
-          <span>{text}</span>
+          <span>
+            {text}
+            {Object.entries(reaction).map(([key, value]) => (
+              <img key={key} src={`../../public/images/${value}`} alt={key} style={{ margin: '5px', width: '50px', height: '50px' }} />
+            ))}
+          </span>
 
           {messageClass === 'sent' && (
             <div className="absolute text-xs text-white bg-black rounded px-2 py-1 top-0 right-0 -translate-y-full opacity-0 hover:opacity-70">
