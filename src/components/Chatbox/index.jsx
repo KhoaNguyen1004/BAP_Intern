@@ -10,7 +10,8 @@ import {
   setDoc,
   serverTimestamp,
   doc,
-  deleteDoc
+  deleteDoc,
+  updateDoc
 } from 'firebase/firestore';
 import { useState, useEffect, useRef } from 'react';
 import { Button, Input, Layout, Dropdown } from 'antd';
@@ -211,10 +212,10 @@ function ChatMessage({ text, username, createdAt, id, reaction }) {
 
   const formattedTime = createdAt
     ? createdAt.toDate().toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      })
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    })
     : '';
   const [reactions, setReactions] = useState({
     like: 0,
@@ -251,34 +252,119 @@ function ChatMessage({ text, username, createdAt, id, reaction }) {
     };
     countReactions();
   }, [reaction]);
+
+  const handleReaction = async (value) => {
+    const messageDoc = doc(firestore, 'messages', id.toString());
+    const userJson = sessionStorage.getItem('user');
+    const user = JSON.parse(userJson);
+    const key = user.username;
+    try {
+      await updateDoc(messageDoc, {
+        [`reaction.${key}`]: value
+      });
+    } catch (error) {
+      console.error('Error adding reaction:', error);
+    }
+  };
+
   const items = [
     {
       key: 'like',
-      label: <img src={likeIcon} alt="Like" className="w-6 h-6" />
+      label: (
+        <button
+          type='button'
+          onClick={() => handleReaction('like')}
+          onKeyDown={(e) => e.key === 'Enter' && handleReaction('like')}
+          aria-label="Like"
+          style={{ background: 'none', border: 'none', padding: 0 }}
+        >
+          <img src={likeIcon} alt="Like" className="w-6 h-6" />
+        </button>
+      ),
     },
     {
       key: 'love',
-      label: <img src={loveIcon} alt="Love" className="w-6 h-6" />
+      label: (
+        <button
+          type='button'
+          onClick={() => handleReaction('love')}
+          onKeyDown={(e) => e.key === 'Enter' && handleReaction('love')}
+          aria-label="Love"
+          style={{ background: 'none', border: 'none', padding: 0 }}
+        >
+          <img src={loveIcon} alt="Love" className="w-6 h-6" />
+        </button>
+      ),
     },
     {
       key: 'haha',
-      label: <img src={hahaIcon} alt="Haha" className="w-6 h-6" />
+      label: (
+        <button
+          type='button'
+          onClick={() => handleReaction('haha')}
+          onKeyDown={(e) => e.key === 'Enter' && handleReaction('haha')}
+          aria-label="Haha"
+          style={{ background: 'none', border: 'none', padding: 0 }}
+        >
+          <img src={hahaIcon} alt="Haha" className="w-6 h-6" />
+        </button>
+      ),
     },
     {
       key: 'wow',
-      label: <img src={wowIcon} alt="Wow" className="w-6 h-6" />
+      label: (
+        <button
+          type='button'
+          onClick={() => handleReaction('wow')}
+          onKeyDown={(e) => e.key === 'Enter' && handleReaction('wow')}
+          aria-label="Wow"
+          style={{ background: 'none', border: 'none', padding: 0 }}
+        >
+          <img src={wowIcon} alt="Wow" className="w-6 h-6" />
+        </button>
+      ),
     },
     {
       key: 'sad',
-      label: <img src={sadIcon} alt="Sad" className="w-6 h-6" />
+      label: (
+        <button
+          type='button'
+          onClick={() => handleReaction('sad')}
+          onKeyDown={(e) => e.key === 'Enter' && handleReaction('sad')}
+          aria-label="Sad"
+          style={{ background: 'none', border: 'none', padding: 0 }}
+        >
+          <img src={sadIcon} alt="Sad" className="w-6 h-6" />
+        </button>
+      ),
     },
     {
       key: 'angry',
-      label: <img src={angryIcon} alt="Angry" className="w-6 h-6" />
+      label: (
+        <button
+          type='button'
+          onClick={() => handleReaction('angry')}
+          onKeyDown={(e) => e.key === 'Enter' && handleReaction('angry')}
+          aria-label="Angry"
+          style={{ background: 'none', border: 'none', padding: 0 }}
+        >
+          <img src={angryIcon} alt="Angry" className="w-6 h-6" />
+        </button>
+      ),
     },
     {
       key: 'care',
-      label: <img src={careIcon} alt="Care" className="w-6 h-6" />
+      label: (
+        <button
+          type='button'
+          onClick={() => handleReaction('care')}
+          onKeyDown={(e) => e.key === 'Enter' && handleReaction('care')}
+          aria-label="Care"
+          style={{ background: 'none', border: 'none', padding: 0 }}
+        >
+          <img src={careIcon} alt="Care" className="w-6 h-6" />
+        </button>
+      ),
     },
     {
       type: 'divider'
@@ -318,8 +404,8 @@ function ChatMessage({ text, username, createdAt, id, reaction }) {
       </div>
 
       <div className={`flex ${messageClass === 'sent' ? 'flex-row-reverse' : 'flex-row'} items-center mt-1`}>
-      <div className={`group relative max-w-[70%] rounded-lg break-words ${messageClass === 'sent' ? 'bg-[#D84152] text-white' : 'bg-[#EEEDEB] text-black'}`}>
-      <Dropdown
+        <div className={`group relative max-w-[70%] rounded-lg break-words ${messageClass === 'sent' ? 'bg-[#D84152] text-white' : 'bg-[#EEEDEB] text-black'}`}>
+          <Dropdown
             menu={{ items }}
             trigger={['hover']}
             className="relative group"
