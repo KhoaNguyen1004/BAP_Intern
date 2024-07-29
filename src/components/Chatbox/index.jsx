@@ -13,13 +13,22 @@ import {
   deleteDoc
 } from 'firebase/firestore';
 import { useState, useEffect, useRef } from 'react';
-import { Button, Input, Layout } from 'antd';
+import { Button, Input, Layout, Dropdown } from 'antd';
 import {
   MessageOutlined,
   SendOutlined,
   CloseOutlined,
-  DeleteOutlined
+  DeleteOutlined,
 } from '@ant-design/icons';
+import {
+  angryIcon,
+  careIcon,
+  hahaIcon,
+  likeIcon,
+  loveIcon,
+  sadIcon,
+  wowIcon
+} from '../../assets/reactions/reactions';
 
 const { Header, Content, Footer } = Layout;
 
@@ -202,38 +211,89 @@ function ChatMessage({ text, username, createdAt, id }) {
       })
     : '';
 
-  return (
-    <div className={`message ${messageClass}`}>
-      <div
-        className={`text-xs font-medium ${messageClass === 'sent' ? 'text-right' : 'text-left'}`}
-      >
-        {username}
-      </div>
 
-      <div
-        className={`flex ${messageClass === 'sent' ? 'flex-row-reverse' : 'flex-row'} items-center mt-1`}
-      >
-        <div className="message-content bg-gray-200 p-2 rounded-lg relative ">
-          <span>{text}</span>
 
-          {messageClass === 'sent' && (
-            <div className="absolute text-xs text-white bg-black rounded px-2 py-1 top-0 right-0 -translate-y-full opacity-0 hover:opacity-70">
-              {formattedTime}
-            </div>
-          )}
-          {messageClass === 'received' && (
-            <div className="absolute text-xs text-white bg-black rounded px-2 py-1 opacity-0 top-0 left-0 -translate-y-full  hover:opacity-70">
-              {formattedTime}
-            </div>
-          )}
-        </div>
-        {user?.role === 'super-admin' && (
+  const items = [
+    {
+      key: 'like',
+      label: <img src={likeIcon} alt="Like" className="w-6 h-6" />
+    },
+    {
+      key: 'love',
+      label: <img src={loveIcon} alt="Love" className="w-6 h-6" />
+    },
+    {
+      key: 'haha',
+      label: <img src={hahaIcon} alt="Haha" className="w-6 h-6" />
+    },
+    {
+      key: 'wow',
+      label: <img src={wowIcon} alt="Wow" className="w-6 h-6" />
+    },
+    {
+      key: 'sad',
+      label: <img src={sadIcon} alt="Sad" className="w-6 h-6" />
+    },
+    {
+      key: 'angry',
+      label: <img src={angryIcon} alt="Angry" className="w-6 h-6" />
+    },
+    {
+      key: 'care',
+      label: <img src={careIcon} alt="Care" className="w-6 h-6" />
+    },
+    {
+      type: 'divider'
+    },
+    {
+      key: 'more',
+      label: (
+        <>
+          {user?.role === 'super-admin' && (
           <DeleteOutlined
             className="text-red-500 hover:text-red-700 m-2"
             onClick={() => deleteMessage(id)}
             style={{ cursor: 'pointer' }}
           />
         )}
+        </>
+      )
+    }
+  ].filter(Boolean);
+
+  return (
+    <div className={`message ${messageClass}`}>
+      <div
+        className={`text-xs font-medium ${messageClass === 'sent' ? 'text-right' : 'text-left'}`}
+      >
+        {messageClass === 'received' ? (
+          <>
+            {username}{' '}
+            <span className="text-xs italic font-normal 	 ">
+              {formattedTime}
+            </span>
+          </>
+        ) : (
+          <>
+            <span className="text-xs font-thin">{formattedTime}</span>
+          </>
+        )}
+      </div>
+
+      <div className={`flex ${messageClass === 'sent' ? 'flex-row-reverse' : 'flex-row'} items-center mt-1`}>
+      <div className="group relative max-w-[70%] break-words">
+      <Dropdown
+        menu={{ items }}
+        trigger={['hover']}
+        className="relative group"
+        placement="topRight"
+        overlayClassName="horizontal-dropdown"
+      >
+        <div className="bg-gray-200 p-2 rounded-lg">
+          <span>{text}</span>
+        </div>
+      </Dropdown>
+      </div>
       </div>
     </div>
   );

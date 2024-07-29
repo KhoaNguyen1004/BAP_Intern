@@ -71,35 +71,51 @@
 .message {
   display: flex;
   flex-direction: column;
-  /* align-items: center; */
   padding: 4px 6px;
   margin-bottom: 4px;
   border-radius: 10px;
-  /* position: relative; */
 }
 
-
-
-.message.sent .message-content {
-  max-width: 70%;
-  word-wrap: break-word;
-
-   background: #D84152;
-   color: white;
-   padding: 10px;
-    border-radius: 10px;
-    /* position: relative; */
-
-   
+.horizontal-dropdown .ant-dropdown-menu {
+  display: flex;
+  flex-direction: row;
+  padding: 0;
+  align-items: center;
 }
 
-.message.received .message-content {
-  max-width: 70%;
-  word-wrap: break-word;
+.horizontal-dropdown .ant-dropdown-menu-item {
+  display: flex;
+  align-items: center;
+}
 
-   background: #EEEDEB;
-   color: black;
-   padding: 10px;
-    border-radius: 10px;
- 
+/* styles.css or a similar stylesheet */
+.custom-dropdown .ant-dropdown-menu {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.custom-dropdown .ant-dropdown-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+}
+
+.custom-dropdown .ant-dropdown-menu-item-divider {
+  margin: 0;
+}
+
+.custom-dropdown .ant-dropdown-menu {
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.custom-dropdown .ant-dropdown-menu-submenu-title {
+  padding: 0;
+}
+
+.custom-dropdown .ant-dropdown-menu-submenu {
+  position: absolute;
+  left: 100%; /* Position submenu to the right */
+  top: 0;
 }
