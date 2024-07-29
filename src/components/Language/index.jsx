@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dropdown, Button } from 'antd';
-import { Flag } from 'semantic-ui-react';
-import 'semantic-ui-css/semantic.min.css';
+
+import VnImage from '../../assets/vietnam.png';
+import UsImage from '../../assets/us.png';
 
 function LanguagePicker() {
   const { i18n } = useTranslation();
@@ -24,18 +25,19 @@ function LanguagePicker() {
     {
       key: 'vn',
       label: (
-        <>
-          <Flag name="vn" /> Vietnamese
-        </>
+        <div className='flex items-center'>
+          <img src={VnImage} alt="Vietnamese" className="w-6 h-4 mr-2" />{' '}
+          Vietnamese
+        </div>
       ),
       onClick: () => handleLanguageChange('vn')
     },
     {
       key: 'us',
       label: (
-        <>
-          <Flag name="us" /> English
-        </>
+        <div className='flex items-center'>
+          <img src={UsImage} alt="English" className="w-6 h-4 mr-2" /> English
+        </div>
       ),
       onClick: () => handleLanguageChange('us')
     }
@@ -48,8 +50,12 @@ function LanguagePicker() {
       placement="topRight"
       arrow
     >
-      <Button className="" size="large" shape="circle">
-        <Flag name={flag} />
+      <Button size="large" shape="circle">
+        <img
+          src={flag === 'vn' ? VnImage : UsImage}
+          alt="Language"
+          className="w-6 h-4 "
+        />
       </Button>
     </Dropdown>
   );
