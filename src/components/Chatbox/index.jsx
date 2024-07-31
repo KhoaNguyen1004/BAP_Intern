@@ -34,13 +34,7 @@ import {
 const { Header, Content, Footer } = Layout;
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyBoydp1xb0ANGxzEvKcKFGtfvKrJCb1Y_U',
-  authDomain: 'test-df021.firebaseapp.com',
-  projectId: 'test-df021',
-  storageBucket: 'test-df021.appspot.com',
-  messagingSenderId: '158215257419',
-  appId: '1:158215257419:web:db2249ea0e25accf68bcce',
-  measurementId: 'G-43XHKG142E'
+  // config
 };
 
 const app = initializeApp(firebaseConfig);
